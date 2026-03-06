@@ -1,0 +1,24 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th>Semester</th>
+      <th>Exam Title</th>
+      <th>Primary Examiner</th>
+      <th>Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (answerSheet of answerSheets; track answerSheet.filePath){
+      <tr [class.disabled]="isUnavailable(answerSheet)" [routerLink]="['review', answerSheet.filePath]" role="button">
+        <td>{{answerSheet.exam.semester | semesterDisplayName}}</td>
+        <td>{{answerSheet.exam.title}}</td>
+        <td>{{answerSheet.exam.primaryExaminer | userDisplayName}}</td>
+        <td>{{answerSheet.exam.date | date}}</td>
+      </tr>
+    } @empty {
+      <tr>
+        <td class="text-center" colspan="4">No exams to review</td>
+      </tr>
+    }
+  </tbody>
+</table>
