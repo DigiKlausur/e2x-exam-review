@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {HttpClient, HttpResponse} from '@angular/common/http';
-import {AnswerSheet} from 'e2xgrader-review-backend';
+import {IAnswerSheet} from 'e2xgrader-review-backend';
 import {environment} from '../../../environments/environment';
 
 @Injectable({
@@ -10,7 +10,11 @@ import {environment} from '../../../environments/environment';
 export class ReviewService {
   private http: HttpClient = inject(HttpClient);
 
-  listAnswerSheets(): Observable<HttpResponse<AnswerSheet[]>>{
-    return this.http.get<AnswerSheet[]>(environment.apiUrl + '/api/v1/review/answer-sheets', {observe: 'response'});
+  listAnswerSheets(): Observable<HttpResponse<IAnswerSheet[]>>{
+    return this.http.get<IAnswerSheet[]>(environment.apiUrl + '/api/v1/review/answer-sheets', {observe: 'response'});
+  }
+
+  getAnswerSheet(id: string): Observable<HttpResponse<IAnswerSheet>>{
+    return this.http.get<IAnswerSheet>(environment.apiUrl + '/api/v1/review/answer-sheets/' + id, {observe: 'response'});
   }
 }

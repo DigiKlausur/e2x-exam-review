@@ -1,0 +1,26 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th>Semester</th>
+      <th>Exam Title</th>
+      <th>Primary Examiner</th>
+      <th>Secondary Examiner</th>
+      <th>Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (exam of exams; track exam._id){
+      <tr  [routerLink]="['exam', exam._id]" role="button">
+        <td>{{exam.semester | semesterDisplayName}}</td>
+        <td>{{exam.title}}</td>
+        <td>{{exam.primaryExaminer | userDisplayName}}</td>
+        <td>{{exam.secondaryExaminer | userDisplayName}}</td>
+        <td>{{exam.date | date}}</td>
+      </tr>
+    } @empty {
+      <tr>
+        <td class="text-center fst-italic" colspan="5">No exams available</td>
+      </tr>
+    }
+  </tbody>
+</table>

@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {NgxExtendedPdfViewerModule} from "ngx-extended-pdf-viewer";
+import {IAnswerSheet} from 'e2xgrader-review-backend';
+import {environment} from '../../../../environments/environment';
 
 @Component({
   selector: 'app-answer-sheet-viewer',
@@ -9,4 +11,7 @@ import {NgxExtendedPdfViewerModule} from "ngx-extended-pdf-viewer";
   templateUrl: './answer-sheet-viewer.html',
   styleUrl: './answer-sheet-viewer.scss',
 })
-export class AnswerSheetViewer {}
+export class AnswerSheetViewer {
+  @Input() answerSheet!: IAnswerSheet;
+  protected readonly environment = environment;
+}
