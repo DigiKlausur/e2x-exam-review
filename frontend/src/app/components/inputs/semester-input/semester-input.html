@@ -1,1 +1,6 @@
-<p>semester-input works!</p>
+<select class="form-select" [(ngModel)]="currentValue" (ngModelChange)="handleValueChange()">
+  <option selected disabled [ngValue]="undefined">Please select</option>
+  @for (option of semesterOptions; track $index){
+    <option [ngValue]="option.value">{{option.title}}</option>
+  }
+</select>

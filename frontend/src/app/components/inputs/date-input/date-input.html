@@ -5,6 +5,8 @@
     name="dp"
     ngbDatepicker
     #d="ngbDatepicker"
+    [(ngModel)]="currentValue"
+    (ngModelChange)="handleValueChange()"
   />
   <button class="btn btn-primary" (click)="d.toggle()" type="button"><i class="bi bi-calendar-event"></i></button>
 </div>
