@@ -1,1 +1,1 @@
-<p>user-search-input works!</p>
+<input type="text" class="form-control" [ngbTypeahead]="search" [inputFormatter]="getUserDisplayName" [resultFormatter]="getUserDisplayName" [(ngModel)]="currentValue" (ngModelChange)="this.handleValueChange()" >

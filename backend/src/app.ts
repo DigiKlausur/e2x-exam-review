@@ -21,7 +21,7 @@ app.use(cors({
 const apiRouter = express.Router();
 
 applyReviewRoutes(apiRouter);
-applyManagementRoutes(apiRouter)
+applyManagementRoutes(apiRouter);
 
 app.use('/api/v1', apiRouter);
 app.use('/', express.static('../frontend/dist/e2xgrader-review-frontend/browser'));
@@ -35,7 +35,7 @@ const authString = dbUser ?  dbUser + (dbPass ? ':' + dbPass : '') + '@' : '';
 const db = connect(`mongodb://${authString}${process.env.DB_HOST ?? 'localhost'}:${process.env.DB_PORT ?? '16510'}/${process.env.DB_NAME ?? 'e2xExamReview'}`);
 
 db.then(async () => {
-    await Promise.all([
+    /*await Promise.all([
         AnswerSheet.collection.drop(),
         Exam.collection.drop(),
         Student.collection.drop(),
@@ -81,7 +81,8 @@ db.then(async () => {
             endDate: null,
             showDownloadButton: false,
             showTextLayer: true
-        }
+        },
+        owner: user0
     });
 
     const exam1 = new Exam({
@@ -98,7 +99,8 @@ db.then(async () => {
             endDate: null,
             showDownloadButton: true,
             showTextLayer: true
-        }
+        },
+        owner: user0
     });
 
     await Promise.all([
@@ -117,7 +119,7 @@ db.then(async () => {
             submitter: student0,
             filePath: 'answer-sheets/sample-local-pdf.pdf'
         }
-    ]);
+    ]);*/
 
     app.listen(SERVER_PORT, () => {
         console.log(`Server started http://localhost:${SERVER_PORT}`);

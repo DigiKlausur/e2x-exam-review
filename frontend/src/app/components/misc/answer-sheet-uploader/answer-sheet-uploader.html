@@ -1,0 +1,5 @@
+<input #fileInput type="file" hidden>
+<div id="dropzone" #dropZone (dragover)="handleDragOver($event)" (dragleave)="handleDragLeave()" (drop)="handleDrop($event)">
+  <i class="bi bi-cloud-upload"></i>
+  <span>Drop answer sheets here</span>
+</div>

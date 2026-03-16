@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {NgbInputDatepicker} from "@ng-bootstrap/ng-bootstrap";
+import {NgbDate, NgbDateAdapter, NgbDateNativeAdapter, NgbInputDatepicker} from "@ng-bootstrap/ng-bootstrap";
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from '@angular/forms';
 
 @Component({
@@ -13,6 +13,10 @@ import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from '@angular/for
       provide: NG_VALUE_ACCESSOR,
       useExisting: DateInput,
       multi: true
+    },
+    {
+      provide: NgbDateAdapter,
+      useClass: NgbDateNativeAdapter
     }
   ],
   templateUrl: './date-input.html',
@@ -33,6 +37,7 @@ export class DateInput implements ControlValueAccessor {
   }
 
   writeValue(val: Date|null): void {
+
     this.currentValue = val;
   }
 

@@ -9,16 +9,16 @@
     </tr>
   </thead>
   <tbody>
-    @for (exam of exams; track exam._id){
-      <tr  [routerLink]="['exam', exam._id]" role="button">
-        <td>{{exam.semester | semesterDisplayName}}</td>
-        <td>{{exam.title}}</td>
-        <td>{{exam.primaryExaminer | userDisplayName}}</td>
-        <td>{{exam.secondaryExaminer | userDisplayName}}</td>
-        <td>{{exam.date | date}}</td>
+    @for (entry of exams; track entry.exam._id){
+      <tr [class.disabled]="!isAvailable(entry)" [routerLink]="entry.link" role="button">
+        <td>{{entry.exam.semester | semesterDisplayName}}</td>
+        <td>{{entry.exam.title}}</td>
+        <td>{{entry.exam.primaryExaminer | userDisplayName}}</td>
+        <td>{{entry.exam.secondaryExaminer | userDisplayName}}</td>
+        <td>{{entry.exam.date | date}}</td>
       </tr>
     } @empty {
-      <tr>
+      <tr class="disabled">
         <td class="text-center fst-italic" colspan="5">No exams available</td>
       </tr>
     }

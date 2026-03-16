@@ -10,4 +10,5 @@ export interface IExam {
     secondaryExaminer: IUser;
     date: Date;
     reviewParameters: IExamReviewParameters;
+    owner: IUser;
 }

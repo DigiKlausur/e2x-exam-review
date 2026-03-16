@@ -1,8 +1,9 @@
 import {inject, Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
+import {map, Observable} from 'rxjs';
 import {HttpClient, HttpResponse} from '@angular/common/http';
-import {IAnswerSheet} from 'e2xgrader-review-backend';
+import {IAnswerSheet, IExam} from 'e2xgrader-exam-review-backend';
 import {environment} from '../../../environments/environment';
+import {prepareExam} from '../../utils/ExamUtil';
 
 @Injectable({
   providedIn: 'root',
@@ -10,11 +11,18 @@ import {environment} from '../../../environments/environment';
 export class ReviewService {
   private http: HttpClient = inject(HttpClient);
 
-  listAnswerSheets(): Observable<HttpResponse<IAnswerSheet[]>>{
-    return this.http.get<IAnswerSheet[]>(environment.apiUrl + '/api/v1/review/answer-sheets', {observe: 'response'});
+  listAnswerSheets(): Observable<IAnswerSheet[]>{
+    return this.http.get<IAnswerSheet[]>(environment.apiUrl + '/api/v1/review/answer-sheets')
+      .pipe(map((response: IAnswerSheet[]) => response.map(this.prepareAnswerSheet)));
   }
 
-  getAnswerSheet(id: string): Observable<HttpResponse<IAnswerSheet>>{
-    return this.http.get<IAnswerSheet>(environment.apiUrl + '/api/v1/review/answer-sheets/' + id, {observe: 'response'});
+  getAnswerSheet(id: string): Observable<IAnswerSheet>{
+    return this.http.get<IAnswerSheet>(environment.apiUrl + '/api/v1/review/answer-sheets/' + id)
+      .pipe(map((response: IAnswerSheet) => this.prepareAnswerSheet(response)));
+  }
+
+  private prepareAnswerSheet(answerSheetProto: IAnswerSheet): IAnswerSheet{
+    answerSheetProto.exam = prepareExam(answerSheetProto.exam);
+    return answerSheetProto;
   }
 }

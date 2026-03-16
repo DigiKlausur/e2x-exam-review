@@ -1,5 +1,5 @@
 import {inject, LOCALE_ID, Pipe, PipeTransform} from '@angular/core';
-import { ISemester } from "e2xgrader-review-backend";
+import { ISemester } from "e2xgrader-exam-review-backend";
 import {getFullSemesterName} from '../../utils/SemesterUtil';
 
 @Pipe({

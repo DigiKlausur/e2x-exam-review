@@ -9,7 +9,8 @@ export const ExamSchema: Schema<IExam> = new Schema<IExam>({
     primaryExaminer: {type: Schema.Types.ObjectId, ref: "User", required: true},
     secondaryExaminer: {type: Schema.Types.ObjectId, ref: "User", required: true},
     date: {type: Date, required: true},
-    reviewParameters: ExamReviewParametersSchema
+    reviewParameters: ExamReviewParametersSchema,
+    owner: {type: Schema.Types.ObjectId, ref: "User", required: true}
 });
 
 export const Exam: Model<IExam> = model<IExam>('Exam', ExamSchema);

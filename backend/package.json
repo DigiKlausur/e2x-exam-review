@@ -1,5 +1,5 @@
 {
-  "name": "e2xgrader-review-backend",
+  "name": "e2xgrader-exam-review-backend",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
@@ -15,12 +15,14 @@
   "dependencies": {
     "cors": "^2.8.6",
     "express": "^5.2.1",
-    "mongoose": "^9.3.0"
+    "mongoose": "^9.3.0",
+    "multer": "^2.1.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/mongoose": "^5.11.96",
+    "@types/multer": "^2.1.0",
     "@types/node": "^25.3.5",
     "eslint": "^10.0.2",
     "install": "^0.13.0",

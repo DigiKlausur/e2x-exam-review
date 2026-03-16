@@ -1,23 +1,23 @@
 <table class="table">
   <thead>
     <tr>
-      <th>Semester</th>
-      <th>Exam Title</th>
-      <th>Primary Examiner</th>
-      <th>Date</th>
+      <th>Student ID</th>
+      <th>Firstname</th>
+      <th>Lastname</th>
+      <th>File</th>
     </tr>
   </thead>
   <tbody>
     @for (answerSheet of answerSheets; track answerSheet._id){
-      <tr [class.disabled]="isUnavailable(answerSheet)" [routerLink]="['review', answerSheet._id]" role="button">
-        <td>{{answerSheet.exam.semester | semesterDisplayName}}</td>
-        <td>{{answerSheet.exam.title}}</td>
-        <td>{{answerSheet.exam.primaryExaminer | userDisplayName}}</td>
-        <td>{{answerSheet.exam.date | date}}</td>
+      <tr>
+        <td>{{answerSheet.submitter.studentId}}</td>
+        <td>{{answerSheet.submitter.firstname}}</td>
+        <td>{{answerSheet.submitter.lastname}}</td>
+        <td>{{answerSheet.filePath}}</td>
       </tr>
     } @empty {
-      <tr>
-        <td class="text-center fst-italic" colspan="4">No exams to review</td>
+      <tr class="disabled">
+        <td class="text-center fst-italic" colspan="4">No answer sheets available</td>
       </tr>
     }
   </tbody>

@@ -9,5 +9,5 @@ import {Navbar} from './components/misc/navbar/navbar';
   styleUrl: './app.scss'
 })
 export class App {
-  protected readonly title = signal('e2xgrader-review-frontend');
+  protected readonly title = signal('e2xgrader-exam-review-frontend');
 }

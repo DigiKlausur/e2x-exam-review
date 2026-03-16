@@ -4,7 +4,7 @@ import {AnswerSheetViewer} from '../../misc/answer-sheet-viewer/answer-sheet-vie
 import {ActivatedRoute} from '@angular/router';
 import {ReviewService} from '../../../services/review-service/review-service';
 import {HttpResponse} from '@angular/common/http';
-import {IAnswerSheet} from 'e2xgrader-review-backend';
+import {IAnswerSheet} from 'e2xgrader-exam-review-backend';
 
 @Component({
   selector: 'app-review-page',
@@ -25,11 +25,9 @@ export class ReviewPage implements OnInit {
   ngOnInit(): void {
     this.activatedRoute.params.subscribe(params => {
       if(params['id']) {
-        this.reviewService.getAnswerSheet(params['id']).subscribe((response: HttpResponse<IAnswerSheet>) => {
-          if(response.status === 200 && response.body){
-            this.answerSheet = response.body;
-            this.changeDetectorRef.detectChanges();
-          }
+        this.reviewService.getAnswerSheet(params['id']).subscribe((response: IAnswerSheet) => {
+          this.answerSheet = response;
+          this.changeDetectorRef.detectChanges();
         });
       }
     })

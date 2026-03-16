@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {NgxExtendedPdfViewerModule} from "ngx-extended-pdf-viewer";
-import {IAnswerSheet} from 'e2xgrader-review-backend';
+import {IAnswerSheet} from 'e2xgrader-exam-review-backend';
 import {environment} from '../../../../environments/environment';
 
 @Component({

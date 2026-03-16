@@ -1,14 +1,16 @@
 <div class="container py-4">
   <div class="card p-4 mb-3">
-    <app-exam-editor></app-exam-editor>
+    <app-exam-editor [examId]="examId"></app-exam-editor>
   </div>
-  @if(newExam) {
+  @if(this.examId === 'new') {
     <ngb-alert [dismissible]="false" type="info">
       An exam needs to be saved once, before answer sheets can be added.
     </ngb-alert>
   } @else {
     <div class="card p-4">
       <label>Answer Sheets</label>
+      <app-answer-sheet-uploader class="mt-3"></app-answer-sheet-uploader>
+      <app-answer-sheet-list class="mt-3" ></app-answer-sheet-list>
     </div>
   }
 </div>

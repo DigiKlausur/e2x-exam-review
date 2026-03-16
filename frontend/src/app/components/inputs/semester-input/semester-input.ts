@@ -1,5 +1,5 @@
-import {Component, forwardRef, inject, LOCALE_ID, OnInit} from '@angular/core';
-import {ISemester, Season} from 'e2xgrader-review-backend';
+import {Component, inject, LOCALE_ID, OnInit} from '@angular/core';
+import {ISemester, Season} from 'e2xgrader-exam-review-backend';
 import {getFullSemesterName} from '../../../utils/SemesterUtil';
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from '@angular/forms';
 
@@ -53,7 +53,18 @@ export class SemesterInput implements OnInit, ControlValueAccessor {
   }
 
   writeValue(val: ISemester|undefined): void {
-    this.currentValue = val;
+    if(val) {
+      this.currentValue = this.semesterOptions.find(option => option.value.year === val?.year && option.value.season === val.season)?.value;
+      if(!this.currentValue) {
+        this.semesterOptions.push({
+          title: getFullSemesterName(val, this.currentLocaleId as 'en' | 'de' | 'en-US'),
+          value: val
+        })
+        this.currentValue = val;
+      }
+    }else {
+      this.currentValue = undefined;
+    }
   }
 
   registerOnChange(fn: any): void {
