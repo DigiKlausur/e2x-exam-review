@@ -1,7 +1,6 @@
 import {ChangeDetectorRef, Component, inject, OnInit} from '@angular/core';
 import {IAnswerSheet, IExam} from "e2xgrader-exam-review-backend";
 import {ReviewService} from '../../../services/review-service/review-service';
-import {AnswerSheetList} from '../../misc/answer-sheet-list/answer-sheet-list';
 import {ExamList} from '../../misc/exam-list/exam-list';
 import {isReviewAvailable} from '../../../utils/AnswerSheet';
 
@@ -10,7 +9,6 @@ import {isReviewAvailable} from '../../../utils/AnswerSheet';
   templateUrl: './landing-page.html',
   styleUrl: './landing-page.scss',
   imports: [
-    AnswerSheetList,
     ExamList
   ]
 })

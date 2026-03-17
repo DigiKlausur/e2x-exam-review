@@ -1,5 +1,6 @@
-import {IUser} from "./IUser";
-
-export interface IStudent extends IUser{
+export interface IStudent {
     studentId: number;
+    email?: string;
+    firstname?: string;
+    lastname?: string;
 }

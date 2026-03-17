@@ -5,6 +5,7 @@
       <th>Firstname</th>
       <th>Lastname</th>
       <th>File</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
@@ -13,12 +14,25 @@
         <td>{{answerSheet.submitter.studentId}}</td>
         <td>{{answerSheet.submitter.firstname}}</td>
         <td>{{answerSheet.submitter.lastname}}</td>
-        <td>{{answerSheet.filePath}}</td>
+        <td>{{answerSheet.originalFileName}}</td>
+        <td class="text-end w-auto">
+          <div class="controls">
+            <i class="bi bi-eye" role="button" [routerLink]="['/','review', answerSheet._id]" ngbTooltip="View answer sheet"></i>
+            <i class="bi bi-x-lg" role="button" (click)="handleDeleteAnswerSheet(answerSheet)" ngbTooltip="Delete answer sheet"></i>
+          </div>
+        </td>
       </tr>
     } @empty {
       <tr class="disabled">
-        <td class="text-center fst-italic" colspan="4">No answer sheets available</td>
+        <td class="text-center fst-italic" colspan="5">No answer sheets available</td>
       </tr>
     }
   </tbody>
+  @if (answerSheets.length > 0){
+    <tfoot>
+      <tr>
+        <td colspan="5" class="text-end fst-italic">{{answerSheets.length}} Answer Sheets</td>
+      </tr>
+    </tfoot>
+  }
 </table>

@@ -6,4 +6,5 @@ export interface IAnswerSheet {
     exam: IExam;
     submitter: IStudent;
     filePath: string;
+    originalFileName: string;
 }

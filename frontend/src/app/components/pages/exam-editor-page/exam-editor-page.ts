@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, inject, OnInit} from '@angular/core';
 import {ExamEditor} from '../../misc/exam-editor/exam-editor';
-import {IExam, IExamReviewParameters} from 'e2xgrader-exam-review-backend';
+import {IAnswerSheet, IExam, IExamReviewParameters} from 'e2xgrader-exam-review-backend';
 import {ActivatedRoute} from '@angular/router';
 import {ManagementService} from '../../../services/management-service/management-service';
 import {NgbAlert} from '@ng-bootstrap/ng-bootstrap';
@@ -21,12 +21,22 @@ import {AnswerSheetUploader} from '../../misc/answer-sheet-uploader/answer-sheet
 export class ExamEditorPage implements OnInit {
   private activatedRoute: ActivatedRoute = inject(ActivatedRoute);
   private changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
+  private managementService: ManagementService = inject(ManagementService);
 
   protected examId!: string;
+  protected answerSheets: IAnswerSheet[] = [];
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe(params => {
       this.examId = params['id'];
+      this.changeDetectorRef.detectChanges();
+      if(this.examId !== 'new') this.loadAnswerSheets();
+    });
+  }
+
+  loadAnswerSheets(): void {
+    this.managementService.listAnswerSheets(this.examId).subscribe(answerSheets => {
+      this.answerSheets = answerSheets;
       this.changeDetectorRef.detectChanges();
     });
   }

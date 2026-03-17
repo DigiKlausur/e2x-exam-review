@@ -9,8 +9,8 @@
   } @else {
     <div class="card p-4">
       <label>Answer Sheets</label>
-      <app-answer-sheet-uploader class="mt-3"></app-answer-sheet-uploader>
-      <app-answer-sheet-list class="mt-3" ></app-answer-sheet-list>
+      <app-answer-sheet-uploader class="mt-3" [examId]="examId" (onChange)="loadAnswerSheets()"></app-answer-sheet-uploader>
+      <app-answer-sheet-list class="mt-3" [answerSheets]="answerSheets"></app-answer-sheet-list>
     </div>
   }
 </div>

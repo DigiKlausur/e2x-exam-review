@@ -1,10 +1,11 @@
 import {Request, Response} from "express";
 import {User} from "../models/User";
 import {Exam} from "../models/Exam";
-import {writeFile} from "node:fs/promises";
+import {writeFile, mkdir} from "node:fs/promises";
 import {ObjectId} from "mongodb";
-import {AnswerSheet} from "../models/AnswerSheet";
+import {AnswerSheet, AnswerSheetSchema} from "../models/AnswerSheet";
 import {Student} from "../models/Student";
+import {IAnswerSheet} from "../interfaces";
 
 export async function getExamsByExaminer(req: Request, res: Response) {
     const userId = (await User.findOne().lean())!._id;
@@ -33,18 +34,29 @@ export async function addAnswerSheet(req: Request, res: Response) {
         return res.status(400).send({error: 'File not found'});
     }
 
-    req.body.submitter = await Student.findOne({studentId: req.body.submitter.studentId});
-    if(!req.body.submitter) {
-        req.body.submitter = new Student({
-            studentId: req.body.submitter.studentId,
-        }).save();
+    console.log(req.body);
+
+    let submitter = await Student.findOne({studentId: req.body.studentId});
+    if(!submitter) {
+        submitter = new Student({
+            studentId: req.body.studentId,
+        });
     }
 
     req.body._id = new ObjectId();
-    const filePath = `answer-sheets/${exam._id}/${req.body._id}.pdf`
-    await writeFile(filePath, req.file?.buffer)
-        .then(async () => {
-            const answerSheet = await new AnswerSheet(req.body).save();
+    const directoryPath: string =`answer-sheets/${exam._id}`;
+    await mkdir(directoryPath, { recursive: true });
+    const filePath: string = `${directoryPath}/${req.body._id}.pdf`;
+    await submitter.save();
+    await new AnswerSheet({
+            exam: exam,
+            submitter: submitter,
+            filePath: filePath,
+            originalFileName: req.body.originalFileName
+        })
+        .save()
+        .then(async (answerSheet: IAnswerSheet) => {
+            await writeFile(filePath, req.file!.buffer, {})
             res.send(answerSheet);
         });
 }
@@ -60,4 +72,9 @@ export async function searchUsers(req: Request, res: Response) {
             {lastname: {$in: queryRegexs}},
             {email: {$in: queryRegexs}}
         ]}));
+}
+
+export async function getAnswerSheetsByExamId(req: Request, res: Response) {
+    // @ts-ignore
+    return res.send(await AnswerSheet.find({"exam": new ObjectId(req.params.id as string)}).populate('submitter').lean());
 }

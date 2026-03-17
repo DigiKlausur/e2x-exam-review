@@ -1,5 +1,7 @@
-<input #fileInput type="file" hidden>
+<input #fileInput type="file" accept="application/pdf" multiple hidden>
 <div id="dropzone" #dropZone (dragover)="handleDragOver($event)" (dragleave)="handleDragLeave()" (drop)="handleDrop($event)">
-  <i class="bi bi-cloud-upload"></i>
-  <span>Drop answer sheets here</span>
+  <div (click)="fileInput.click()" role="button" class="d-flex flex-column align-items-center">
+    <i class="bi bi-cloud-upload"></i>
+    <span class="mt-1">Drop answer sheets here</span>
+  </div>
 </div>

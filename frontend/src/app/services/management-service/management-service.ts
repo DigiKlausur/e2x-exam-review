@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient, HttpResponse} from '@angular/common/http';
 import {map, Observable} from 'rxjs';
-import {IExam, IUser} from 'e2xgrader-exam-review-backend';
+import {IAnswerSheet, IExam, IUser} from 'e2xgrader-exam-review-backend';
 import {environment} from '../../../environments/environment';
 import {prepareExam} from '../../utils/ExamUtil';
 
@@ -27,6 +27,18 @@ export class ManagementService {
 
   updateExam(exam: IExam) {
     return this.http.put(environment.apiUrl + '/api/v1/manage/exams', exam);
+  }
+
+  addAnswerSheet(examId: string, studentId: string, file: File): Observable<IAnswerSheet> {
+    const body: FormData = new FormData();
+    body.append('file', file);
+    body.append('studentId', studentId.toString());
+    body.append('originalFileName', file.name);
+    return this.http.post<IAnswerSheet>(`${environment.apiUrl}/api/v1/manage/exams/${examId}/answerSheet`, body);
+  }
+
+  listAnswerSheets(examId: string): Observable<IAnswerSheet[]> {
+    return this.http.get<IAnswerSheet[]>(`${environment.apiUrl}/api/v1/manage/exams/${examId}/answerSheet`);
   }
 
   searchUsers(query: string): Observable<IUser[]> {
