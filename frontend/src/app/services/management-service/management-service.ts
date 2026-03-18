@@ -29,6 +29,10 @@ export class ManagementService {
     return this.http.put(environment.apiUrl + '/api/v1/manage/exams', exam);
   }
 
+  listAnswerSheets(examId: string): Observable<IAnswerSheet[]> {
+    return this.http.get<IAnswerSheet[]>(`${environment.apiUrl}/api/v1/manage/exams/${examId}/answerSheet`);
+  }
+
   addAnswerSheet(examId: string, studentId: string, file: File): Observable<IAnswerSheet> {
     const body: FormData = new FormData();
     body.append('file', file);
@@ -37,8 +41,8 @@ export class ManagementService {
     return this.http.post<IAnswerSheet>(`${environment.apiUrl}/api/v1/manage/exams/${examId}/answerSheet`, body);
   }
 
-  listAnswerSheets(examId: string): Observable<IAnswerSheet[]> {
-    return this.http.get<IAnswerSheet[]>(`${environment.apiUrl}/api/v1/manage/exams/${examId}/answerSheet`);
+  deleteAnswerSheet(answerSheetId: string): Observable<void>{
+    return this.http.delete<void>(environment.apiUrl + '/api/v1/manage/answerSheet/' + answerSheetId);
   }
 
   searchUsers(query: string): Observable<IUser[]> {

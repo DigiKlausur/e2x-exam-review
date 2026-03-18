@@ -2,7 +2,7 @@ import {Router} from 'express';
 import * as multer from 'multer';
 import {
     addAnswerSheet,
-    createExam, getAnswerSheetsByExamId,
+    createExam, deleteAnswerSheet, getAnswerSheetsByExamId,
     getExamById,
     getExamsByExaminer,
     searchUsers,
@@ -19,6 +19,7 @@ export function applyManagementRoutes(parentRouter: Router) {
 
     managementRouter.get('/exams/:id/answerSheet', getAnswerSheetsByExamId);
     managementRouter.post('/exams/:id/answerSheet', multer().single('file'), addAnswerSheet);
+    managementRouter.delete('/answerSheet/:id', deleteAnswerSheet);
 
     managementRouter.get('/users/search', searchUsers);
 

@@ -18,7 +18,7 @@
         <td class="text-end w-auto">
           <div class="controls">
             <i class="bi bi-eye" role="button" [routerLink]="['/','review', answerSheet._id]" ngbTooltip="View answer sheet"></i>
-            <i class="bi bi-x-lg" role="button" (click)="handleDeleteAnswerSheet(answerSheet)" ngbTooltip="Delete answer sheet"></i>
+            <i class="bi bi-trash" role="button" (click)="handleDeleteAnswerSheet(answerSheet)" ngbTooltip="Delete answer sheet"></i>
           </div>
         </td>
       </tr>
@@ -31,8 +31,21 @@
   @if (answerSheets.length > 0){
     <tfoot>
       <tr>
-        <td colspan="5" class="text-end fst-italic">{{answerSheets.length}} Answer Sheets</td>
+        <td colspan="5" class="text-end fst-italic">{{answerSheets.length}} Answer Sheet(s)</td>
       </tr>
     </tfoot>
   }
 </table>
+<ng-template #confirmDeleteModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" >Delete Answer Sheet</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    Are your sure, that you want to delete the answer sheet of student <span class="font-monospace">{{selectedAnswerSheet?.submitter?.studentId}}</span> @if(selectedAnswerSheet?.submitter){{{selectedAnswerSheet?.submitter! | userDisplayName}}}?
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Abort')"><i class="bi bi-x-lg"></i><span>Abort</span></button>
+    <button type="button" class="btn btn-danger" (click)="confirmDelete()"><i class="bi bi-trash"></i><span>Delete</span></button>
+  </div>
+</ng-template>
