@@ -9,7 +9,7 @@
     </tr>
   </thead>
   <tbody>
-    @for (entry of exams; track entry.exam._id){
+    @for (entry of exams; track $index){
       <tr [class.disabled]="!isAvailable(entry)" [routerLink]="entry.link" role="button">
         <td>{{entry.exam.semester | semesterDisplayName}}</td>
         <td>{{entry.exam.title}}</td>

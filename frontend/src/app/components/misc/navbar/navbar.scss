@@ -1,0 +1,17 @@
+:host{
+
+}
+
+.btn-logoff {
+  --bs-btn-color: var(--bs-white);
+  --bs-btn-bg: transparent;
+  --bs-btn-border-color: transparent;
+  --bs-btn-hover-color: var(--bs-white);
+  --bs-btn-hover-bg: transparent;
+  --bs-btn-hover-border-color: var(--bs-nav-link-hover-color);
+  --bs-btn-focus-shadow-rgb: var(--bs-light);
+  --bs-btn-active-color: var(--bs-primary);
+  --bs-btn-active-bg: var(--bs-white);
+  --bs-btn-active-border-color: transparent;
+  --bs-btn-box-shadow: none;
+}

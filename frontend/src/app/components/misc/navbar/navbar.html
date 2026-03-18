@@ -13,6 +13,10 @@
           <a class="nav-link" routerLink="manage" routerLinkActive="active" >Manage</a>
         </li>
       </ul>
+      <div class="ms-auto d-flex align-items-center gap-3">
+        @if(authenticatedUser) {<span class="text-white">{{authenticatedUser | userDisplayName}}</span>}
+        <button class="btn btn-sm btn-logoff" (click)="handleLogout()"><span>Logout</span><i class="bi bi-box-arrow-right"></i></button>
+      </div>
     </div>
   </div>
 </nav>

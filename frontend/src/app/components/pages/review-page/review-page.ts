@@ -3,7 +3,6 @@ import {NgxExtendedPdfViewerModule} from 'ngx-extended-pdf-viewer';
 import {AnswerSheetViewer} from '../../misc/answer-sheet-viewer/answer-sheet-viewer';
 import {ActivatedRoute} from '@angular/router';
 import {ReviewService} from '../../../services/review-service/review-service';
-import {HttpResponse} from '@angular/common/http';
 import {IAnswerSheet} from 'e2xgrader-exam-review-backend';
 
 @Component({
@@ -21,6 +20,7 @@ export class ReviewPage implements OnInit {
   private changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
 
   answerSheet?: IAnswerSheet;
+  accessToken?: string;
 
   ngOnInit(): void {
     this.activatedRoute.params.subscribe(params => {

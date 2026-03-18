@@ -8,10 +8,13 @@ import {
     searchUsers,
     updateExam
 } from "../controllers/managementController";
+import {jwtProtect} from "../middlewares/jwtProtect";
+import {config} from "../globals";
 
 export function applyManagementRoutes(parentRouter: Router) {
     const managementRouter = Router();
 
+    managementRouter.use(jwtProtect(config.jwt.roleMappings.lecturer));
     managementRouter.get('/exams', getExamsByExaminer);
     managementRouter.get('/exams/:id', getExamById);
     managementRouter.put('/exams', updateExam);
