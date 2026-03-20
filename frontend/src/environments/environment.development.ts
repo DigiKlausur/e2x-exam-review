@@ -6,12 +6,16 @@ export const environment: Environment = {
   openId: {
     authorityUrl: 'http://localhost:8080/auth/realms/e2x-exam-review',
     clientId: 'e2x-exam-review-client',
-    mappings: {
+    attributeMappings: {
       studentId: 'studentId',
       displayName: 'name',
       firstname: 'given_name',
       lastname: 'family_name',
       email: 'email'
+    },
+    roleMappings: {
+      lecturer: 'lecturer',
+      student: 'student'
     }
   }
 };

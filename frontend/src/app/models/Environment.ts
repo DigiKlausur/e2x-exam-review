@@ -4,12 +4,16 @@ export interface Environment {
   openId: {
     authorityUrl: string;
     clientId: string;
-    mappings: {
+    attributeMappings: {
       displayName: string;
       firstname: string;
       lastname: string;
       email: string;
       studentId: string;
+    },
+    roleMappings: {
+      lecturer: string;
+      student: string;
     }
   }
 }

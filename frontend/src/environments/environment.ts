@@ -6,12 +6,16 @@ export const environment: Environment = {
   openId: {
     authorityUrl: '',
     clientId: '',
-    mappings: {
+    attributeMappings: {
       studentId: '',
       displayName: '',
       firstname: '',
       lastname: '',
       email: ''
+    },
+    roleMappings: {
+      lecturer: 'lecturer',
+      student: 'student'
     }
   }
 };

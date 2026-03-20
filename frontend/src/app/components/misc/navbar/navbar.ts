@@ -4,6 +4,7 @@ import {OidcSecurityService} from 'angular-auth-oidc-client';
 import {IStudent, IUser} from 'e2xgrader-exam-review-backend';
 import {environment} from '../../../../environments/environment';
 import {UserDisplayNamePipe} from '../../../pipes/user-display-name-pipe/user-display-name-pipe';
+import {hasRole} from '../../../utils/AccessToken';
 
 @Component({
   selector: 'app-navbar',
@@ -19,15 +20,17 @@ export class Navbar implements OnInit {
   private readonly oidcSecurityService: OidcSecurityService = inject(OidcSecurityService);
 
   protected authenticatedUser?: IUser | IStudent;
+  protected isLecturer: boolean = false;
 
   ngOnInit(): void {
-    this.oidcSecurityService.getUserData().subscribe((userData) => {
+    this.oidcSecurityService.getPayloadFromAccessToken().subscribe((token) => {
       this.authenticatedUser = {
-        firstname: userData[environment.openId.mappings.firstname],
-        lastname: userData[environment.openId.mappings.lastname],
-        email: userData[environment.openId.mappings.email],
-        studentId: userData[environment.openId.mappings.studentId] ?? undefined
+        firstname: token[environment.openId.attributeMappings.firstname],
+        lastname: token[environment.openId.attributeMappings.lastname],
+        email: token[environment.openId.attributeMappings.email],
+        studentId: token[environment.openId.attributeMappings.studentId] ?? undefined
       };
+      this.isLecturer = hasRole(token, environment.openId.roleMappings.lecturer);
     })
   }
 

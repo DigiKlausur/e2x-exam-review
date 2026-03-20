@@ -2,8 +2,8 @@
   <thead>
     <tr>
       <th>Student ID</th>
-      <th>Firstname</th>
-      <th>Lastname</th>
+      <!--<th>Firstname</th>
+      <th>Lastname</th>-->
       <th>File</th>
       <th></th>
     </tr>
@@ -12,8 +12,8 @@
     @for (answerSheet of answerSheets; track answerSheet._id){
       <tr>
         <td>{{answerSheet.submitter.studentId}}</td>
-        <td>{{answerSheet.submitter.firstname}}</td>
-        <td>{{answerSheet.submitter.lastname}}</td>
+        <!--<td>{{answerSheet.submitter.firstname}}</td>
+        <td>{{answerSheet.submitter.lastname}}</td>-->
         <td>{{answerSheet.originalFileName}}</td>
         <td class="text-end w-auto">
           <div class="controls">
@@ -24,14 +24,14 @@
       </tr>
     } @empty {
       <tr class="disabled">
-        <td class="text-center fst-italic" colspan="5">No answer sheets available</td>
+        <td class="text-center fst-italic" colspan="3">No answer sheets available</td>
       </tr>
     }
   </tbody>
   @if (answerSheets.length > 0){
     <tfoot>
       <tr>
-        <td colspan="5" class="text-end fst-italic">{{answerSheets.length}} Answer Sheet(s)</td>
+        <td colspan="3" class="text-end fst-italic">{{answerSheets.length}} Answer Sheet(s)</td>
       </tr>
     </tfoot>
   }

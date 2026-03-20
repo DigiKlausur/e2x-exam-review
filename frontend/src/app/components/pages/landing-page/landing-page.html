@@ -1,3 +1,19 @@
 <div class="container py-4">
-  <app-exam-list [exams]="exams"></app-exam-list>
+  @if (authFailed){
+    <ngb-alert class="alert-danger" [dismissible]="false">It seems that your account does not have the permissions, that are necessary to use this service.</ngb-alert>
+  }
+  <div class="d-flex flex-column justify-content-center align-items-center gap-2 pt-5">
+    @if (authFailed){
+      <div class="text-danger" style="width: 3rem; height: 3rem; font-size: 3rem; line-height: 3rem; " role="status">
+        <i class="bi bi-x-lg"></i>
+        <span class="visually-hidden">Authentication failed.</span>
+      </div>
+      <span>Authentication failed.</span>
+    } @else {
+      <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Authenticating...</span>
+      </div>
+      <span>Authenticating...</span>
+    }
+  </div>
 </div>
