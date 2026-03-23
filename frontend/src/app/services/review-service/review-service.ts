@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {map, Observable} from 'rxjs';
 import {HttpClient, HttpResponse} from '@angular/common/http';
-import {IAnswerSheet, IExam} from 'e2xgrader-exam-review-backend';
+import {IAnswerSheet, IExam, IStudent} from 'e2xgrader-exam-review-backend';
 import {environment} from '../../../environments/environment';
 import {prepareExam} from '../../utils/ExamUtil';
 
@@ -24,5 +24,9 @@ export class ReviewService {
   private prepareAnswerSheet(answerSheetProto: IAnswerSheet): IAnswerSheet{
     answerSheetProto.exam = prepareExam(answerSheetProto.exam);
     return answerSheetProto;
+  }
+
+  updateStudentData(): Observable<IStudent> {
+    return this.http.post<IStudent>(environment.apiUrl + '/api/v1/review/students', {});
   }
 }

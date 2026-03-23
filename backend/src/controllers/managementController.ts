@@ -5,16 +5,36 @@ import {writeFile, mkdir, rm} from "node:fs/promises";
 import {ObjectId} from "mongodb";
 import {AnswerSheet} from "../models/AnswerSheet";
 import {Student} from "../models/Student";
-import {IAnswerSheet} from "../interfaces";
-import {Document} from 'mongoose';
+import {IAnswerSheet, IExam, IUser} from "../interfaces";
+import {Request as JwtRequest} from 'express-jwt';
+import {getCurrentUser, getUserFromJwt} from "../util/user";
 
 export async function getExamsByExaminer(req: Request, res: Response) {
-    const userId = (await User.findOne().lean())!._id;
-    res.send(await Exam.find({$or: [{primaryExaminer: {_id: userId}}, {secondaryExaminer: {_id: userId}}]}).lean().populate(['primaryExaminer', 'secondaryExaminer']));
+    const currentUser: IUser | null | undefined = await getCurrentUser(req);
+    if(!currentUser) {
+        return res.status(400).send({error: 'Unable to find current user!'});
+    }
+    res.send(await Exam.find({$or: [
+            {"primaryExaminer": {_id: currentUser._id?.toString()}},
+            {"secondaryExaminer": {_id: currentUser._id?.toString()}},
+            {"owner": {_id: currentUser._id?.toString()}},
+        ]}).lean().populate(['primaryExaminer', 'secondaryExaminer']));
 }
 
 export async function getExamById(req: Request, res: Response) {
-    res.send(await Exam.findById(req.params.id).lean().populate(['primaryExaminer', 'secondaryExaminer']));
+    const currentUser: IUser | null | undefined = await getCurrentUser(req);
+    if(!currentUser) {
+        return res.status(400).send({error: 'Unable to find current user!'});
+    }
+
+    res.send(await Exam.findOne({$and: [
+            {_id: req.params.id as string},
+            {$or: [
+                {"primaryExaminer": {_id: currentUser._id?.toString()}},
+                {"secondaryExaminer": {_id: currentUser._id?.toString()}},
+                {"owner": {_id: currentUser._id?.toString()}},
+            ]}
+        ]}).lean().populate(['primaryExaminer', 'secondaryExaminer']));
 }
 
 export async function createExam(req: Request, res: Response) {
@@ -23,16 +43,58 @@ export async function createExam(req: Request, res: Response) {
 }
 
 export async function updateExam(req: Request, res: Response) {
-    res.send(await Exam.updateOne({_id: req.body._id}, {$set: req.body}));
+    const currentUser: IUser | null | undefined = await getCurrentUser(req);
+    if(!currentUser) {
+        return res.status(400).send({error: 'Unable to find current user!'});
+    }
+
+    res.send(
+        await Exam.updateOne({
+            // @ts-ignore
+            _id: req.body._id as string,
+            $or: [
+                {"primaryExaminer": currentUser._id!.toString()},
+                {"secondaryExaminer": currentUser._id!.toString()},
+                {"owner": currentUser._id!.toString()},
+            ]
+        }, {$set: req.body}));
 }
 
 export async function getAnswerSheetsByExamId(req: Request, res: Response) {
-    // @ts-ignore
-    return res.send(await AnswerSheet.find({"exam": new ObjectId(req.params.id as string)}).populate('submitter').lean());
+    const currentUser: IUser | null | undefined = await getCurrentUser(req);
+    if(!currentUser) {
+        return res.status(400).send({error: 'Unable to find current user!'});
+    }
+
+    return res.send(
+        [...
+        await AnswerSheet.find(
+            // @ts-ignore
+            {'exam': new ObjectId(req.params.id as string)}
+        ).populate(['submitter', {path: 'exam', populate: ['primaryExaminer', 'secondaryExaminer']}])
+        .lean()].filter((answerSheet: IAnswerSheet) =>
+            answerSheet.exam.primaryExaminer._id?.toString() === currentUser._id?.toString()
+            || answerSheet.exam.secondaryExaminer._id?.toString() === currentUser._id?.toString()
+            || answerSheet.exam.owner._id?.toString() === currentUser._id?.toString()
+        )
+    );
 }
 
 export async function addAnswerSheet(req: Request, res: Response) {
-    const exam = await Exam.findById(req.params.id);
+    const currentUser: IUser | null | undefined = await getCurrentUser(req);
+    if(!currentUser) {
+        return res.status(400).send({error: 'Unable to find current user!'});
+    }
+
+    const exam: IExam | null | undefined = await Exam.findOne({$and: [
+            {_id: req.params.id as string},
+            {$or: [
+                    {"primaryExaminer": {_id: currentUser._id as string}},
+                    {"secondaryExaminer": {_id: currentUser._id as string}},
+                    {"owner": {_id: currentUser._id as string}},
+                ]}
+    ]});
+
     if(!exam) {
         return res.status(400).send({error: 'Exam not found'});
     }
@@ -73,10 +135,21 @@ export async function addAnswerSheet(req: Request, res: Response) {
 }
 
 export async function deleteAnswerSheet(req: Request, res: Response) {
-    await AnswerSheet.findById(req.params.id)
-        .then(async answerSheet => {
+    const currentUser: IUser | null | undefined = await getCurrentUser(req);
+    if(!currentUser) {
+        return res.status(400).send({error: 'Unable to find current user!'});
+    }
+    await AnswerSheet.findOne({$and: [
+            {_id: req.params.id as string},
+            {$or: [
+                {"exam.primaryExaminer": {_id: currentUser._id as string}},
+                {"exam.secondaryExaminer": {_id: currentUser._id as string}},
+                {"exam.owner": {_id: currentUser._id as string}},
+            ]}
+        ]})
+        .then(async (answerSheet: IAnswerSheet | undefined | null) => {
             if(!answerSheet) {throw Error('answer sheet not found');}
-            await answerSheet.deleteOne()
+            await AnswerSheet.deleteOne({_id: answerSheet._id as string});
             await rm(answerSheet.filePath);
             res.send();
         });
@@ -94,3 +167,16 @@ export async function searchUsers(req: Request, res: Response) {
             {email: {$in: queryRegexs}}
         ]}));
 }
+
+export async function updateUser(req: JwtRequest, res: Response) {
+    const currentUserData: IUser | undefined = getUserFromJwt(req) as IUser | undefined;
+    if(!currentUserData) {
+        return res.status(400).send({error: 'Unable to extract user-data from token!'});
+    }
+    await User.findOneAndUpdate({email: currentUserData.email}, currentUserData, {upsert: true}).lean()
+        .then((updatedUser: IUser|null) => {
+            res.send(updatedUser);
+        })
+}
+
+

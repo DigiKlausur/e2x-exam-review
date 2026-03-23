@@ -10,7 +10,9 @@ export const config = {
         },
         attributeMappings: {
             email: process.env.JWT_EMAIL_ATTRIBUTE ?? 'email',
-            studentId: process.env.JWT_STUDENT_ID_ATTRIBUTE ?? 'student-id'
+            studentId: process.env.JWT_STUDENT_ID_ATTRIBUTE ?? 'student-id',
+            firstname: process.env.JWT_FIRSTNAME ?? 'given_name',
+            lastname: process.env.JWT_LASTNAME ?? 'family_name'
         }
     },
     mongoDb: {

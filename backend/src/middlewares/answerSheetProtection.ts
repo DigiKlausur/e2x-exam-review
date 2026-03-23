@@ -4,6 +4,7 @@ import {AnswerSheet} from "../models/AnswerSheet";
 import {hasRole} from "./jwtProtect";
 import {config} from "../globals";
 import {User} from "../models/User";
+import {getCurrentUser} from "../util/user";
 
 export const answerSheetProtection = async (req: JwtRequest, res: Response, next: NextFunction) => {
     const answerSheet = await AnswerSheet.findOne({filePath: 'answer-sheets' + req.path}).populate([{path: 'exam', populate: ['primaryExaminer', 'secondaryExaminer']}, 'submitter']).lean();
@@ -11,10 +12,10 @@ export const answerSheetProtection = async (req: JwtRequest, res: Response, next
     if(hasRole(req, config.jwt.roleMappings.lecturer)){
         if(!req.auth?.[config.jwt.attributeMappings.email]) return res.status(400).send('Email not present in JWT');
 
-        const currentUser = await User.findOne({email: req.auth[config.jwt.attributeMappings.email]}).lean();
+        const currentUser = await getCurrentUser(req);
         if(!currentUser) return res.status(400).send('Unable to identify current user');
 
-        if(answerSheet.exam.owner._id === currentUser._id || answerSheet.exam.primaryExaminer._id === currentUser._id || answerSheet.exam.secondaryExaminer._id === currentUser._id){
+        if(answerSheet.exam.owner._id?.toString() === currentUser._id?.toString() || answerSheet.exam.primaryExaminer._id?.toString() === currentUser._id?.toString() || answerSheet.exam.secondaryExaminer._id?.toString() === currentUser._id?.toString()){
             return next();
         }
     }else if(hasRole(req, config.jwt.roleMappings.student)){

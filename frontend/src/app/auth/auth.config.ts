@@ -11,6 +11,7 @@ export const authConfig: PassedInitialConfig = {
     responseType: 'code',
     silentRenew: true,
     useRefreshToken: true,
+    triggerRefreshWhenIdTokenExpired: true,
     renewTimeBeforeTokenExpiresInSeconds: 30,
     secureRoutes: [
       environment.apiUrl

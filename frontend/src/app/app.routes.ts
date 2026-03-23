@@ -4,7 +4,7 @@ import {ReviewPage} from './components/pages/review-page/review-page';
 import {ExamListPage} from './components/pages/exam-list-page/exam-list-page';
 import {ExamEditorPage} from './components/pages/exam-editor-page/exam-editor-page';
 import {ReviewListPage} from './components/pages/review-list-page/review-list-page';
-import {oidcCanActivateGuard} from './guards/oidc-can-activate-guard/oidc-can-activate-guard';
+import oidcCanActivateGuard from './guards/oidc-can-activate-guard/oidc-can-activate-guard';
 import {environment} from '../environments/environment';
 
 const roleMappings = environment.openId.roleMappings;

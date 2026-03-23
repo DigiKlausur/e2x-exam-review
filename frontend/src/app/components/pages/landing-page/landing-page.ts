@@ -1,9 +1,11 @@
 import {Component, inject, OnInit} from '@angular/core';
-import {LoginResponse, OidcSecurityService} from 'angular-auth-oidc-client';
+import {AuthenticatedResult, OidcSecurityService} from 'angular-auth-oidc-client';
 import {hasRole} from '../../../utils/AccessToken';
 import {environment} from '../../../../environments/environment';
 import {Router} from '@angular/router';
 import {NgbAlert} from '@ng-bootstrap/ng-bootstrap';
+import {ReviewService} from '../../../services/review-service/review-service';
+import {ManagementService} from '../../../services/management-service/management-service';
 
 @Component({
   selector: 'app-landing-page',
@@ -20,8 +22,8 @@ export class LandingPage implements OnInit {
   protected authFailed: boolean = false;
 
   ngOnInit(): void {
-    this.oidcSecurityService.checkAuth().subscribe((loginResponse: LoginResponse) => {
-      if (loginResponse.isAuthenticated) {
+    this.oidcSecurityService.isAuthenticated$.subscribe((authenticatedResult: AuthenticatedResult) => {
+      if (authenticatedResult.isAuthenticated) {
         this.oidcSecurityService.getPayloadFromAccessToken().subscribe(token => {
           if(hasRole(token, environment.openId.roleMappings.lecturer)) {
             return this.router.navigate(['/', 'manage']);
@@ -31,13 +33,7 @@ export class LandingPage implements OnInit {
           this.authFailed = true;
           return;
         });
-      } else {
-        this.login();
       }
     })
-  }
-
-  login(): void {
-    this.oidcSecurityService.authorize();
   }
 }

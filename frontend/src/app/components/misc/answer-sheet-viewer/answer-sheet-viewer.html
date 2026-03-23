@@ -25,6 +25,22 @@
                            [showDownloadButton]="answerSheet.exam.reviewParameters.showDownloadButton"
                            [showPrintButton]="answerSheet.exam.reviewParameters.showDownloadButton"
                            [authorization]="accessToken"
+                           (pdfLoadingStarts)="loadingState = loadingStates.LOADING"
+                           (pdfLoadingFailed)="loadingState = loadingStates.FAILED"
+                           (pdfLoaded)="loadingState = loadingStates.LOADED"
   ></ngx-extended-pdf-viewer>
+  @if(loadingState !== loadingStates.LOADED){
+    <div class="position-absolute top-0 w-100 d-flex flex-column justify-content-center align-items-center gap-2 pt-5">
+      @if (loadingState === loadingStates.FAILED){
+        <div class="text-danger" style="width: 3rem; height: 3rem; font-size: 3rem; line-height: 3rem; " role="status">
+          <i class="bi bi-x-lg"></i>
+        </div>
+      } @else {
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+          <span class="visually-hidden">{{loadingMessages[loadingState]}}</span>
+        </div>
+      }
+      <span>{{loadingMessages[loadingState]}}</span>
+    </div>
+  }
 }
-

@@ -30,7 +30,7 @@ export class ManagementService {
   }
 
   listAnswerSheets(examId: string): Observable<IAnswerSheet[]> {
-    return this.http.get<IAnswerSheet[]>(`${environment.apiUrl}/api/v1/manage/exams/${examId}/answerSheet`);
+    return this.http.get<IAnswerSheet[]>(`${environment.apiUrl}/api/v1/manage/exams/${examId}/answer-sheets`);
   }
 
   addAnswerSheet(examId: string, studentId: string, file: File): Observable<IAnswerSheet> {
@@ -38,14 +38,18 @@ export class ManagementService {
     body.append('file', file);
     body.append('studentId', studentId.toString());
     body.append('originalFileName', file.name);
-    return this.http.post<IAnswerSheet>(`${environment.apiUrl}/api/v1/manage/exams/${examId}/answerSheet`, body);
+    return this.http.post<IAnswerSheet>(`${environment.apiUrl}/api/v1/manage/exams/${examId}/answer-sheets`, body);
   }
 
   deleteAnswerSheet(answerSheetId: string): Observable<void>{
-    return this.http.delete<void>(environment.apiUrl + '/api/v1/manage/answerSheet/' + answerSheetId);
+    return this.http.delete<void>(environment.apiUrl + '/api/v1/manage/answer-sheets/' + answerSheetId);
   }
 
   searchUsers(query: string): Observable<IUser[]> {
     return this.http.get<IUser[]>(environment.apiUrl + '/api/v1/manage/users/search?query=' + query);
+  }
+
+  updateUserData(): Observable<IUser> {
+    return this.http.post<IUser>(environment.apiUrl + '/api/v1/manage/users', {});
   }
 }

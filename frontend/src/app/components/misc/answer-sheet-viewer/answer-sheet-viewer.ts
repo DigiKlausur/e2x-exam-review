@@ -4,6 +4,20 @@ import {IAnswerSheet} from 'e2xgrader-exam-review-backend';
 import {environment} from '../../../../environments/environment';
 import {OidcSecurityService} from 'angular-auth-oidc-client';
 
+enum loadingStates {
+  INITIAL,
+  LOADING,
+  LOADED,
+  FAILED
+}
+
+const loadingMessages: Record<loadingStates, string> = {
+  [loadingStates.INITIAL]: 'Authenticating...',
+  [loadingStates.LOADING]: 'Loading...',
+  [loadingStates.LOADED]: 'Loading finished!',
+  [loadingStates.FAILED]: 'Failed to load!'
+};
+
 @Component({
   selector: 'app-answer-sheet-viewer',
     imports: [
@@ -17,6 +31,7 @@ export class AnswerSheetViewer implements OnInit {
 
   @Input() answerSheet!: IAnswerSheet;
   protected readonly environment = environment;
+  protected loadingState: loadingStates = loadingStates.INITIAL;
 
   accessToken?: string;
 
@@ -25,4 +40,7 @@ export class AnswerSheetViewer implements OnInit {
       this.accessToken = 'Bearer ' + accessToken;
     });
   }
+
+  protected readonly loadingStates = loadingStates;
+  protected readonly loadingMessages = loadingMessages;
 }

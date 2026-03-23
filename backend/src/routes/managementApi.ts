@@ -6,7 +6,7 @@ import {
     getExamById,
     getExamsByExaminer,
     searchUsers,
-    updateExam
+    updateExam, updateUser
 } from "../controllers/managementController";
 import {jwtProtect} from "../middlewares/jwtProtect";
 import {config} from "../globals";
@@ -20,10 +20,11 @@ export function applyManagementRoutes(parentRouter: Router) {
     managementRouter.put('/exams', updateExam);
     managementRouter.post('/exams', createExam);
 
-    managementRouter.get('/exams/:id/answerSheet', getAnswerSheetsByExamId);
-    managementRouter.post('/exams/:id/answerSheet', multer().single('file'), addAnswerSheet);
-    managementRouter.delete('/answerSheet/:id', deleteAnswerSheet);
+    managementRouter.get('/exams/:id/answer-sheets', getAnswerSheetsByExamId);
+    managementRouter.post('/exams/:id/answer-sheets', multer().single('file'), addAnswerSheet);
+    managementRouter.delete('/answer-sheets/:id', deleteAnswerSheet);
 
+    managementRouter.post('/users', updateUser);
     managementRouter.get('/users/search', searchUsers);
 
     parentRouter.use('/manage', managementRouter);

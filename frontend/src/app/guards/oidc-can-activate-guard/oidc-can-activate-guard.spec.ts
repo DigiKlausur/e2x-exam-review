@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { CanActivateFn } from '@angular/router';
 
-import { oidcCanActivateGuard } from './oidc-can-activate-guard';
+import oidcCanActivateGuard from './oidc-can-activate-guard';
 
 describe('oidcCanActivateGuard', () => {
   const executeGuard: CanActivateFn = (...guardParameters) =>
