@@ -1,4 +1,4 @@
-import {IExam} from 'e2xgrader-exam-review-backend';
+import {IExam} from 'e2x-exam-review-backend';
 import {asDate} from './DateUtil';
 
 export function prepareExam(exam: IExam): IExam {

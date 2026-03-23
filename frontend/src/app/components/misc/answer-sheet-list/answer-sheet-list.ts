@@ -1,5 +1,5 @@
 import {Component, EventEmitter, inject, Input, Output, ViewChild} from '@angular/core';
-import { IAnswerSheet } from "e2xgrader-exam-review-backend";
+import { IAnswerSheet } from "e2x-exam-review-backend";
 import {NgbModal, NgbModalRef, NgbTooltip} from '@ng-bootstrap/ng-bootstrap';
 import {RouterLink} from '@angular/router';
 import {ManagementService} from '../../../services/management-service/management-service';

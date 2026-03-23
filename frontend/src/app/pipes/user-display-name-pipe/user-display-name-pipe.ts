@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import {IStudent, IUser} from 'e2xgrader-exam-review-backend';
+import {IStudent, IUser} from 'e2x-exam-review-backend';
 import {getUserDisplayName} from '../../utils/UserUtil';
 
 @Pipe({

@@ -1,4 +1,4 @@
-import {IAnswerSheet} from 'e2xgrader-exam-review-backend';
+import {IAnswerSheet} from 'e2x-exam-review-backend';
 
 export function isReviewAvailable(answerSheet: IAnswerSheet): boolean {
   return !!answerSheet.filePath

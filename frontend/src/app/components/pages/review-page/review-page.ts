@@ -3,7 +3,7 @@ import {NgxExtendedPdfViewerModule} from 'ngx-extended-pdf-viewer';
 import {AnswerSheetViewer} from '../../misc/answer-sheet-viewer/answer-sheet-viewer';
 import {ActivatedRoute} from '@angular/router';
 import {ReviewService} from '../../../services/review-service/review-service';
-import {IAnswerSheet} from 'e2xgrader-exam-review-backend';
+import {IAnswerSheet} from 'e2x-exam-review-backend';
 
 @Component({
   selector: 'app-review-page',

@@ -1,5 +1,5 @@
 import {Component, inject, LOCALE_ID, OnInit} from '@angular/core';
-import {ISemester, Season} from 'e2xgrader-exam-review-backend';
+import {ISemester, Season} from 'e2x-exam-review-backend';
 import {getFullSemesterName} from '../../../utils/SemesterUtil';
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from '@angular/forms';
 

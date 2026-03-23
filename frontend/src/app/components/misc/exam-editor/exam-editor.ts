@@ -4,7 +4,7 @@ import {UserSearchInput} from "../../inputs/user-search-input/user-search-input"
 import {NgbCollapse} from '@ng-bootstrap/ng-bootstrap';
 import {SemesterInput} from '../../inputs/semester-input/semester-input';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {IExam, ISemester, IUser} from 'e2xgrader-exam-review-backend';
+import {IExam, ISemester, IUser} from 'e2x-exam-review-backend';
 import {ManagementService} from '../../../services/management-service/management-service';
 import {Router} from '@angular/router';
 

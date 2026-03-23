@@ -1,7 +1,7 @@
 import {ChangeDetectorRef, Component, inject, OnInit} from '@angular/core';
 import {ExamList} from "../../misc/exam-list/exam-list";
 import {ReviewService} from '../../../services/review-service/review-service';
-import {IAnswerSheet, IExam} from 'e2xgrader-exam-review-backend';
+import {IAnswerSheet, IExam} from 'e2x-exam-review-backend';
 import {isReviewAvailable} from '../../../utils/AnswerSheet';
 
 @Component({

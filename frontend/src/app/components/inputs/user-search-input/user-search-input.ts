@@ -1,6 +1,6 @@
 import {Component, inject} from '@angular/core';
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {IUser} from 'e2xgrader-exam-review-backend';
+import {IUser} from 'e2x-exam-review-backend';
 import {ManagementService} from '../../../services/management-service/management-service';
 import {
   catchError,

@@ -1,6 +1,6 @@
 import {Component, inject, Input, OnInit} from '@angular/core';
 import {NgxExtendedPdfViewerModule} from "ngx-extended-pdf-viewer";
-import {IAnswerSheet} from 'e2xgrader-exam-review-backend';
+import {IAnswerSheet} from 'e2x-exam-review-backend';
 import {environment} from '../../../../environments/environment';
 import {OidcSecurityService} from 'angular-auth-oidc-client';
 

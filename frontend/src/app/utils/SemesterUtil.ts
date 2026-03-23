@@ -1,4 +1,4 @@
-import {ISemester, Season} from 'e2xgrader-exam-review-backend';
+import {ISemester, Season} from 'e2x-exam-review-backend';
 
 const semesterNames: Record<'en'|'de', Record<Season, string>> = {
   'en': {

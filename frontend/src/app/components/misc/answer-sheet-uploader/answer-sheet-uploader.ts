@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, inject, Input, Output, ViewChild} from '@angular/core';
 import {environment} from '../../../../environments/environment';
 import {ManagementService} from '../../../services/management-service/management-service';
-import {IAnswerSheet, IExam} from 'e2xgrader-exam-review-backend';
+import {IAnswerSheet, IExam} from 'e2x-exam-review-backend';
 import {prepareExam} from '../../../utils/ExamUtil';
 import {ToastService} from '../../../services/toast-service/toast-service';
 

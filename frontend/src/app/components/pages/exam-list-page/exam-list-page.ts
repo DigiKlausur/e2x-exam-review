@@ -1,7 +1,7 @@
 import {ChangeDetectorRef, Component, inject, OnInit} from '@angular/core';
 import {ExamList} from '../../misc/exam-list/exam-list';
 import {RouterLink} from '@angular/router';
-import {IExam} from 'e2xgrader-exam-review-backend';
+import {IExam} from 'e2x-exam-review-backend';
 import {ManagementService} from '../../../services/management-service/management-service';
 
 @Component({

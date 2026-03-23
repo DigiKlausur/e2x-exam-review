@@ -32,7 +32,7 @@ const jwtMiddleware = expressjwt({
 });
 
 app.use('/api/v1', jwtMiddleware, apiRouter);
-app.use('/', express.static('../frontend/dist/e2xgrader-review-frontend/browser'));
+app.use('/', express.static('../frontend/dist/e2x-review-frontend/browser'));
 app.use('/answer-sheets', jwtMiddleware, answerSheetProtection, express.static('./answer-sheets', {index: false}));
 
 const authString = config.mongoDb.username ?  config.mongoDb.username + (config.mongoDb.password ? ':' + config.mongoDb.password : '') + '@' : '';

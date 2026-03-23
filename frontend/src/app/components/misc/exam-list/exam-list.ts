@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {IExam} from 'e2xgrader-exam-review-backend';
+import {IExam} from 'e2x-exam-review-backend';
 import {DatePipe} from '@angular/common';
 import {SemesterDisplayNamePipe} from '../../../pipes/semester-display-name-pipe/semester-display-name-pipe';
 import {UserDisplayNamePipe} from '../../../pipes/user-display-name-pipe/user-display-name-pipe';

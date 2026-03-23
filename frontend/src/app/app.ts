@@ -18,7 +18,7 @@ export class App {
   private readonly oidcSecurityService: OidcSecurityService = inject(OidcSecurityService);
   private readonly reviewService: ReviewService = inject(ReviewService);
   private readonly managementService: ManagementService = inject(ManagementService);
-  protected readonly title = signal('e2xgrader-exam-review-frontend');
+  protected readonly title = signal('e2x-exam-review-frontend');
 
   ngOnInit(): void {
     this.oidcSecurityService.checkAuth().subscribe((loginResponse: LoginResponse) => {

@@ -6,7 +6,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "e2xgrader-exam-review-frontend": {
+    "e2x-exam-review-frontend": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -71,10 +71,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "e2xgrader-exam-review-frontend:build:production"
+              "buildTarget": "e2x-exam-review-frontend:build:production"
             },
             "development": {
-              "buildTarget": "e2xgrader-exam-review-frontend:build:development"
+              "buildTarget": "e2x-exam-review-frontend:build:development"
             }
           },
           "defaultConfiguration": "development"
