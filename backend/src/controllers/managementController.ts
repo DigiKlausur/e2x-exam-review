@@ -18,7 +18,7 @@ export async function getExamsByExaminer(req: Request, res: Response) {
             {"primaryExaminer": {_id: currentUser._id?.toString()}},
             {"secondaryExaminer": {_id: currentUser._id?.toString()}},
             {"owner": {_id: currentUser._id?.toString()}},
-        ]}).lean().populate(['primaryExaminer', 'secondaryExaminer']));
+        ]}).lean().sort([['semester.year', -1], ['semester.season', -1], ['title', 1]]).populate(['primaryExaminer', 'secondaryExaminer']));
 }
 
 export async function getExamById(req: Request, res: Response) {
@@ -76,7 +76,7 @@ export async function getAnswerSheetsByExamId(req: Request, res: Response) {
             answerSheet.exam.primaryExaminer._id?.toString() === currentUser._id?.toString()
             || answerSheet.exam.secondaryExaminer._id?.toString() === currentUser._id?.toString()
             || answerSheet.exam.owner._id?.toString() === currentUser._id?.toString()
-        )
+        ).sort((answerSheetA, answerSheetB) => answerSheetA.submitter.studentId - answerSheetB.submitter.studentId)
     );
 }
 
@@ -165,7 +165,7 @@ export async function searchUsers(req: Request, res: Response) {
             {firstname: {$in: queryRegexs}},
             {lastname: {$in: queryRegexs}},
             {email: {$in: queryRegexs}}
-        ]}));
+        ]}).sort([['lastname', 1], ['firstname', 1]]));
 }
 
 export async function updateUser(req: JwtRequest, res: Response) {

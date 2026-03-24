@@ -12,7 +12,18 @@ import {Student} from "../models/Student";
 export async function getAnswerSheets(req: JwtRequest, res: Response) {
     const student = await findCurrentStudent(req, res);
     if(!student) return;
-    return res.send(await AnswerSheet.find({submitter: student}).populate({path: 'exam', populate: ['primaryExaminer','secondaryExaminer']}));
+    return res.send(
+      await AnswerSheet.find({ submitter: student })
+        .populate({
+          path: "exam",
+          populate: ["primaryExaminer", "secondaryExaminer"],
+        })
+        .sort([
+          ["exam.semester.year", -1],
+          ["exam.semester.season", -1],
+          ["exam.title", 1],
+        ])
+    );
 }
 
 export async function getAnswerSheetById(req: Request, res: Response) {
