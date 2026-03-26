@@ -8,6 +8,7 @@ import {Student} from "../models/Student";
 import {IAnswerSheet, IExam, IUser} from "../interfaces";
 import {Request as JwtRequest} from 'express-jwt';
 import {getCurrentUser, getUserFromJwt} from "../util/user";
+import {ExamReviewParametersSchema} from "../models/ExamReviewParameters";
 
 export async function getExamsByExaminer(req: Request, res: Response) {
     const currentUser: IUser | null | undefined = await getCurrentUser(req);
@@ -38,8 +39,28 @@ export async function getExamById(req: Request, res: Response) {
 }
 
 export async function createExam(req: Request, res: Response) {
-    req.body.owner = await User.findOne().lean();
-    res.send(await Exam.insertOne(req.body));
+    const currentUser: IUser | null | undefined = await getCurrentUser(req);
+    if(!currentUser) {
+        return res.status(400).send({error: 'Unable to find current user!'});
+    }
+
+    res.send(await Exam.insertOne({
+        title: req.body.title,
+        semester: {
+            year: req.body.semester.year,
+            season: req.body.semester.season
+        },
+        primaryExaminer: req.body.primaryExaminer._id,
+        secondaryExaminer: req.body.secondaryExaminer._id,
+        date: req.body.date,
+        reviewParameters: {
+            startDate: req.body.reviewParameters.startDate,
+            endDate: req.body.reviewParameters.endDate,
+            showDownloadButton: req.body.reviewParameters.showDownloadButton,
+            showTextLayer: req.body.reviewParameters.showTextLayer
+        },
+        owner: currentUser
+    }));
 }
 
 export async function updateExam(req: Request, res: Response) {
@@ -49,15 +70,34 @@ export async function updateExam(req: Request, res: Response) {
     }
 
     res.send(
-        await Exam.updateOne({
-            // @ts-ignore
-            _id: req.body._id as string,
-            $or: [
-                {"primaryExaminer": currentUser._id!.toString()},
-                {"secondaryExaminer": currentUser._id!.toString()},
-                {"owner": currentUser._id!.toString()},
-            ]
-        }, {$set: req.body}));
+        await Exam.updateOne(
+            {
+                // @ts-ignore
+                _id: req.body._id as string,
+                $or: [
+                    {"primaryExaminer": currentUser._id!.toString()},
+                    {"secondaryExaminer": currentUser._id!.toString()},
+                    {"owner": currentUser._id!.toString()},
+                ]
+            },
+            {$set: {
+                title: req.body.title,
+                semester: {
+                    year: req.body.semester.year,
+                    season: req.body.semester.season
+                },
+                primaryExaminer: req.body.primaryExaminer._id,
+                secondaryExaminer: req.body.secondaryExaminer._id,
+                date: req.body.date,
+                reviewParameters: {
+                    startDate: req.body.reviewParameters.startDate,
+                    endDate: req.body.reviewParameters.endDate,
+                    showDownloadButton: req.body.reviewParameters.showDownloadButton,
+                    showTextLayer: req.body.reviewParameters.showTextLayer
+                }
+            }}
+        )
+    );
 }
 
 export async function getAnswerSheetsByExamId(req: Request, res: Response) {
