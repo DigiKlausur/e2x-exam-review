@@ -6,7 +6,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "npx tsc",
-    "dev": "nodemon src/app.ts"
+    "dev": "nodemon src/app.ts",
+    "openApi": "node src/openapi-gen.js"
   },
   "keywords": [],
   "author": "Luca Ringhausen",
@@ -31,6 +32,7 @@
     "nodemon": "^3.1.14",
     "npm": "^11.11.0",
     "prettier": "^3.8.1",
+    "swagger-autogen": "^2.23.7",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }

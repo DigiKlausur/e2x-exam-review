@@ -8,7 +8,11 @@ import {enforceValidity} from "../middlewares/requestValidation";
 export function applyReviewRoutes(parentRouter: Router) {
     const reviewRouter = Router();
 
-    reviewRouter.get('/answer-sheets', jwtProtect(config.jwt.roleMappings.student), getAnswerSheets);
+    reviewRouter.get(
+        '/answer-sheets',
+        jwtProtect(config.jwt.roleMappings.student),
+        getAnswerSheets
+    );
     reviewRouter.get(
         '/answer-sheets/:id',
         jwtProtect([config.jwt.roleMappings.student, config.jwt.roleMappings.lecturer]),

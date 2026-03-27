@@ -8,9 +8,23 @@ import {Student} from "../models/Student";
 import {IAnswerSheet, IExam, IUser} from "../interfaces";
 import {Request as JwtRequest} from 'express-jwt';
 import {getCurrentUser, getUserFromJwt} from "../util/user";
-import {ExamReviewParametersSchema} from "../models/ExamReviewParameters";
 
 export async function getExamsByExaminer(req: Request, res: Response) {
+    /*
+        #swagger.responses[200] = {
+            description: 'list of exams, to which the current user is connected (owner or examiner)',
+            content: {
+                'application/json': {
+                    schema: {
+                        type: 'array',
+                        items: {
+                            $ref: '#/components/schemas/exam'
+                        }
+                    }
+                }
+            }
+        }
+     */
     const currentUser: IUser | null | undefined = await getCurrentUser(req);
     if(!currentUser) {
         return res.status(400).send({error: 'Unable to find current user!'});
@@ -23,22 +37,130 @@ export async function getExamsByExaminer(req: Request, res: Response) {
 }
 
 export async function getExamById(req: Request, res: Response) {
+    /*
+        #swagger.parameters['id'] = {
+            in: 'path',
+            description: 'ID of the exam',
+            required: true,
+            type: 'string'
+        }
+        #swagger.responses[200] = {
+            description: 'exam',
+            content: {
+                'application/json': {
+                    schema: {
+                        $ref: '#/components/schemas/exam'
+                    }
+                }
+            }
+        }
+     */
     const currentUser: IUser | null | undefined = await getCurrentUser(req);
     if(!currentUser) {
         return res.status(400).send({error: 'Unable to find current user!'});
     }
 
-    res.send(await Exam.findOne({$and: [
+    await Exam.findOne({$and: [
             {_id: req.params.id as string},
             {$or: [
-                {"primaryExaminer": {_id: currentUser._id?.toString()}},
-                {"secondaryExaminer": {_id: currentUser._id?.toString()}},
-                {"owner": {_id: currentUser._id?.toString()}},
-            ]}
-        ]}).lean().populate(['primaryExaminer', 'secondaryExaminer']));
+                    {"primaryExaminer": {_id: currentUser._id?.toString()}},
+                    {"secondaryExaminer": {_id: currentUser._id?.toString()}},
+                    {"owner": {_id: currentUser._id?.toString()}},
+                ]}
+        ]})
+        .lean()
+        .populate(['primaryExaminer', 'secondaryExaminer'])
+        .then(exam => {
+            if(exam) res.send(exam);
+            else res.status(404).send({error: 'Unable to find exam'});
+        });
 }
 
 export async function createExam(req: Request, res: Response) {
+    /*
+        #swagger.requestBody = {
+            required: true,
+            content: {
+                "application/json": {
+                    schema: {
+                        type: "object",
+                        properties: {
+                            title: {
+                                type: 'string',
+                                required: true,
+                                minLength: 2,
+                                maxLength: 512
+                            },
+                            semester: {
+                                required: true,
+                                $ref: '#/components/schemas/semester'
+                            },
+                            primaryExaminer: {
+                                type: "object",
+                                required: true,
+                                properties: {
+                                    _id: {
+                                        required: true,
+                                        $ref: '#/components/schemas/objectId'
+                                    }
+                                }
+                            },
+                            secondaryExaminer: {
+                                type: "object",
+                                required: true,
+                                properties: {
+                                    _id: {
+                                        required: true,
+                                        $ref: '#/components/schemas/objectId'
+                                    }
+                                }
+                            },
+                            date: {
+                                type: 'string',
+                                required: true,
+                                format: 'date'
+                            },
+                            reviewParameters: {
+                                type: 'object',
+                                properties: {
+                                    startDate: {
+                                        type: 'string',
+                                        required: true,
+                                        format: 'date',
+                                        nullable: true
+                                    },
+                                    endDate: {
+                                        type: 'string',
+                                        required: true,
+                                        format: 'date',
+                                        nullable: true
+                                    },
+                                    showDownloadButton: {
+                                        required: true,
+                                        type: 'boolean'
+                                    },
+                                    showTextLayer: {
+                                        required: true,
+                                        type: 'boolean'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        #swagger.responses[200] = {
+            description: 'exam',
+            content: {
+                'application/json': {
+                    schema: {
+                        $ref: '#/components/schemas/exam'
+                    }
+                }
+            }
+        }
+     */
     const currentUser: IUser | null | undefined = await getCurrentUser(req);
     if(!currentUser) {
         return res.status(400).send({error: 'Unable to find current user!'});
@@ -64,6 +186,83 @@ export async function createExam(req: Request, res: Response) {
 }
 
 export async function updateExam(req: Request, res: Response) {
+    /*
+        #swagger.requestBody = {
+            required: true,
+            content: {
+                "application/json": {
+                    schema: {
+                        type: "object",
+                        properties: {
+                            _id: {
+                                required: true,
+                                $ref: '#/components/schemas/objectId'
+                            },
+                            title: {
+                                type: 'string',
+                                required: true,
+                                minLength: 2,
+                                maxLength: 512
+                            },
+                            semester: {
+                                required: true,
+                                $ref: '#/components/schemas/semester'
+                            },
+                            primaryExaminer: {
+                                type: "object",
+                                properties: {
+                                    _id: {
+                                        required: true,
+                                        $ref: '#/components/schemas/objectId'
+                                    }
+                                }
+                            },
+                            secondaryExaminer: {
+                                type: "object",
+                                properties: {
+                                    _id: {
+                                        required: true,
+                                        $ref: '#/components/schemas/objectId'
+                                    }
+                                }
+                            },
+                            date: {
+                                type: 'string',
+                                required: true,
+                                format: 'date'
+                            },
+                            reviewParameters: {
+                                type: 'object',
+                                properties: {
+                                    startDate: {
+                                        type: 'string',
+                                        format: 'date',
+                                        required: true,
+                                        nullable: true
+                                    },
+                                    endDate: {
+                                        type: 'string',
+                                        format: 'date',
+                                        required: true,
+                                        nullable: true
+                                    },
+                                    showDownloadButton: {
+                                        required: true,
+                                        type: 'boolean'
+                                    },
+                                    showTextLayer: {
+                                        required: true,
+                                        type: 'boolean'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+     */
+
     const currentUser: IUser | null | undefined = await getCurrentUser(req);
     if(!currentUser) {
         return res.status(400).send({error: 'Unable to find current user!'});
@@ -101,6 +300,27 @@ export async function updateExam(req: Request, res: Response) {
 }
 
 export async function getAnswerSheetsByExamId(req: Request, res: Response) {
+    /*
+        #swagger.parameters['id'] = {
+            in: 'path',
+            required: true,
+            description: 'ID of the answer-sheet',
+            type: 'string'
+        }
+        #swagger.responses[200] = {
+            description: 'list of answer-sheets, belonging to the specified exam',
+            content: {
+                'application/json': {
+                    schema: {
+                        type: 'array',
+                        items: {
+                            $ref: '#/components/schemas/answerSheet'
+                        }
+                    }
+                }
+            }
+        }
+     */
     const currentUser: IUser | null | undefined = await getCurrentUser(req);
     if(!currentUser) {
         return res.status(400).send({error: 'Unable to find current user!'});
@@ -121,6 +341,50 @@ export async function getAnswerSheetsByExamId(req: Request, res: Response) {
 }
 
 export async function addAnswerSheet(req: Request, res: Response) {
+    /*  #swagger.parameters['id'] = {
+            in: 'path',
+            description: 'ID of the exam, the answer-sheet belongs to',
+            required: true,
+            type: 'string',
+            pattern: '^[0-9a-fA-F]{24}$'
+        }
+        #swagger.requestBody = {
+            required: true,
+            content: {
+                "multipart/form-data": {
+                    schema: {
+                        type: "object",
+                        properties: {
+                            studentId: {
+                                type: "integer",
+                                description: "student ID (Matrikelnummer)"
+                            },
+                            originalFileName: {
+                                type: "string",
+                                description: "original name of the file, that was uploaded by the user -> better traceability"
+                            },
+                            file: {
+                                type: "string",
+                                format: "binary",
+                                description: "answer-sheet as a PDF file"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        #swagger.responses[200] = {
+            description: 'answer-sheet',
+            content: {
+                'application/json': {
+                    schema: {
+                        $ref: '#/components/schemas/answerSheet'
+                    }
+                }
+            }
+        }
+     */
+
     const currentUser: IUser | null | undefined = await getCurrentUser(req);
     if(!currentUser) {
         return res.status(400).send({error: 'Unable to find current user!'});
@@ -175,6 +439,15 @@ export async function addAnswerSheet(req: Request, res: Response) {
 }
 
 export async function deleteAnswerSheet(req: Request, res: Response) {
+    /*
+        #swagger.parameters['id'] = {
+            in: 'path',
+            description: 'ID of the answer-sheet',
+            required: true,
+            type: 'string',
+            pattern: '^[0-9a-fA-F]{24}$'
+        }
+     */
     const currentUser: IUser | null | undefined = await getCurrentUser(req);
     if(!currentUser) {
         return res.status(400).send({error: 'Unable to find current user!'});
@@ -196,6 +469,30 @@ export async function deleteAnswerSheet(req: Request, res: Response) {
 }
 
 export async function searchUsers(req: Request, res: Response) {
+    /*
+        #swagger.parameters['query'] = {
+            in: 'query',
+            description: 'search query',
+            required: true,
+            type: 'string',
+            minLength: 0,
+            maxLength: 64
+        }
+        #swagger.responses[200] = {
+            description: 'list of matching users',
+            content: {
+                "application/json": {
+                    schema: {
+                        type: 'array',
+                        items: {
+                            $ref: '#/components/schemas/user'
+                        }
+                    }
+                }
+            }
+        }
+     */
+
     const queryRegexs: RegExp[] = (req.query.query as string)
         .trim() // remove leading and trailing whitespace
         .split(' ') //split at spaces
@@ -209,6 +506,18 @@ export async function searchUsers(req: Request, res: Response) {
 }
 
 export async function updateUser(req: JwtRequest, res: Response) {
+    /*
+        #swagger.responses[200] = {
+            description: 'user',
+            content: {
+                'application/json': {
+                    schema: {
+                        $ref: '#/components/schemas/user'
+                    }
+                }
+            }
+        }
+     */
     const currentUserData: IUser | undefined = getUserFromJwt(req) as IUser | undefined;
     if(!currentUserData) {
         return res.status(400).send({error: 'Unable to extract user-data from token!'});

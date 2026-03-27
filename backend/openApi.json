@@ -1,0 +1,667 @@
+{
+  "openapi": "3.1.2",
+  "info": {
+    "title": "e²x Exam Review API",
+    "description": "API of the e²x Exam Review backend",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://{host}:{port}/api/v1",
+      "variables": {
+        "host": {
+          "default": "localhost",
+          "type": "string"
+        },
+        "port": {
+          "default": 3000,
+          "type": "number"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/exams": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "list of exams, to which the current user is connected (owner or examiner)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/exam"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "put": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "_id": {
+                    "required": true,
+                    "$ref": "#/components/schemas/objectId"
+                  },
+                  "title": {
+                    "type": "string",
+                    "required": true,
+                    "minLength": 2,
+                    "maxLength": 512
+                  },
+                  "semester": {
+                    "required": true,
+                    "$ref": "#/components/schemas/semester"
+                  },
+                  "primaryExaminer": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "required": true,
+                        "$ref": "#/components/schemas/objectId"
+                      }
+                    }
+                  },
+                  "secondaryExaminer": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "required": true,
+                        "$ref": "#/components/schemas/objectId"
+                      }
+                    }
+                  },
+                  "date": {
+                    "type": "string",
+                    "required": true,
+                    "format": "date"
+                  },
+                  "reviewParameters": {
+                    "type": "object",
+                    "properties": {
+                      "startDate": {
+                        "type": "string",
+                        "format": "date",
+                        "required": true,
+                        "nullable": true
+                      },
+                      "endDate": {
+                        "type": "string",
+                        "format": "date",
+                        "required": true,
+                        "nullable": true
+                      },
+                      "showDownloadButton": {
+                        "required": true,
+                        "type": "boolean"
+                      },
+                      "showTextLayer": {
+                        "required": true,
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "exam",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/exam"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "required": true,
+                    "minLength": 2,
+                    "maxLength": 512
+                  },
+                  "semester": {
+                    "required": true,
+                    "$ref": "#/components/schemas/semester"
+                  },
+                  "primaryExaminer": {
+                    "type": "object",
+                    "required": true,
+                    "properties": {
+                      "_id": {
+                        "required": true,
+                        "$ref": "#/components/schemas/objectId"
+                      }
+                    }
+                  },
+                  "secondaryExaminer": {
+                    "type": "object",
+                    "required": true,
+                    "properties": {
+                      "_id": {
+                        "required": true,
+                        "$ref": "#/components/schemas/objectId"
+                      }
+                    }
+                  },
+                  "date": {
+                    "type": "string",
+                    "required": true,
+                    "format": "date"
+                  },
+                  "reviewParameters": {
+                    "type": "object",
+                    "properties": {
+                      "startDate": {
+                        "type": "string",
+                        "required": true,
+                        "format": "date",
+                        "nullable": true
+                      },
+                      "endDate": {
+                        "type": "string",
+                        "required": true,
+                        "format": "date",
+                        "nullable": true
+                      },
+                      "showDownloadButton": {
+                        "required": true,
+                        "type": "boolean"
+                      },
+                      "showTextLayer": {
+                        "required": true,
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/exams/{id}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the exam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "exam",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/exam"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/exams/{id}/answer-sheets": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the answer-sheet"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "list of answer-sheets, belonging to the specified exam",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/answerSheet"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the exam, the answer-sheet belongs to",
+            "pattern": "^[0-9a-fA-F]{24}$"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "answer-sheet",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/answerSheet"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "studentId": {
+                    "type": "integer",
+                    "description": "student ID (Matrikelnummer)"
+                  },
+                  "originalFileName": {
+                    "type": "string",
+                    "description": "original name of the file, that was uploaded by the user -> better traceability"
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "answer-sheet as a PDF file"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/answer-sheets/{id}": {
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the answer-sheet",
+            "pattern": "^[0-9a-fA-F]{24}$"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the answer-sheet",
+            "pattern": "^[0-9a-fA-F]{24}$"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "answer-sheet",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/answerSheet"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/users": {
+      "post": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/user"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/users/search": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "description": "search query",
+            "required": true,
+            "minLength": 0,
+            "maxLength": 64,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "list of matching users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/user"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/answer-sheets": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "list of answer-sheets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/answerSheet"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/students": {
+      "post": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "student",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/student"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "objectId": {
+        "type": "string",
+        "description": "object id",
+        "pattern": "^[0-9a-fA-F]{24}$"
+      },
+      "user": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/objectId"
+          },
+          "firstname": {
+            "type": "string",
+            "required": true,
+            "example": "John"
+          },
+          "lastname": {
+            "type": "string",
+            "required": true,
+            "example": "Doe"
+          },
+          "email": {
+            "type": "string",
+            "required": true,
+            "format": "email",
+            "example": "john.doe@example.com"
+          }
+        }
+      },
+      "semester": {
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "number",
+            "required": true,
+            "example": 1970
+          },
+          "season": {
+            "type": "string",
+            "required": true,
+            "enum": [
+              "summer",
+              "winter"
+            ]
+          }
+        }
+      },
+      "exam": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/objectId"
+          },
+          "semester": {
+            "$ref": "#/components/schemas/semester"
+          },
+          "title": {
+            "type": "string",
+            "required": true,
+            "example": "Linear Algebra"
+          },
+          "date": {
+            "type": "string",
+            "required": true,
+            "format": "date",
+            "example": "1970-01-01"
+          },
+          "primaryExaminer": {
+            "required": true,
+            "$ref": "#/components/schemas/user"
+          },
+          "secondaryExaminer": {
+            "required": true,
+            "$ref": "#/components/schemas/user"
+          },
+          "reviewParameters": {
+            "type": "object",
+            "properties": {
+              "startDate": {
+                "type": "string",
+                "required": true,
+                "nullable": true,
+                "format": "date",
+                "example": "1970-01-01"
+              },
+              "endDate": {
+                "type": "string",
+                "required": true,
+                "nullable": true,
+                "format": "date",
+                "example": "1970-01-01"
+              },
+              "showDownloadButton": {
+                "type": "boolean",
+                "required": true
+              },
+              "showTextLayer": {
+                "type": "boolean",
+                "required": true
+              }
+            }
+          },
+          "owner": {
+            "required": true,
+            "$ref": "#/components/schemas/user"
+          }
+        }
+      },
+      "student": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/objectId"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "jane.smith@example.com"
+          },
+          "firstname": {
+            "type": "string",
+            "example": "Jane"
+          },
+          "lastname": {
+            "type": "string",
+            "example": "Smith"
+          },
+          "studentId": {
+            "type": "integer",
+            "required": true,
+            "example": 9010000
+          }
+        }
+      },
+      "answerSheet": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "$ref": "#/components/schemas/objectId"
+          },
+          "exam": {
+            "$ref": "#/components/schemas/exam"
+          },
+          "submitter": {
+            "required": true,
+            "$ref": "#/components/schemas/student"
+          },
+          "filePath": {
+            "type": "string",
+            "required": true
+          },
+          "originalFileName": {
+            "type": "string",
+            "required": true
+          }
+        }
+      }
+    }
+  }
+}
