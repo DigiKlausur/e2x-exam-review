@@ -82,7 +82,7 @@ export class AnswerSheetUploader {
     this.toastService.show({
       header: 'Warning',
       body: 'Failed to upload answer sheet: ' + (message ?? '[unknown error]'),
-      classname: 'bg-warning',
+      classname: 'bg-danger text-white',
       delay: -1
     })
   }

@@ -13,6 +13,7 @@ export const authConfig: PassedInitialConfig = {
     useRefreshToken: true,
     triggerRefreshWhenIdTokenExpired: true,
     renewTimeBeforeTokenExpiresInSeconds: 30,
+    disablePkce: true, // disabled because of unwanted redirects
     secureRoutes: [
       environment.apiUrl
     ]
