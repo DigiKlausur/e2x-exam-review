@@ -9,10 +9,18 @@ import {ManagementService} from '../../../services/management-service/management
 import {Router} from '@angular/router';
 import { ToastService } from '../../../services/toast-service/toast-service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ShowInvalid } from '../../../directives/show-invalid/show-invalid';
 
 @Component({
   selector: 'app-exam-editor',
-  imports: [DateInput, UserSearchInput, NgbCollapse, SemesterInput, ReactiveFormsModule],
+  imports: [
+    DateInput,
+    UserSearchInput,
+    NgbCollapse,
+    SemesterInput,
+    ReactiveFormsModule,
+    ShowInvalid,
+  ],
   templateUrl: './exam-editor.html',
   styleUrl: './exam-editor.scss',
 })
@@ -27,7 +35,11 @@ export class ExamEditor implements OnChanges {
   protected exam?: IExam;
 
   protected examForm: FormGroup = new FormGroup({
-    title: new FormControl<string>('', [Validators.required]),
+    title: new FormControl<string>('', [
+      Validators.required,
+      Validators.minLength(2),
+      Validators.maxLength(512)
+    ]),
     semester: new FormControl<ISemester | undefined>(undefined, [Validators.required]),
     primaryExaminer: new FormControl<IUser | undefined>(undefined, [Validators.required]),
     secondaryExaminer: new FormControl<IUser | undefined>(undefined, [Validators.required]),
@@ -78,6 +90,8 @@ export class ExamEditor implements OnChanges {
   }
 
   saveExam(): void {
+    this.examForm.markAllAsTouched();
+    if(!this.examForm.valid) return;
     if (this.isNewExam) {
       this.managementService.createExam(this.getFormValues()).subscribe({
         next: (response) => {
@@ -89,7 +103,7 @@ export class ExamEditor implements OnChanges {
     } else {
       this.managementService.updateExam(this.getFormValues()).subscribe({
         next: (response) => this.showSuccessfulResponse(),
-        error: (error: HttpErrorResponse) => this.showErrorResponse(error)
+        error: (error: HttpErrorResponse) => this.showErrorResponse(error),
       });
     }
   }
@@ -108,7 +122,7 @@ export class ExamEditor implements OnChanges {
       header: 'Exam Editor: Error',
       body: 'Failed to save exam!',
       classname: 'bg-danger text-white',
-      delay: -1
+      delay: -1,
     });
   }
 }

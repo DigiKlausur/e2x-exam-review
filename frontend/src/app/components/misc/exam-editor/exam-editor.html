@@ -2,35 +2,35 @@
   <div class="row">
     <div class="col-3">
       <label class="form-label">Semester *</label>
-      <app-semester-input formControlName="semester"></app-semester-input>
+      <app-semester-input appShowInvalid formControlName="semester"></app-semester-input>
     </div>
     <div class="col">
       <label class="form-label">Title *</label>
-      <input class="form-control" formControlName="title" type="text">
+      <input class="form-control" appShowInvalid formControlName="title" type="text">
     </div>
   </div>
   <div class="row mt-3">
     <div class="col-2">
       <label class="form-label">Exam Date *</label>
-      <app-date-input formControlName="date"></app-date-input>
+      <app-date-input appShowInvalid formControlName="date"></app-date-input>
     </div>
     <div class="col-5">
       <label class="form-label">Primary Examiner *</label>
-      <app-user-search-input formControlName="primaryExaminer"></app-user-search-input>
+      <app-user-search-input appShowInvalid formControlName="primaryExaminer"></app-user-search-input>
     </div>
     <div class="col-5">
       <label class="form-label">Secondary Examiner *</label>
-      <app-user-search-input formControlName="secondaryExaminer"></app-user-search-input>
+      <app-user-search-input appShowInvalid formControlName="secondaryExaminer"></app-user-search-input>
     </div>
   </div>
   <div class="row mt-3" formGroupName="reviewParameters" [(ngbCollapse)]="collapseReviewSettings" #collapse="ngbCollapse">
     <div class="col-2">
       <label class="form-label">Review Start</label>
-      <app-date-input formControlName="startDate"></app-date-input>
+      <app-date-input appShowInvalid formControlName="startDate"></app-date-input>
     </div>
     <div class="col-2">
       <label class="form-label">Review End</label>
-      <app-date-input formControlName="endDate"></app-date-input>
+      <app-date-input appShowInvalid formControlName="endDate"></app-date-input>
     </div>
     <div class="col-auto">
       <div class="form-check form-switch" style="margin-top: 2.5rem">

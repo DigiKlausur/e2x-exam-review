@@ -1,1 +1,1 @@
-<input type="text" class="form-control" [ngbTypeahead]="search" [inputFormatter]="getUserDisplayName" [resultFormatter]="getUserDisplayName" [(ngModel)]="currentValue" (ngModelChange)="this.handleValueChange()" >
+<input type="text" class="form-control" [class.is-invalid]="isInvalid" [ngbTypeahead]="search" [inputFormatter]="getUserDisplayName" [resultFormatter]="getUserDisplayName" [(ngModel)]="currentValue" (ngModelChange)="this.handleValueChange()" >

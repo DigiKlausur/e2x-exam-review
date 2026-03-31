@@ -1,0 +1,7 @@
+import { Schema } from "mongoose";
+import { IFile } from "../interfaces/IFile";
+
+export const FileSchema: Schema<IFile> = new Schema<IFile>({
+  originalFileName: {type: String, required: true},
+  filePath: {type: String, required: true, unique: true}
+});

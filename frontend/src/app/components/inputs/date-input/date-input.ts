@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {NgbDate, NgbDateAdapter, NgbDateNativeAdapter, NgbInputDatepicker} from "@ng-bootstrap/ng-bootstrap";
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from '@angular/forms';
+import { CustomInput } from '../../../directives/custom-input/custom-input';
 
 @Component({
   selector: 'app-date-input',
@@ -22,7 +23,7 @@ import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from '@angular/for
   templateUrl: './date-input.html',
   styleUrl: './date-input.scss',
 })
-export class DateInput implements ControlValueAccessor {
+export class DateInput extends CustomInput implements ControlValueAccessor {
   protected currentValue: Date | null = null;
 
   onChange: (value: Date|null) => any = (value: Date|null) => {};

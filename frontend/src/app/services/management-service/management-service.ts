@@ -33,11 +33,10 @@ export class ManagementService {
     return this.http.get<IAnswerSheet[]>(`${environment.apiUrl}/api/v1/manage/exams/${examId}/answer-sheets`);
   }
 
-  addAnswerSheet(examId: string, studentId: string, file: File): Observable<IAnswerSheet> {
+  addAnswerSheet(examId: string, studentId: string, files: File[]): Observable<IAnswerSheet> {
     const body: FormData = new FormData();
-    body.append('file', file);
+    files.forEach((file: File) => body.append('files', file));
     body.append('studentId', studentId.toString());
-    body.append('originalFileName', file.name);
     return this.http.post<IAnswerSheet>(`${environment.apiUrl}/api/v1/manage/exams/${examId}/answer-sheets`, body);
   }
 

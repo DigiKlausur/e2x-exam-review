@@ -22,4 +22,7 @@ export const config = {
     port: process.env.MONGODB_PORT ?? "27017",
     database: process.env.MONGODB_DATABASE_NAME ?? "e2xExamReview",
   },
+  limits: {
+    maxFilesPerAnswerSheet: process.env.MAX_FILES_PER_ANSWER_SHEET ?? 64
+  }
 };

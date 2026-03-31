@@ -2,6 +2,8 @@ import {Component, inject, LOCALE_ID, OnInit} from '@angular/core';
 import {ISemester, Season} from 'e2x-exam-review-backend';
 import {getFullSemesterName} from '../../../utils/SemesterUtil';
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from '@angular/forms';
+import { ShowInvalid } from '../../../directives/show-invalid/show-invalid';
+import { CustomInput } from '../../../directives/custom-input/custom-input';
 
 @Component({
   selector: 'app-semester-input',
@@ -18,7 +20,7 @@ import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from '@angular/for
   templateUrl: './semester-input.html',
   styleUrl: './semester-input.scss',
 })
-export class SemesterInput implements OnInit, ControlValueAccessor {
+export class SemesterInput extends CustomInput implements OnInit, ControlValueAccessor {
   private currentLocaleId: string = inject(LOCALE_ID);
   semesterOptions: {title: string; value: ISemester}[] = [];
 

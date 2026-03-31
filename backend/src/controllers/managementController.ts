@@ -5,7 +5,7 @@ import {writeFile, mkdir, rm} from "node:fs/promises";
 import {ObjectId} from "mongodb";
 import {AnswerSheet} from "../models/AnswerSheet";
 import {Student} from "../models/Student";
-import {IAnswerSheet, IExam, IUser} from "../interfaces";
+import { IAnswerSheet, IExam, IFile, IUser } from "../interfaces";
 import {Request as JwtRequest} from 'express-jwt';
 import {getCurrentUser, getUserFromJwt} from "../util/user";
 
@@ -390,6 +390,10 @@ export async function addAnswerSheet(req: Request, res: Response) {
         return res.status(400).send({error: 'Unable to find current user!'});
     }
 
+    if (!req.files) {
+      return res.status(400).send({ error: "No files present!" });
+    }
+
     const exam: IExam | null | undefined = await Exam.findOne({$and: [
             {_id: req.params.id as string},
             {$or: [
@@ -402,9 +406,6 @@ export async function addAnswerSheet(req: Request, res: Response) {
     if(!exam) {
         return res.status(400).send({error: 'Exam not found'});
     }
-    if (!req.file){
-        return res.status(400).send({error: 'File not found'});
-    }
 
     let submitter = await Student.findOne({studentId: req.body.studentId});
     if(!submitter) {
@@ -413,20 +414,33 @@ export async function addAnswerSheet(req: Request, res: Response) {
         });
     }
 
-    const fileId = new ObjectId();
     const directoryPath: string =`answer-sheets/${exam._id}`;
     await mkdir(directoryPath, { recursive: true });
-    const filePath: string = `${directoryPath}/${fileId}.pdf`;
+
+    const files: (Omit<IFile, '_id'> & { _id: ObjectId })[] = (
+      req.files as Express.Multer.File[]
+    ).map((file: Express.Multer.File) => {
+      const fileId = new ObjectId();
+      return {
+        _id: fileId,
+        filePath: `${directoryPath}/${fileId}.pdf`,
+        originalFileName: file.originalname,
+      };
+    });
+
     await submitter.save();
     await new AnswerSheet({
             exam: exam,
             submitter: submitter,
-            filePath: filePath,
-            originalFileName: req.body.originalFileName
+            files: files
         })
         .save()
         .then(async (answerSheet: IAnswerSheet) => {
-            await writeFile(filePath, req.file!.buffer, {})
+            await Promise.all(
+              files.map(async (file: Omit<IFile, "_id"> & { _id: ObjectId }, index: number) =>
+                writeFile(file.filePath, (req.files as Express.Multer.File[])[index]!.buffer, {}),
+              ),
+            );
             res.send(answerSheet);
         })
         .catch((err) => {
@@ -450,20 +464,19 @@ export async function deleteAnswerSheet(req: Request, res: Response) {
      */
     const currentUser: IUser | null | undefined = await getCurrentUser(req);
     if(!currentUser) {
-        return res.status(400).send({error: 'Unable to find current user!'});
-    }
-    await AnswerSheet.findOne({$and: [
-            {_id: req.params.id as string},
-            {$or: [
-                {"exam.primaryExaminer": {_id: currentUser._id as string}},
-                {"exam.secondaryExaminer": {_id: currentUser._id as string}},
-                {"exam.owner": {_id: currentUser._id as string}},
-            ]}
-        ]})
+      return res.status(400).send({ error: "Unable to find current user!" });
+    }    
+    await AnswerSheet.findOne({_id: req.params.id as string}).populate({
+            path: 'exam',
+            populate: ['primaryExaminer', 'secondaryExaminer', 'owner']
+        })
         .then(async (answerSheet: IAnswerSheet | undefined | null) => {
+            /*if(!(answerSheet?.exam.primaryExaminer._id === currentUser._id || answerSheet?.exam.secondaryExaminer._id === currentUser._id || answerSheet?.exam.owner._id === currentUser._id)) {
+              throw Error("user invalid");
+            }*/ //todo fix
             if(!answerSheet) {throw Error('answer sheet not found');}
             await AnswerSheet.deleteOne({_id: answerSheet._id as string});
-            await rm(answerSheet.filePath);
+            await Promise.all(answerSheet.files.map(async (file) => rm(file.filePath)));
             res.send();
         });
 }

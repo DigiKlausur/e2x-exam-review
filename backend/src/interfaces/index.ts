@@ -4,3 +4,4 @@ export * from './ISemester';
 export * from './IExamReviewParameters';
 export * from './IExam';
 export * from './IAnswerSheet';
+export * from './IFile';

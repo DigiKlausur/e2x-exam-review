@@ -15,6 +15,7 @@ import {
 } from 'rxjs';
 import {NgbTypeahead} from '@ng-bootstrap/ng-bootstrap';
 import {getUserDisplayName} from '../../../utils/UserUtil';
+import { CustomInput } from '../../../directives/custom-input/custom-input';
 
 @Component({
   selector: 'app-user-search-input',
@@ -32,7 +33,7 @@ import {getUserDisplayName} from '../../../utils/UserUtil';
   templateUrl: './user-search-input.html',
   styleUrl: './user-search-input.scss',
 })
-export class UserSearchInput implements ControlValueAccessor {
+export class UserSearchInput extends CustomInput implements ControlValueAccessor {
   private managementService: ManagementService = inject(ManagementService);
 
   protected currentValue: IUser | undefined;

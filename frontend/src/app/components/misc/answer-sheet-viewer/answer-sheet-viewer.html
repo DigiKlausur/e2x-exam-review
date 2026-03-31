@@ -1,5 +1,5 @@
 @if (accessToken){
-  <ngx-extended-pdf-viewer [src]="environment.apiUrl + '/' + answerSheet.filePath"
+  <ngx-extended-pdf-viewer [src]="environment.apiUrl + '/' + answerSheet.files[0].filePath"
                            backgroundColor="transparent"
                            [showRotateButton]="false"
                            [showHighlightEditor]="false"

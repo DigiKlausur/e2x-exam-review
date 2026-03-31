@@ -10,9 +10,8 @@ import {
 } from "../controllers/managementController";
 import {jwtProtect} from "../middlewares/jwtProtect";
 import {config} from "../globals";
-import {body, checkExact, oneOf, param, query} from "express-validator";
+import {body, param, query} from "express-validator";
 import {enforceValidity} from "../middlewares/requestValidation";
-import * as trace_events from "node:trace_events";
 
 export function applyManagementRoutes(parentRouter: Router) {
     const managementRouter = Router();
@@ -66,10 +65,9 @@ export function applyManagementRoutes(parentRouter: Router) {
 
     managementRouter.post(
         '/exams/:id/answer-sheets',
-        multer().single('file'),
+        multer().array('files', config.limits.maxFilesPerAnswerSheet as number),
         param('id').isMongoId(),
         body('studentId').isNumeric(),
-        body('originalFileName').isString(),
         enforceValidity,
         addAnswerSheet
     );

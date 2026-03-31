@@ -58,7 +58,7 @@ export class AnswerSheetUploader {
           this.showWarning(e);
           return reject(e);
         }
-        this.managementService.addAnswerSheet(this.examId, matches[0][1], file).subscribe({
+        this.managementService.addAnswerSheet(this.examId, matches[0][1], [file]).subscribe({
           next: response => resolve(response),
           error: error => {
             this.showWarning(error.error.error ? `<${file.name}> ${error.error.error}` : undefined);

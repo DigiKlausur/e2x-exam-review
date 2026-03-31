@@ -14,7 +14,7 @@
         <td>{{answerSheet.submitter.studentId}}</td>
         <!--<td>{{answerSheet.submitter.firstname}}</td>
         <td>{{answerSheet.submitter.lastname}}</td>-->
-        <td>{{answerSheet.originalFileName}}</td>
+        <td>{{answerSheet.files[0].originalFileName}}</td>
         <td class="text-end w-auto">
           <div class="controls">
             <i class="bi bi-eye" role="button" [routerLink]="['/','review', answerSheet._id]" ngbTooltip="View answer sheet"></i>
