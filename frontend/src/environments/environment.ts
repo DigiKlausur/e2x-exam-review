@@ -2,7 +2,7 @@ import {Environment} from '../app/models/Environment';
 
 export const environment: Environment = {
   apiUrl: 'http://localhost:3000',
-  studentIdRegex: '(?:^|\\D)(90[\\d]{5})(?:$|\\D)',
+  studentIdRegex: '(?<!\\d)(90[\\d]{5})(?!\\d)',
   openId: {
     authorityUrl: '',
     clientId: '',
@@ -11,11 +11,11 @@ export const environment: Environment = {
       displayName: '',
       firstname: '',
       lastname: '',
-      email: ''
+      email: '',
     },
     roleMappings: {
       lecturer: 'lecturer',
-      student: 'student'
-    }
-  }
+      student: 'student',
+    },
+  },
 };
