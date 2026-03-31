@@ -107,10 +107,8 @@ export async function createExam(req: Request, res: Response) {
                             },
                             secondaryExaminer: {
                                 type: "object",
-                                required: true,
                                 properties: {
                                     _id: {
-                                        required: true,
                                         $ref: '#/components/schemas/objectId'
                                     }
                                 }
@@ -186,7 +184,7 @@ export async function createExam(req: Request, res: Response) {
 }
 
 export async function updateExam(req: Request, res: Response) {
-    /*
+  /*
         #swagger.requestBody = {
             required: true,
             content: {
@@ -210,6 +208,7 @@ export async function updateExam(req: Request, res: Response) {
                             },
                             primaryExaminer: {
                                 type: "object",
+                                required: true,
                                 properties: {
                                     _id: {
                                         required: true,
@@ -221,7 +220,6 @@ export async function updateExam(req: Request, res: Response) {
                                 type: "object",
                                 properties: {
                                     _id: {
-                                        required: true,
                                         $ref: '#/components/schemas/objectId'
                                     }
                                 }
@@ -263,43 +261,43 @@ export async function updateExam(req: Request, res: Response) {
         }
      */
 
-    const currentUser: IUser | null | undefined = await getCurrentUser(req);
-    if(!currentUser) {
-        return res.status(400).send({error: 'Unable to find current user!'});
-    }
+  const currentUser: IUser | null | undefined = await getCurrentUser(req);
+  if (!currentUser) {
+    return res.status(400).send({ error: "Unable to find current user!" });
+  }
 
-    res.send(
-      await Exam.updateOne(
-        {
-          // @ts-ignore
-          _id: req.body._id as string,
-          $or: [
-            { primaryExaminer: currentUser._id!.toString() },
-            { secondaryExaminer: currentUser._id!.toString() },
-            { owner: currentUser._id!.toString() },
-          ],
-        },
-        {
-          $set: {
-            title: req.body.title,
-            semester: {
-              year: req.body.semester.year,
-              season: req.body.semester.season,
-            },
-            primaryExaminer: req.body.primaryExaminer._id,
-            secondaryExaminer: req.body.secondaryExaminer?._id ?? undefined,
-            date: req.body.date,
-            reviewParameters: {
-              startDate: req.body.reviewParameters.startDate,
-              endDate: req.body.reviewParameters.endDate,
-              showDownloadButton: req.body.reviewParameters.showDownloadButton,
-              showTextLayer: req.body.reviewParameters.showTextLayer,
-            },
+  res.send(
+    await Exam.updateOne(
+      {
+        // @ts-ignore
+        _id: req.body._id as string,
+        $or: [
+          { primaryExaminer: currentUser._id!.toString() },
+          { secondaryExaminer: currentUser._id!.toString() },
+          { owner: currentUser._id!.toString() },
+        ],
+      },
+      {
+        $set: {
+          title: req.body.title,
+          semester: {
+            year: req.body.semester.year,
+            season: req.body.semester.season,
           },
-          $unset: !req.body.secondaryExaminer ? {secondaryExaminer: 1} : {}
+          primaryExaminer: req.body.primaryExaminer._id,
+          secondaryExaminer: req.body.secondaryExaminer?._id ?? undefined,
+          date: req.body.date,
+          reviewParameters: {
+            startDate: req.body.reviewParameters.startDate,
+            endDate: req.body.reviewParameters.endDate,
+            showDownloadButton: req.body.reviewParameters.showDownloadButton,
+            showTextLayer: req.body.reviewParameters.showTextLayer,
+          },
         },
-      ),
-    );
+        $unset: !req.body.secondaryExaminer ? { secondaryExaminer: 1 } : {},
+      },
+    ),
+  );
 }
 
 export async function getAnswerSheetsByExamId(req: Request, res: Response) {
@@ -344,7 +342,7 @@ export async function getAnswerSheetsByExamId(req: Request, res: Response) {
 }
 
 export async function addAnswerSheet(req: Request, res: Response) {
-    /*  #swagger.parameters['id'] = {
+  /*  #swagger.parameters['id'] = {
             in: 'path',
             description: 'ID of the exam, the answer-sheet belongs to',
             required: true,
@@ -360,16 +358,17 @@ export async function addAnswerSheet(req: Request, res: Response) {
                         properties: {
                             studentId: {
                                 type: "integer",
+                                required: true,
                                 description: "student ID (Matrikelnummer)"
                             },
-                            originalFileName: {
-                                type: "string",
-                                description: "original name of the file, that was uploaded by the user -> better traceability"
-                            },
-                            file: {
-                                type: "string",
-                                format: "binary",
-                                description: "answer-sheet as a PDF file"
+                            files: {
+                                type: "array",
+                                requires: true,
+                                items: {
+                                  type: "string",
+                                  format: "binary",
+                                  description: "answer-sheet as a PDF file"
+                                }
                             }
                         }
                     }
@@ -388,71 +387,80 @@ export async function addAnswerSheet(req: Request, res: Response) {
         }
      */
 
-    const currentUser: IUser | null | undefined = await getCurrentUser(req);
-    if(!currentUser) {
-        return res.status(400).send({error: 'Unable to find current user!'});
-    }
+  const currentUser: IUser | null | undefined = await getCurrentUser(req);
+  if (!currentUser) {
+    return res.status(400).send({ error: "Unable to find current user!" });
+  }
 
-    if (!req.files) {
-      return res.status(400).send({ error: "No files present!" });
-    }
+  if (!req.files) {
+    return res.status(400).send({ error: "No files present!" });
+  }
 
-    const exam: IExam | null | undefined = await Exam.findOne({$and: [
-            {_id: req.params.id as string},
-            {$or: [
-                    {"primaryExaminer": {_id: currentUser._id as string}},
-                    {"secondaryExaminer": {_id: currentUser._id as string}},
-                    {"owner": {_id: currentUser._id as string}},
-                ]}
-    ]});
+  const exam: IExam | null | undefined = await Exam.findOne({
+    $and: [
+      { _id: req.params.id as string },
+      {
+        $or: [
+          { primaryExaminer: { _id: currentUser._id as string } },
+          { secondaryExaminer: { _id: currentUser._id as string } },
+          { owner: { _id: currentUser._id as string } },
+        ],
+      },
+    ],
+  });
 
-    if(!exam) {
-        return res.status(400).send({error: 'Exam not found'});
-    }
+  if (!exam) {
+    return res.status(400).send({ error: "Exam not found" });
+  }
 
-    let submitter = await Student.findOne({studentId: req.body.studentId});
-    if(!submitter) {
-        submitter = new Student({
-            studentId: req.body.studentId,
-        });
-    }
-
-    const directoryPath: string =`answer-sheets/${exam._id}`;
-    await mkdir(directoryPath, { recursive: true });
-
-    const files: (Omit<IFile, '_id'> & { _id: ObjectId })[] = (
-      req.files as Express.Multer.File[]
-    ).map((file: Express.Multer.File) => {
-      const fileId = new ObjectId();
-      return {
-        _id: fileId,
-        filePath: `${directoryPath}/${fileId}.pdf`,
-        originalFileName: file.originalname,
-      };
+  let submitter = await Student.findOne({ studentId: req.body.studentId });
+  if (!submitter) {
+    submitter = new Student({
+      studentId: req.body.studentId,
     });
+  }
 
-    await submitter.save();
-    await new AnswerSheet({
-            exam: exam,
-            submitter: submitter,
-            files: files
-        })
-        .save()
-        .then(async (answerSheet: IAnswerSheet) => {
-            await Promise.all(
-              files.map(async (file: Omit<IFile, "_id"> & { _id: ObjectId }, index: number) =>
-                writeFile(file.filePath, (req.files as Express.Multer.File[])[index]!.buffer, {}),
-              ),
-            );
-            res.send(answerSheet);
-        })
-        .catch((err) => {
-            if (err.code === 11000){
-                res.status(400).send({error: 'duplicate answer sheet'});
-            }else{
-                res.status(500).send({error: err.message});
-            }
-        })
+  const directoryPath: string = `answer-sheets/${exam._id}`;
+  await mkdir(directoryPath, { recursive: true });
+
+  const files: (Omit<IFile, "_id"> & { _id: ObjectId })[] = (
+    req.files as Express.Multer.File[]
+  ).map((file: Express.Multer.File) => {
+    const fileId = new ObjectId();
+    return {
+      _id: fileId,
+      filePath: `${directoryPath}/${fileId}.pdf`,
+      originalFileName: file.originalname,
+    };
+  });
+
+  await submitter.save();
+  await new AnswerSheet({
+    exam: exam,
+    submitter: submitter,
+    files: files,
+  })
+    .save()
+    .then(async (answerSheet: IAnswerSheet) => {
+      await Promise.all(
+        files.map(
+          async (file: Omit<IFile, "_id"> & { _id: ObjectId }, index: number) =>
+            writeFile(
+              file.filePath,
+              (req.files as Express.Multer.File[])[index]!.buffer,
+              {},
+            ),
+        ),
+      );
+      res.send(answerSheet);
+    })
+    .catch((err) => {
+      if (err.code === 11000) {
+        res.status(400).send({ error: "duplicate answer sheet" });
+      } else {
+        res.status(500).send({ error: err.message });
+      }
+    });
 }
 
 export async function deleteAnswerSheet(req: Request, res: Response) {

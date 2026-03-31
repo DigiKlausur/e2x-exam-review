@@ -76,6 +76,7 @@
                   },
                   "primaryExaminer": {
                     "type": "object",
+                    "required": true,
                     "properties": {
                       "_id": {
                         "required": true,
@@ -87,7 +88,6 @@
                     "type": "object",
                     "properties": {
                       "_id": {
-                        "required": true,
                         "$ref": "#/components/schemas/objectId"
                       }
                     }
@@ -174,10 +174,8 @@
                   },
                   "secondaryExaminer": {
                     "type": "object",
-                    "required": true,
                     "properties": {
                       "_id": {
-                        "required": true,
                         "$ref": "#/components/schemas/objectId"
                       }
                     }
@@ -327,16 +325,17 @@
                 "properties": {
                   "studentId": {
                     "type": "integer",
+                    "required": true,
                     "description": "student ID (Matrikelnummer)"
                   },
-                  "originalFileName": {
-                    "type": "string",
-                    "description": "original name of the file, that was uploaded by the user -> better traceability"
-                  },
-                  "file": {
-                    "type": "string",
-                    "format": "binary",
-                    "description": "answer-sheet as a PDF file"
+                  "files": {
+                    "type": "array",
+                    "requires": true,
+                    "items": {
+                      "type": "string",
+                      "format": "binary",
+                      "description": "answer-sheet as a PDF file"
+                    }
                   }
                 }
               }
