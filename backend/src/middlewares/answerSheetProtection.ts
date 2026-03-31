@@ -14,7 +14,7 @@ export const answerSheetProtection = async (req: JwtRequest, res: Response, next
         const currentUser = await getCurrentUser(req);
         if(!currentUser) return res.status(400).send('Unable to identify current user');
 
-        if(answerSheet.exam.owner._id?.toString() === currentUser._id?.toString() || answerSheet.exam.primaryExaminer._id?.toString() === currentUser._id?.toString() || answerSheet.exam.secondaryExaminer._id?.toString() === currentUser._id?.toString()){
+        if(answerSheet.exam.owner._id?.toString() === currentUser._id?.toString() || answerSheet.exam.primaryExaminer._id?.toString() === currentUser._id?.toString() || answerSheet.exam.secondaryExaminer?._id?.toString() === currentUser._id?.toString()){
             return next();
         }
     }else if(hasRole(req, config.jwt.roleMappings.student)){

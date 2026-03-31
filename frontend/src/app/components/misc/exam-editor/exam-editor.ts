@@ -42,7 +42,7 @@ export class ExamEditor implements OnChanges {
     ]),
     semester: new FormControl<ISemester | undefined>(undefined, [Validators.required]),
     primaryExaminer: new FormControl<IUser | undefined>(undefined, [Validators.required]),
-    secondaryExaminer: new FormControl<IUser | undefined>(undefined, [Validators.required]),
+    secondaryExaminer: new FormControl<IUser | undefined>(undefined),
     date: new FormControl<Date | undefined>(undefined, [Validators.required]),
     reviewParameters: new FormGroup({
       startDate: new FormControl<Date | null>(null),

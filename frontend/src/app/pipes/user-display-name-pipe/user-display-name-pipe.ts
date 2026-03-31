@@ -6,8 +6,8 @@ import {getUserDisplayName} from '../../utils/UserUtil';
   name: 'userDisplayName',
 })
 export class UserDisplayNamePipe implements PipeTransform {
-  transform(value: IUser | IStudent): string {
-    if(!value.firstname || !value.lastname) return '';
+  transform(value: IUser | IStudent | undefined): string {
+    if(!value || !value.firstname || !value.lastname) return '';
     return getUserDisplayName(value);
   }
 }

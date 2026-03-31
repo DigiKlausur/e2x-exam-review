@@ -173,7 +173,7 @@ export async function createExam(req: Request, res: Response) {
             season: req.body.semester.season
         },
         primaryExaminer: req.body.primaryExaminer._id,
-        secondaryExaminer: req.body.secondaryExaminer._id,
+        secondaryExaminer: req.body.secondaryExaminer?._id ?? undefined,
         date: req.body.date,
         reviewParameters: {
             startDate: req.body.reviewParameters.startDate,
@@ -269,33 +269,36 @@ export async function updateExam(req: Request, res: Response) {
     }
 
     res.send(
-        await Exam.updateOne(
-            {
-                // @ts-ignore
-                _id: req.body._id as string,
-                $or: [
-                    {"primaryExaminer": currentUser._id!.toString()},
-                    {"secondaryExaminer": currentUser._id!.toString()},
-                    {"owner": currentUser._id!.toString()},
-                ]
+      await Exam.updateOne(
+        {
+          // @ts-ignore
+          _id: req.body._id as string,
+          $or: [
+            { primaryExaminer: currentUser._id!.toString() },
+            { secondaryExaminer: currentUser._id!.toString() },
+            { owner: currentUser._id!.toString() },
+          ],
+        },
+        {
+          $set: {
+            title: req.body.title,
+            semester: {
+              year: req.body.semester.year,
+              season: req.body.semester.season,
             },
-            {$set: {
-                title: req.body.title,
-                semester: {
-                    year: req.body.semester.year,
-                    season: req.body.semester.season
-                },
-                primaryExaminer: req.body.primaryExaminer._id,
-                secondaryExaminer: req.body.secondaryExaminer._id,
-                date: req.body.date,
-                reviewParameters: {
-                    startDate: req.body.reviewParameters.startDate,
-                    endDate: req.body.reviewParameters.endDate,
-                    showDownloadButton: req.body.reviewParameters.showDownloadButton,
-                    showTextLayer: req.body.reviewParameters.showTextLayer
-                }
-            }}
-        )
+            primaryExaminer: req.body.primaryExaminer._id,
+            secondaryExaminer: req.body.secondaryExaminer?._id ?? undefined,
+            date: req.body.date,
+            reviewParameters: {
+              startDate: req.body.reviewParameters.startDate,
+              endDate: req.body.reviewParameters.endDate,
+              showDownloadButton: req.body.reviewParameters.showDownloadButton,
+              showTextLayer: req.body.reviewParameters.showTextLayer,
+            },
+          },
+          $unset: !req.body.secondaryExaminer ? {secondaryExaminer: 1} : {}
+        },
+      ),
     );
 }
 
@@ -334,7 +337,7 @@ export async function getAnswerSheetsByExamId(req: Request, res: Response) {
         ).populate(['submitter', {path: 'exam', populate: ['primaryExaminer', 'secondaryExaminer']}])
         .lean()].filter((answerSheet: IAnswerSheet) =>
             answerSheet.exam.primaryExaminer._id?.toString() === currentUser._id?.toString()
-            || answerSheet.exam.secondaryExaminer._id?.toString() === currentUser._id?.toString()
+            || answerSheet.exam.secondaryExaminer?._id?.toString() === currentUser._id?.toString()
             || answerSheet.exam.owner._id?.toString() === currentUser._id?.toString()
         ).sort((answerSheetA, answerSheetB) => answerSheetA.submitter.studentId - answerSheetB.submitter.studentId)
     );

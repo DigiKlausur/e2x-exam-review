@@ -7,7 +7,7 @@ export const ExamSchema: Schema<IExam> = new Schema<IExam>({
     title: {type: String, required: true},
     semester: SemesterSchema,
     primaryExaminer: {type: Schema.Types.ObjectId, ref: "User", required: true},
-    secondaryExaminer: {type: Schema.Types.ObjectId, ref: "User", required: true},
+    secondaryExaminer: {type: Schema.Types.ObjectId, ref: "User", optional: true},
     date: {type: Date, required: true},
     reviewParameters: ExamReviewParametersSchema,
     owner: {type: Schema.Types.ObjectId, ref: "User", required: true}

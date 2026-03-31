@@ -19,16 +19,13 @@ import { CustomInput } from '../../../directives/custom-input/custom-input';
 
 @Component({
   selector: 'app-user-search-input',
-  imports: [
-    NgbTypeahead,
-    FormsModule
-  ],
+  imports: [NgbTypeahead, FormsModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: UserSearchInput,
-      multi: true
-    }
+      multi: true,
+    },
   ],
   templateUrl: './user-search-input.html',
   styleUrl: './user-search-input.scss',
@@ -36,7 +33,7 @@ import { CustomInput } from '../../../directives/custom-input/custom-input';
 export class UserSearchInput extends CustomInput implements ControlValueAccessor {
   private managementService: ManagementService = inject(ManagementService);
 
-  protected currentValue: IUser | undefined;
+  protected currentValue: IUser | undefined | '';
 
   onChange: (value: IUser | undefined) => any = (value: IUser | undefined) => {};
   onTouched: () => any = () => {};
@@ -53,7 +50,11 @@ export class UserSearchInput extends CustomInput implements ControlValueAccessor
     this.currentValue = val;
   }
 
-  handleValueChange(): void{
+  handleValueChange(): void {
+    if (this.currentValue === '') {
+      this.onChange(undefined);
+      return;
+    }
     this.onChange(this.currentValue);
   }
 
@@ -71,7 +72,7 @@ export class UserSearchInput extends CustomInput implements ControlValueAccessor
             return of([]);
           }),
         ),
-      )
+      ),
     );
   protected readonly getUserDisplayName = getUserDisplayName;
 }

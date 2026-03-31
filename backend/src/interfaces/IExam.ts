@@ -7,7 +7,7 @@ export interface IExam {
     title: string;
     semester: ISemester;
     primaryExaminer: IUser;
-    secondaryExaminer: IUser;
+    secondaryExaminer?: IUser;
     date: Date;
     reviewParameters: IExamReviewParameters;
     owner: IUser;
