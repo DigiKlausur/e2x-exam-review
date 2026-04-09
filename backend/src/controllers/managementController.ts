@@ -435,13 +435,19 @@ export async function addAnswerSheet(req: Request, res: Response) {
   });
 
   await submitter.save();
-  await new AnswerSheet({
+  await AnswerSheet.findOneAndUpdate(
+  {
+      // @ts-ignore
+      exam: exam._id.toString(),
+      submitter: submitter._id.toString()
+  },
+  {
     exam: exam,
     submitter: submitter,
-    files: files,
-  })
-    .save()
-    .then(async (answerSheet: IAnswerSheet) => {
+    $push: {files: {$each: files}}
+  },
+  {upsert: true}).lean()
+    .then(async (answerSheet: IAnswerSheet | null) => {
       await Promise.all(
         files.map(
           async (file: Omit<IFile, "_id"> & { _id: ObjectId }, index: number) =>
@@ -476,7 +482,7 @@ export async function deleteAnswerSheet(req: Request, res: Response) {
     const currentUser: IUser | null | undefined = await getCurrentUser(req);
     if(!currentUser) {
       return res.status(400).send({ error: "Unable to find current user!" });
-    }    
+    }
     await AnswerSheet.findOne({_id: req.params.id as string}).populate({
             path: 'exam',
             populate: ['primaryExaminer', 'secondaryExaminer', 'owner']
