@@ -44,6 +44,10 @@ export class ManagementService {
     return this.http.delete<void>(environment.apiUrl + '/api/v1/manage/answer-sheets/' + answerSheetId);
   }
 
+  deleteAnswerSheetFile(answerSheetId: string, fileId: string): Observable<void>{
+    return this.http.delete<void>(`${environment.apiUrl}/api/v1/manage/answer-sheets/${answerSheetId}/${fileId}`);
+  }
+
   searchUsers(query: string): Observable<IUser[]> {
     return this.http.get<IUser[]>(environment.apiUrl + '/api/v1/manage/users/search?query=' + query);
   }

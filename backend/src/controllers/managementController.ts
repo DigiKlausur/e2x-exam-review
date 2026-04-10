@@ -434,6 +434,16 @@ export async function addAnswerSheet(req: Request, res: Response) {
     };
   });
 
+  const existingAnswerSheet: IAnswerSheet | null = await AnswerSheet.findOne({
+      // @ts-ignore
+      exam: exam._id.toString(),
+      submitter: submitter._id.toString()
+  }).lean();
+
+  if(existingAnswerSheet && files.some((file: (Omit<IFile, "_id"> & { _id: ObjectId })) => existingAnswerSheet.files.map((f: IFile) => f.originalFileName).includes(file.originalFileName))) {
+      return res.status(400).send({ error: "Unable to assign multiple files with the same name to one answer sheet!" });
+  }
+
   await submitter.save();
   await AnswerSheet.findOneAndUpdate(
   {
@@ -494,6 +504,48 @@ export async function deleteAnswerSheet(req: Request, res: Response) {
             if(!answerSheet) {throw Error('answer sheet not found');}
             await AnswerSheet.deleteOne({_id: answerSheet._id as string});
             await Promise.all(answerSheet.files.map(async (file) => rm(file.filePath)));
+            res.send();
+        });
+}
+
+export async function deleteAnswerSheetFile(req: Request, res: Response) {
+    /*
+        #swagger.parameters['answerSheetId'] = {
+            in: 'path',
+            description: 'ID of the answer-sheet',
+            required: true,
+            type: 'string',
+            pattern: '^[0-9a-fA-F]{24}$'
+        }
+        #swagger.parameters['fileId'] = {
+            in: 'path',
+            description: 'ID of the answer-sheet',
+            required: true,
+            type: 'string',
+            pattern: '^[0-9a-fA-F]{24}$'
+        }
+     */
+    const currentUser: IUser | null | undefined = await getCurrentUser(req);
+    if(!currentUser) {
+        return res.status(400).send({ error: "Unable to find current user!" });
+    }
+    await AnswerSheet.findOne({_id: req.params.answerSheetId as string}).populate({
+        path: 'exam',
+        populate: ['primaryExaminer', 'secondaryExaminer', 'owner']
+    })
+        .then(async (answerSheet: IAnswerSheet | undefined | null) => {
+            /*if(!(answerSheet?.exam.primaryExaminer._id === currentUser._id || answerSheet?.exam.secondaryExaminer._id === currentUser._id || answerSheet?.exam.owner._id === currentUser._id)) {
+              throw Error("user invalid");
+            }*/ //todo fix
+            if(!answerSheet) {throw Error('answer sheet not found');}
+            const file: IFile | undefined = answerSheet.files.find((file: IFile) => file._id!.toString() === req.params.fileId);
+            if(!file){{throw Error('file not found');}}
+            if(answerSheet.files.length === 1) {
+                await AnswerSheet.deleteOne({_id: answerSheet._id as string});
+            }else {
+                await AnswerSheet.updateOne({_id: answerSheet._id as string}, {$pull: {files: {_id: file._id}}});
+            }
+            await rm(file.filePath);
             res.send();
         });
 }

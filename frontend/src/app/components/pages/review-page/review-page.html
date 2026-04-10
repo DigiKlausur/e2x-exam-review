@@ -1,3 +1,9 @@
-@if (answerSheet){
-  <app-answer-sheet-viewer [answerSheet]="answerSheet" ></app-answer-sheet-viewer>
+@if (answerSheet && file){
+  <app-answer-sheet-viewer [answerSheet]="answerSheet" [file]="file" ></app-answer-sheet-viewer>
+} @else {
+  <div class="container mt-3">
+    <ngb-alert class="alert-warning" [dismissible]="false">
+      Answer sheet could not be found!
+    </ngb-alert>
+  </div>
 }

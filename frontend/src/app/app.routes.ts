@@ -21,7 +21,7 @@ export const routes: Routes = [
     canActivate: [oidcCanActivateGuard]
   },
   {
-    path: 'review/:id',
+    path: 'review/:assignmentId/:fileId',
     component: ReviewPage,
     data: { roles: [roleMappings.student, roleMappings.lecturer] },
     canActivate: [oidcCanActivateGuard]

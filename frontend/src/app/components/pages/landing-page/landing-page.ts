@@ -25,7 +25,6 @@ export class LandingPage implements OnInit {
     this.oidcSecurityService.isAuthenticated$.subscribe((authenticatedResult: AuthenticatedResult) => {
       if (authenticatedResult.isAuthenticated) {
         this.oidcSecurityService.getPayloadFromAccessToken().subscribe(token => {
-          console.log('landing page redirecting')
           if(hasRole(token, environment.openId.roleMappings.lecturer)) {
             return this.router.navigate(['/', 'manage']);
           } else if(hasRole(token, environment.openId.roleMappings.student)) {
