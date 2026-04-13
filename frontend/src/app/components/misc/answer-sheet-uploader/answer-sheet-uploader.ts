@@ -4,12 +4,8 @@ import {ManagementService} from '../../../services/management-service/management
 import {IAnswerSheet} from 'e2x-exam-review-backend';
 import {ToastService} from '../../../services/toast-service/toast-service';
 import {
-  BlobReader,
-  DirectoryEntry,
-  FileEntry,
-  ZipReader,
   FS as zipFS,
-  fs as zipFs,
+  fs as zipFsFactory,
   ZipEntry,
   ZipDirectoryEntry, ZipFileEntry
 } from '@zip.js/zip.js';
@@ -56,8 +52,8 @@ export class AnswerSheetUploader {
       return this.readZipArchive(files.item(0)!);
     }
     this.toastService.show({
-      header: 'Answer Sheet Upload',
-      body: 'Unable to upload files, as they does not match the supported formats!',
+      header: $localize`:@@app.toast.header.answer-sheet-upload:Answer Sheet Upload`,
+      body: $localize`:@@app.toast.body.answer-sheet-upload-failed.unsupported-format:Unable to upload files, as they does not match the supported formats!`,
       classname: 'bg-danger text-white',
       delay: -1
     });
@@ -93,8 +89,8 @@ export class AnswerSheetUploader {
     }))
     .then((results) => {
       this.toastService.show({
-        header: 'Answer Sheet Upload',
-        body: `Upload finished: ${results.reduce((acc, cur) => cur.status === 'fulfilled' ? acc + 1 : acc, 0)} / ${files.length} uploads successful`,
+        header: $localize`:@@app.toast.header.answer-sheet-upload:Answer Sheet Upload`,
+        body: $localize`:@@app.toast.body.answer-sheet-upload-successful:Upload finished: ${results.reduce((acc, cur) => cur.status === 'fulfilled' ? acc + 1 : acc, 0)} / ${files.length} uploads successful`,
       });
     })
     .finally(() => {
@@ -103,7 +99,7 @@ export class AnswerSheetUploader {
   }
 
   async readZipArchive(file: File): Promise<void> {
-    const zFs: zipFS = new zipFs.FS();
+    const zFs: zipFS = new zipFsFactory.FS();
     await zFs.importBlob(file);
     const rootDirectory = zFs.children.length === 1 && this.matchStudentId(zFs.children[0].name).length === 0 ? zFs.children[0] : zFs.root; //if there is only one directory inside the root of the zip, that does not contain a student-ID in its name -> assume it's the actual root
     const submitterDirectories: ZipDirectoryEntry[] = rootDirectory.children.filter((child: ZipEntry) => (child as ZipDirectoryEntry).directory ?? false) as ZipDirectoryEntry[];
@@ -113,7 +109,7 @@ export class AnswerSheetUploader {
         const studentIdMatches = this.matchStudentId(directory.name);
         if(studentIdMatches.length !== 1) {
           this.showWarning(`Student ID could not be found in directory-name <${directory.name}>`);
-          return Promise.reject(`student ID could not be matched (directory-name: ${directory.name})`);
+          return Promise.reject($localize`:@@app.error.student-id-not-matched:student ID could not be matched (directory-name: ${directory.name})`);
         }
         numberOfSubmitters++;
 
@@ -133,8 +129,8 @@ export class AnswerSheetUploader {
       }))
       .then((results) => {
         this.toastService.show({
-          header: 'Answer Sheet Upload',
-          body: `Upload finished: ${results.reduce((acc, cur) => cur.status === 'fulfilled' ? acc + 1 : acc, 0)} / ${numberOfSubmitters} uploads successful`,
+          header: $localize`:@@app.toast.header.answer-sheet-upload:Answer Sheet Upload`,
+          body: $localize`:@@app.toast.body.answer-sheet-upload-successful.zip:Upload finished: ${results.reduce((acc, cur) => cur.status === 'fulfilled' ? acc + 1 : acc, 0)} / ${numberOfSubmitters} uploads successful`,
         });
       })
       .finally(() => {
@@ -144,8 +140,8 @@ export class AnswerSheetUploader {
 
   showWarning(message?: string): void {
     this.toastService.show({
-      header: 'Warning',
-      body: 'Failed to upload answer sheet: ' + (message ?? '[unknown error]'),
+      header: $localize`:@@app.toast.header.answer-sheet-upload:Answer Sheet Upload`,
+      body: `:@@app.toast.body.answer-sheet-upload-failed.warning:Failed to upload answer sheet: ` + (message ?? '[unknown error]'),
       classname: 'bg-danger text-white',
       delay: -1
     })

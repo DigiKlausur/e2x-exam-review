@@ -1,54 +1,54 @@
 <form [formGroup]="examForm">
   <div class="row">
     <div class="col-3">
-      <label class="form-label">Semester *</label>
+      <label class="form-label" i18n="@@app.form.label.semester">Semester *</label>
       <app-semester-input appShowInvalid formControlName="semester"></app-semester-input>
     </div>
     <div class="col">
-      <label class="form-label">Title *</label>
+      <label class="form-label" i18n="@@app.form.label.exam-title">Title *</label>
       <input class="form-control" appShowInvalid formControlName="title" type="text">
     </div>
   </div>
   <div class="row mt-3">
     <div class="col-2">
-      <label class="form-label">Exam Date *</label>
+      <label class="form-label" i18n="@@app.form.label.exam-date">Exam Date *</label>
       <app-date-input appShowInvalid formControlName="date"></app-date-input>
     </div>
     <div class="col-5">
-      <label class="form-label">Primary Examiner *</label>
+      <label class="form-label" i18n="@@app.form.label.primary-examiner">Primary Examiner *</label>
       <app-user-search-input appShowInvalid formControlName="primaryExaminer"></app-user-search-input>
     </div>
     <div class="col-5">
-      <label class="form-label">Secondary Examiner</label>
+      <label class="form-label" i18n="@@app.form.label.secondary-examiner">Secondary Examiner</label>
       <app-user-search-input appShowInvalid formControlName="secondaryExaminer"></app-user-search-input>
     </div>
   </div>
   <div class="row mt-3" formGroupName="reviewParameters" [(ngbCollapse)]="collapseReviewSettings" #collapse="ngbCollapse">
     <div class="col-2">
-      <label class="form-label">Review Start</label>
+      <label class="form-label" i18n="@@app.form.label.review-start">Review Start</label>
       <app-date-input appShowInvalid formControlName="startDate"></app-date-input>
     </div>
     <div class="col-2">
-      <label class="form-label">Review End</label>
+      <label class="form-label" i18n="@@app.form.label.review-end">Review End</label>
       <app-date-input appShowInvalid formControlName="endDate"></app-date-input>
     </div>
     <div class="col-auto">
       <div class="form-check form-switch" style="margin-top: 2.5rem">
         <input class="form-check-input" formControlName="showDownloadButton" type="checkbox" role="switch" id="showDownloadButtonSwitch">
-        <label class="form-check-label" for="showDownloadButtonSwitch">Show Download Button</label>
+        <label class="form-check-label" for="showDownloadButtonSwitch"  i18n="@@app.form.label.show-download-button">Show Download Button</label>
       </div>
     </div>
     <div class="col-auto">
       <div class="form-check form-switch" style="margin-top: 2.5rem">
         <input class="form-check-input" formControlName="showTextLayer" type="checkbox" role="switch" id="showTextLayerSwitch">
-        <label class="form-check-label" for="showTextLayerSwitch">Show Text Layer</label>
+        <label class="form-check-label" for="showTextLayerSwitch"  i18n="@@app.form.label.show-text-layer">Show Text Layer</label>
       </div>
     </div>
   </div>
   <div class="d-flex justify-content-center mt-3">
-    <a (click)="collapse.toggle()" role="button">@if(collapseReviewSettings) {<i class="bi bi-caret-down-fill"></i> show} @else {<i class="bi bi-caret-up-fill"></i> hide} exam review settings</a>
+    <a (click)="collapse.toggle()" role="button" i18n="@@app.exam-editor.details-toggle">@if(collapseReviewSettings) {<i class="bi bi-caret-down-fill"></i> show} @else {<i class="bi bi-caret-up-fill"></i> hide} exam review settings</a>
   </div>
   <div class="d-flex justify-content-end gap-2">
-    <button class="btn btn-primary" (click)="saveExam()"><i class="bi bi-floppy me-2"></i><span>Save</span></button>
+    <button class="btn btn-primary" (click)="saveExam()"><i class="bi bi-floppy me-2"></i><span  i18n="@@app.form.save-button">Save</span></button>
   </div>
 </form>

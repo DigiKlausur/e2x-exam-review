@@ -12,10 +12,10 @@ enum loadingStates {
 }
 
 const loadingMessages: Record<loadingStates, string> = {
-  [loadingStates.INITIAL]: 'Authenticating...',
-  [loadingStates.LOADING]: 'Loading...',
-  [loadingStates.LOADED]: 'Loading finished!',
-  [loadingStates.FAILED]: 'Failed to load!'
+  [loadingStates.INITIAL]: $localize`:@@app.spinner.pdf-viewer.message.authenticating:Authenticating...`,
+  [loadingStates.LOADING]: $localize`:@@app.spinner.pdf-viewer.message.loading:Loading...`,
+  [loadingStates.LOADED]: $localize`:@@app.spinner.pdf-viewer.message.loading-finished:Loading finished!`,
+  [loadingStates.FAILED]: $localize`:@@app.spinner.pdf-viewer.message.loading-failed:Failed to load!`
 };
 
 @Component({

@@ -1,21 +1,21 @@
 <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
   <div class="container">
-    <a class="navbar-brand" href="#">e²x Exam Review</a>
+    <a class="navbar-brand" href="#" i18n="@@app.navbar.branding">e²x Exam Review</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
         <li class="nav-item" [hidden]="!isStudent">
-          <a class="nav-link" routerLink="review" routerLinkActive="active" >Review</a>
+          <a class="nav-link" routerLink="review" routerLinkActive="active" i18n="@@app.navbar.item.review" >Review</a>
         </li>
         <li class="nav-item" [hidden]="!isLecturer">
-          <a class="nav-link" routerLink="manage" routerLinkActive="active" >Manage</a>
+          <a class="nav-link" routerLink="manage" routerLinkActive="active" i18n="@@app.navbar.item.manage" >Manage</a>
         </li>
       </ul>
       <div class="ms-auto d-flex align-items-center gap-3">
         @if(authenticatedUser) {<span class="text-white">{{authenticatedUser | userDisplayName}}</span>}
-        <button class="btn btn-sm btn-logoff" (click)="handleLogout()"><span>Logout</span><i class="bi bi-box-arrow-right"></i></button>
+        <button class="btn btn-sm btn-logoff" (click)="handleLogout()"><span i18n="@@app.navbar.logout-button">Logout</span><i class="bi bi-box-arrow-right"></i></button>
       </div>
     </div>
   </div>

@@ -110,8 +110,8 @@ export class ExamEditor implements OnChanges {
 
   private showSuccessfulResponse(): void {
     this.toastService.show({
-      header: 'Exam Editor',
-      body: 'Exam has been saved successfully.',
+      header: $localize`:@@app.toast.header.exam-editor:Exam Editor`,
+      body: $localize`:@@app.toast.body.exam-saved-successfully:Exam has been saved successfully.`,
       classname: 'bg-warn',
     });
   }
@@ -119,8 +119,8 @@ export class ExamEditor implements OnChanges {
   private showErrorResponse(error: HttpErrorResponse): void {
     console.warn('Failed to save exam:', error.error ?? error);
     this.toastService.show({
-      header: 'Exam Editor: Error',
-      body: 'Failed to save exam!',
+      header: $localize`:@@app.toast.header.exam-editor:Exam Editor`,
+      body: $localize`:@@app.toast.body.exam-save-failed:Failed to save exam!`,
       classname: 'bg-danger text-white',
       delay: -1,
     });

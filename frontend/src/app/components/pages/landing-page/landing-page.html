@@ -1,6 +1,6 @@
 <div class="container py-4">
   @if (authFailed){
-    <ngb-alert class="alert-danger" [dismissible]="false">It seems that your account does not have the permissions, that are necessary to use this service.</ngb-alert>
+    <ngb-alert class="alert-danger" [dismissible]="false" i18n="@@app.alert.unsufficiant-permissions" >It seems that your account does not have the permissions, that are necessary to use this service.</ngb-alert>
   }
   <div class="d-flex flex-column justify-content-center align-items-center gap-2 pt-5">
     @if (authFailed){
@@ -8,12 +8,12 @@
         <i class="bi bi-x-lg"></i>
         <span class="visually-hidden">Authentication failed.</span>
       </div>
-      <span>Authentication failed.</span>
+      <span i18n="@@app.spinner.authentication-failed">Authentication failed.</span>
     } @else {
       <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
         <span class="visually-hidden">Authenticating...</span>
       </div>
-      <span>Authenticating...</span>
+      <span i18n="@@app.spinner.authenticating">Authenticating...</span>
     }
   </div>
 </div>
