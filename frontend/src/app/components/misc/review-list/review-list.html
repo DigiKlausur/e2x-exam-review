@@ -1,0 +1,37 @@
+<table class="table">
+  <thead>
+  <tr>
+    <th i18n="@@app.table.header.semster">Semester</th>
+    <th i18n="@@app.table.header.exam-title">Exam Title</th>
+    <th i18n="@@app.table.header.primary-examiner">Primary Examiner</th>
+    <th i18n="@@app.table.header.secondary-examiner">Secondary Examiner</th>
+    <th i18n="@@app.table.header.Date">Date</th>
+  </tr>
+  </thead>
+  <tbody>
+    @for (answerSheet of answerSheets; track answerSheet._id){
+      <tr [class.disabled]="!isAvailable(answerSheet)" [routerLink]="isSingleFile(answerSheet) ? [answerSheet._id, answerSheet.files[0]._id] : undefined " [attr.role]="isSingleFile(answerSheet) ? 'button' : undefined">
+        <td>{{answerSheet.exam.semester | semesterDisplayName}}</td>
+        <td>{{answerSheet.exam.title}}</td>
+        <td>{{answerSheet.exam.primaryExaminer | userDisplayName}}</td>
+        <td>{{answerSheet.exam.secondaryExaminer | userDisplayName}}</td>
+        <td>{{answerSheet.exam.date | date}}</td>
+      </tr>
+      @if (!isSingleFile(answerSheet)) {
+        @for (file of answerSheet.files; track file._id) {
+          <tr class="answer-sheet-file" [routerLink]="[answerSheet._id, file._id]" role="button">
+            <td class="text-end fs-5 py-0 fw-lighter align-middle">@if($index < (answerSheet.files.length - 1)){├}@else{└}</td>
+            <td>{{file.originalFileName}}</td>
+            <td colspan="3">
+            </td>
+          </tr>
+        }
+      }
+    } @empty {
+      <tr class="disabled">
+        <td class="text-center fst-italic" colspan="5" i18n="@@app.table.body.no-exams-notice">No exams available</td>
+      </tr>
+    }
+  </tbody>
+</table>
+

@@ -1,0 +1,10 @@
+tr[role=button]:not(.disabled):hover td {
+  background-color: var(--bs-secondary-bg);
+}
+
+.answer-sheet-file{
+  background-color: var(--bs-gray-100);
+  td {
+    background-color: transparent;
+  }
+}
