@@ -3,7 +3,7 @@ import {ExamEditor} from '../../misc/exam-editor/exam-editor';
 import {IAnswerSheet, IExam, IExamReviewParameters} from 'e2x-exam-review-backend';
 import {ActivatedRoute} from '@angular/router';
 import {ManagementService} from '../../../services/management-service/management-service';
-import {NgbAlert} from '@ng-bootstrap/ng-bootstrap';
+import {NgbAlert, NgbPopover} from '@ng-bootstrap/ng-bootstrap';
 import {AnswerSheetList} from '../../misc/answer-sheet-list/answer-sheet-list';
 import {AnswerSheetUploader} from '../../misc/answer-sheet-uploader/answer-sheet-uploader';
 
@@ -13,7 +13,8 @@ import {AnswerSheetUploader} from '../../misc/answer-sheet-uploader/answer-sheet
     ExamEditor,
     NgbAlert,
     AnswerSheetList,
-    AnswerSheetUploader
+    AnswerSheetUploader,
+    NgbPopover
   ],
   templateUrl: './exam-editor-page.html',
   styleUrl: './exam-editor-page.scss',

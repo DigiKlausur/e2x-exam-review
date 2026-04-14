@@ -1,11 +1,11 @@
 <table class="table">
   <thead>
     <tr>
-      <th>Semester</th>
-      <th>Exam Title</th>
-      <th>Primary Examiner</th>
-      <th>Secondary Examiner</th>
-      <th>Date</th>
+      <th i18n="@@app.table.header.semster">Semester</th>
+      <th i18n="@@app.table.header.exam-title">Exam Title</th>
+      <th i18n="@@app.table.header.primary-examiner">Primary Examiner</th>
+      <th i18n="@@app.table.header.secondary-examiner">Secondary Examiner</th>
+      <th i18n="@@app.table.header.Date">Date</th>
     </tr>
   </thead>
   <tbody>
@@ -19,7 +19,7 @@
       </tr>
     } @empty {
       <tr class="disabled">
-        <td class="text-center fst-italic" colspan="5">No exams available</td>
+        <td class="text-center fst-italic" colspan="5" i18n="@@app.table.body.no-exams-notice">No exams available</td>
       </tr>
     }
   </tbody>

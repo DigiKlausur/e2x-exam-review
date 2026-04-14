@@ -3,14 +3,23 @@
     <app-exam-editor [examId]="examId"></app-exam-editor>
   </div>
   @if(this.examId === 'new') {
-    <ngb-alert [dismissible]="false" type="info">
+    <ngb-alert [dismissible]="false" type="info" i18n="@@app.alert.save-exam-before-upload-info">
       An exam needs to be saved once, before answer sheets can be added.
     </ngb-alert>
   } @else {
-    <div class="card p-4">
-      <label>Answer Sheets</label>
+    <div class="answer-sheets card p-4">
+      <label><span i18n="@@app.label.answer-sheets-section">Answer Sheets</span> <i class="bi bi-info-circle ms-2" role="button" [ngbPopover]="answerSheetUploaderDescription" popoverTitle="Supported formats" placement="right"></i></label>
       <app-answer-sheet-uploader class="mt-3" [examId]="examId" (onChange)="loadAnswerSheets()"></app-answer-sheet-uploader>
       <app-answer-sheet-list class="mt-3" [answerSheets]="answerSheets" (onChange)="loadAnswerSheets()"></app-answer-sheet-list>
     </div>
   }
 </div>
+
+<ng-template #answerSheetUploaderDescription i18n="@@app.popover.answer-sheet-upload-info">
+  Answer sheets can bee uploaded in bulk. Two kinds of bulk-upload are supported:
+  <ul>
+    <li>Just uploading a bunch of files. Each of the file's names must contain the student-ID of the corresponding student.</li>
+    <li>Uploading a zip-archive containing a directory for each student. The directory's name must contain the student-ID.</li>
+  </ul>
+  Either way, only PDF files are supported as answer sheets.
+</ng-template>

@@ -39,6 +39,10 @@
           },
           "configurations": {
             "production": {
+              "localize": [
+                "en",
+                "de"
+              ],
               "budgets": [
                 {
                   "type": "initial",
@@ -63,6 +67,28 @@
                   "with": "src/environments/environment.development.ts"
                 }
               ]
+            },
+            "de": {
+              "localize": [
+                "de"
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.development.ts"
+                }
+              ]
+            },
+            "en": {
+              "localize": [
+                "en"
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.development.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -75,12 +101,22 @@
             },
             "development": {
               "buildTarget": "e2x-exam-review-frontend:build:development"
+            },
+            "development-de": {
+              "buildTarget": "e2x-exam-review-frontend:build:development,de"
             }
+
           },
           "defaultConfiguration": "development"
         },
         "test": {
           "builder": "@angular/build:unit-test"
+        }
+      },
+      "i18n": {
+        "sourceLocale": "en",
+        "locales": {
+          "de": "src/locale/de.json"
         }
       }
     }

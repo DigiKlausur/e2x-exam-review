@@ -5,8 +5,10 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start-de": "ng serve --configuration=development-de",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
+    "xi18n": "ng extract-i18n --format=json --output-path src/locale --out-file en.json",
     "test": "ng test"
   },
   "private": true,
@@ -21,6 +23,7 @@
     "@fontsource/inter": "^5.2.8",
     "@ng-bootstrap/ng-bootstrap": "^20.0.0",
     "@popperjs/core": "^2.11.8",
+    "@zip.js/zip.js": "^2.8.26",
     "angular-auth-oidc-client": "21.0.1",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",

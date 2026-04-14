@@ -1,10 +1,8 @@
 <table class="table">
   <thead>
     <tr>
-      <th>Student ID</th>
-      <!--<th>Firstname</th>
-      <th>Lastname</th>-->
-      <th>File</th>
+      <th i18n="@@app.table.header.student-id">Student ID</th>
+      <th i18n="@@app.table.header.file-name">File</th>
       <th></th>
     </tr>
   </thead>
@@ -12,40 +10,76 @@
     @for (answerSheet of answerSheets; track answerSheet._id){
       <tr>
         <td>{{answerSheet.submitter.studentId}}</td>
-        <!--<td>{{answerSheet.submitter.firstname}}</td>
-        <td>{{answerSheet.submitter.lastname}}</td>-->
-        <td>{{answerSheet.files[0].originalFileName}}</td>
-        <td class="text-end w-auto">
-          <div class="controls">
-            <i class="bi bi-eye" role="button" [routerLink]="['/','review', answerSheet._id]" ngbTooltip="View answer sheet"></i>
-            <i class="bi bi-trash" role="button" (click)="handleDeleteAnswerSheet(answerSheet)" ngbTooltip="Delete answer sheet"></i>
-          </div>
-        </td>
+        @if (answerSheet.files.length === 1){
+          <td>{{answerSheet.files[0].originalFileName}}</td>
+          <td class="text-end w-auto">
+            <div class="controls">
+              <i class="bi bi-eye" role="button" [routerLink]="['/','review', answerSheet._id, answerSheet.files[0]._id]" i18n-ngbTooltip="@@app.button.tooltip.view-answer-sheet" ngbTooltip="View answer sheet"></i>
+              <i class="bi bi-trash" role="button" (click)="handleDeleteAnswerSheet(answerSheet)" i18n-ngbTooltip="@@app.button.tooltip.delete-answer-sheet" ngbTooltip="Delete answer sheet"></i>
+            </div>
+          </td>
+        } @else {
+          <td></td>
+          <td class="text-end w-auto">
+            <div class="controls">
+              <i class="bi bi-trash" role="button" (click)="handleDeleteAnswerSheet(answerSheet)" i18n-ngbTooltip="@@app.button.tooltip.delete-answer-sheet" ngbTooltip="Delete answer sheet"></i>
+            </div>
+          </td>
+        }
       </tr>
+      @if (answerSheet.files.length > 1) {
+        @for (file of answerSheet.files; track file._id) {
+          <tr class="answer-sheet-file">
+            <td class="text-end fs-5 py-0 fw-lighter align-middle">@if($index < (answerSheet.files.length - 1)){├}@else{└}</td>
+            <td>{{file.originalFileName}}</td>
+            <td class="text-end w-auto">
+              <div class="controls">
+                <i class="bi bi-eye" role="button" [routerLink]="['/','review', answerSheet._id, file._id]" i18n-ngbTooltip="@@app.button.tooltip.view-answer-sheet-file" ngbTooltip="View answer sheet file"></i>
+                <i class="bi bi-trash" role="button" (click)="handleDeleteAnswerSheetFile(answerSheet, file)" i18n-ngbTooltip="@@app.button.tooltip.delete-answer-sheet-file" ngbTooltip="Delete answer sheet file"></i>
+              </div>
+            </td>
+          </tr>
+        }
+      }
     } @empty {
       <tr class="disabled">
-        <td class="text-center fst-italic" colspan="3">No answer sheets available</td>
+        <td class="text-center fst-italic" colspan="3" i18n="@@app.table.body.no-answer-sheets-notice">No answer sheets available</td>
       </tr>
     }
   </tbody>
   @if (answerSheets.length > 0){
     <tfoot>
       <tr>
-        <td colspan="3" class="text-end fst-italic">{{answerSheets.length}} Answer Sheet(s)</td>
+        <td colspan="3" class="text-end fst-italic" i18n="@@app.table.footer.answer-sheet-stats">{{answerSheets.length}} Answer Sheet(s), {{numberOfFiles}} File(s)</td>
       </tr>
     </tfoot>
   }
 </table>
-<ng-template #confirmDeleteModal let-modal>
+
+<ng-template #confirmDeleteAnswerSheetModal let-modal>
   <div class="modal-header">
-    <h4 class="modal-title" >Delete Answer Sheet</h4>
+    <h4 class="modal-title" i18n="@@app.modal.title.delete-answer-sheet" >Delete Answer Sheet</h4>
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
   </div>
-  <div class="modal-body">
-    Are your sure, that you want to delete the answer sheet of student <span class="font-monospace">{{selectedAnswerSheet?.submitter?.studentId}}</span> @if(selectedAnswerSheet?.submitter){{{selectedAnswerSheet?.submitter! | userDisplayName}}}?
+  <div class="modal-body" i18n="@@app.modal.body.delete-answer-sheet">
+    Are your sure, that you want to delete the answer sheet of student <span class="font-monospace">{{selectedAnswerSheet?.submitter?.studentId}}</span>&nbsp;@if(selectedAnswerSheet?.submitter){{{selectedAnswerSheet?.submitter! | userDisplayName}}}?
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Abort')"><i class="bi bi-x-lg"></i><span>Abort</span></button>
-    <button type="button" class="btn btn-danger" (click)="confirmDelete()"><i class="bi bi-trash"></i><span>Delete</span></button>
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Abort')"><i class="bi bi-x-lg"></i><span i18n="@@app.modal.button.abort">Abort</span></button>
+    <button type="button" class="btn btn-danger" (click)="confirmDeleteAnswerSheet()"><i class="bi bi-trash"></i><span i18n="@@app.modal.button.delete">Delete</span></button>
+  </div>
+</ng-template>
+
+<ng-template #confirmDeleteAnswerSheetFileModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" i18n="@@app.modal.title.delete-answer-sheet-file" >Delete Answer Sheet File</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body" i18n="@@app.modal.body.delete-answer-sheet-file">
+    Are your sure, that you want to delete <span class="font-monospace">{{selectedFile?.originalFileName}}</span>&nbsp; from the answer sheet of student <span class="font-monospace">{{selectedAnswerSheet?.submitter?.studentId}}</span>&nbsp;@if(selectedAnswerSheet?.submitter){{{selectedAnswerSheet?.submitter! | userDisplayName}}}?
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Abort')"><i class="bi bi-x-lg"></i><span i18n="@@app.modal.button.abort">Abort</span></button>
+    <button type="button" class="btn btn-danger" (click)="confirmDeleteAnswerSheetFile()"><i class="bi bi-trash"></i><span i18n="@@app.modal.button.delete">Delete</span></button>
   </div>
 </ng-template>
