@@ -1,5 +1,8 @@
 export interface Environment {
   apiUrl: string;
+  imprintUrl: string;
+  privacyUrl: string;
+  bugReportEmail: string;
   studentIdRegex: string;
   openId: {
     authorityUrl: string;

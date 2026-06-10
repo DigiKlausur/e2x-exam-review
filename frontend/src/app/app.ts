@@ -7,12 +7,13 @@ import {hasRole} from './utils/AccessToken';
 import {environment} from '../environments/environment';
 import {ReviewService} from './services/review-service/review-service';
 import {ManagementService} from './services/management-service/management-service';
+import { Footer } from './components/misc/footer/footer';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Navbar, ToastsContainer],
+  imports: [RouterOutlet, Navbar, ToastsContainer, Footer],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
 })
 export class App {
   private readonly oidcSecurityService: OidcSecurityService = inject(OidcSecurityService);
@@ -23,20 +24,18 @@ export class App {
   ngOnInit(): void {
     this.oidcSecurityService.checkAuth().subscribe((loginResponse: LoginResponse) => {
       if (loginResponse.isAuthenticated) {
-        this.oidcSecurityService.getPayloadFromAccessToken().subscribe(token => {
-          if(hasRole(token, environment.openId.roleMappings.lecturer)) {
-            return this.managementService.updateUserData().subscribe(() => {
-            });
-          } else if(hasRole(token, environment.openId.roleMappings.student)) {
-            return this.reviewService.updateStudentData().subscribe(() => {
-            });
+        this.oidcSecurityService.getPayloadFromAccessToken().subscribe((token) => {
+          if (hasRole(token, environment.openId.roleMappings.lecturer)) {
+            return this.managementService.updateUserData().subscribe(() => {});
+          } else if (hasRole(token, environment.openId.roleMappings.student)) {
+            return this.reviewService.updateStudentData().subscribe(() => {});
           }
           return;
         });
       } else {
         this.login();
       }
-    })
+    });
   }
 
   login(): void {

@@ -1,0 +1,13 @@
+ul{
+  list-style: none;
+  padding: 0;
+  margin: 0.25rem 0;
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+
+  a:not(:hover) {
+    text-decoration: none !important;
+    color: var(--bs-body-color) !important;
+  }
+}
