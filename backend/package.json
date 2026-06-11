@@ -6,6 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "npx tsc",
+    "start": "node ./dist/app.js",
     "dev": "nodemon src/app.ts",
     "openApi": "node src/openapi-gen.js"
   },
