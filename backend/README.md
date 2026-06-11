@@ -20,6 +20,8 @@ As the backend is written in TypeScript, it must be transpiled to JavaScript bef
 npm run build
 ```
 
+The build output is located in the subdirectory `dist\`. Running the backend with given start script (see next section) uses this directory.
+
 ## Running the backend
 
 After transpilation, the backend can be started with the following command. Make sure to set all the [environment variables](#configuration-environment-variables) that are needed.
