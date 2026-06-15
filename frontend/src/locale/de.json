@@ -38,6 +38,7 @@
     "app.navbar.item.review": "Einsicht",
     "app.navbar.logout-button": "Logout",
     "app.popover.answer-sheet-upload-info": " Einreichungen können gesammelt hochgeladen werden. Zwei Varianten des gesammelten Uploads werden unterstützt: {$START_UNORDERED_LIST}{$START_LIST_ITEM}Dateien unstrukturiert hochladen. Jeder Dateiname muss die Matrikelnummer des/der entsprechenden Studierenden enthalten.{$CLOSE_LIST_ITEM}{$START_LIST_ITEM}Ein Zip-Archiv hochladen, welches für jede(n) Studierende(n) ein Verzeichnis enthält. Der Name des Verzeichnisses muss die Matrikelnummer enthalten.{$CLOSE_LIST_ITEM}{$CLOSE_UNORDERED_LIST} Unabhängig der genutzten Upload-Variante werden nur PDF-Dokumente unterstützt.\n",
+    "app.popover.answer-sheet-upload-info-title": "Unterstützte Formate",
     "app.popover.text-layer.description": "Wenn der Text Layer aktiviert wurde, können Anwender:innen Text auswählen, kopieren und nach diesem suchen. Unabhängig von Ihrer Konfiguration, kann der Text Layer nur angezeigt werden, wenn die PDF-Datei diese Informationen enthält.",
     "app.popover.text-layer.title": "Text Layer",
     "app.spinner.authenticating": "Authentifiziere...",
