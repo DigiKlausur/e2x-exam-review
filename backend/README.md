@@ -36,6 +36,7 @@ npm run start
 |------------------------------|--------------------------------------|---------------------------------------------------------------------|
 | `SERVER_PORT`                | `3000`                               |                                                                     |
 | `ALLOWED_ORIGIN`             | `http://localhost:4200`              | allowed CORS origin                                                 |
+| `FILE_STORAGE_LOCATION`      | `./answer-sheets`                    | location, where answer sheet PDFs are stored                        |
 | `JWT_ISSUER`                 | (mandatory)                          | expected issuer of the JWT (will be matched with the iss field)     |
 | `JWT_SECRET`                 | (mandatory)                          | public key for JWT verification                                     |
 | `JWT_LECTURER_ROLE`          | `lecturer`                           | role that must be present in the JWT to identify a teacher/lecturer |

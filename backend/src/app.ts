@@ -8,6 +8,7 @@ import {applyManagementRoutes} from "./routes/managementApi";
 import {expressjwt} from "express-jwt";
 import {config} from "./globals";
 
+export const ANSWER_SHEETS_PATH = "answer-sheets";
 
 const app: Application = express();
 app.use(express.json());
@@ -32,8 +33,7 @@ const jwtMiddleware = expressjwt({
 });
 
 app.use('/api/v1', jwtMiddleware, apiRouter);
-app.use('/', express.static('../frontend/dist/e2x-review-frontend/browser'));
-app.use('/answer-sheets', jwtMiddleware, answerSheetProtection, express.static('./answer-sheets', {index: false}));
+app.use('/' + ANSWER_SHEETS_PATH, jwtMiddleware, answerSheetProtection, express.static(config.fileStorageLocation, {index: false}));
 
 const authString = config.mongoDb.username ?  config.mongoDb.username + (config.mongoDb.password ? ':' + config.mongoDb.password : '') + '@' : '';
 

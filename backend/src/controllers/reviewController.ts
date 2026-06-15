@@ -29,7 +29,7 @@ export async function getAnswerSheets(req: JwtRequest, res: Response) {
       await AnswerSheet.find({ submitter: student })
         .populate({
           path: "exam",
-          populate: ["primaryExaminer", "secondaryExaminer"],
+          populate: ["primaryExaminer", "secondaryExaminer"]
         })
         .sort([
           ["exam.semester.year", -1],

@@ -1,5 +1,5 @@
 @if (accessToken){
-  <ngx-extended-pdf-viewer [src]="environment.apiUrl + '/' + file.filePath"
+  <ngx-extended-pdf-viewer [src]="fileUrl"
                            backgroundColor="transparent"
                            [showRotateButton]="false"
                            [showHighlightEditor]="false"
@@ -30,7 +30,7 @@
                            (pdfLoaded)="loadingState = loadingStates.LOADED"
   ></ngx-extended-pdf-viewer>
   @if(loadingState !== loadingStates.LOADED){
-    <div class="position-absolute top-0 w-100 d-flex flex-column justify-content-center align-items-center gap-2 pt-5">
+    <div class="position-absolute top-50 w-100 d-flex flex-column justify-content-center align-items-center gap-2 pt-5">
       @if (loadingState === loadingStates.FAILED){
         <div class="text-danger" style="width: 3rem; height: 3rem; font-size: 3rem; line-height: 3rem; " role="status">
           <i class="bi bi-x-lg"></i>

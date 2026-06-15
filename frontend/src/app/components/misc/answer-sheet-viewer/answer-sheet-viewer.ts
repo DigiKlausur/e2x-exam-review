@@ -42,6 +42,10 @@ export class AnswerSheetViewer implements OnInit {
     });
   }
 
+  get fileUrl(): string {
+    return `${environment.apiUrl}/${this.file.filePath}`;
+  }
+
   protected readonly loadingStates = loadingStates;
   protected readonly loadingMessages = loadingMessages;
 }

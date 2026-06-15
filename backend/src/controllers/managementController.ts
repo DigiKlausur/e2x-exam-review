@@ -8,6 +8,9 @@ import {Student} from "../models/Student";
 import { IAnswerSheet, IExam, IFile, IUser } from "../interfaces";
 import {Request as JwtRequest} from 'express-jwt';
 import {getCurrentUser, getUserFromJwt} from "../util/user";
+import * as path from 'path';
+import {config} from "../globals";
+import {ANSWER_SHEETS_PATH} from "../app";
 
 export async function getExamsByExaminer(req: Request, res: Response) {
     /*
@@ -420,7 +423,7 @@ export async function addAnswerSheet(req: Request, res: Response) {
     });
   }
 
-  const directoryPath: string = `answer-sheets/${exam._id}`;
+  const directoryPath: string = path.join(config.fileStorageLocation, exam._id!.toString());
   await mkdir(directoryPath, { recursive: true });
 
   const files: (Omit<IFile, "_id"> & { _id: ObjectId })[] = (
@@ -429,7 +432,8 @@ export async function addAnswerSheet(req: Request, res: Response) {
     const fileId = new ObjectId();
     return {
       _id: fileId,
-      filePath: `${directoryPath}/${fileId}.pdf`,
+      sysFilePath: path.join(directoryPath,`${fileId}.pdf`),
+      filePath: `${ANSWER_SHEETS_PATH}/${exam._id!.toString()}/${fileId}.pdf`,
       originalFileName: file.originalname,
     };
   });
@@ -462,7 +466,7 @@ export async function addAnswerSheet(req: Request, res: Response) {
         files.map(
           async (file: Omit<IFile, "_id"> & { _id: ObjectId }, index: number) =>
             writeFile(
-              file.filePath,
+              file.sysFilePath,
               (req.files as Express.Multer.File[])[index]!.buffer,
               {},
             ),
@@ -503,7 +507,7 @@ export async function deleteAnswerSheet(req: Request, res: Response) {
             }*/ //todo fix
             if(!answerSheet) {throw Error('answer sheet not found');}
             await AnswerSheet.deleteOne({_id: answerSheet._id as string});
-            await Promise.all(answerSheet.files.map(async (file) => rm(file.filePath)));
+            await Promise.all(answerSheet.files.map(async (file) => rm(file.sysFilePath)));
             res.send();
         });
 }
@@ -545,7 +549,7 @@ export async function deleteAnswerSheetFile(req: Request, res: Response) {
             }else {
                 await AnswerSheet.updateOne({_id: answerSheet._id as string}, {$pull: {files: {_id: file._id}}});
             }
-            await rm(file.filePath);
+            await rm(file.sysFilePath);
             res.send();
         });
 }

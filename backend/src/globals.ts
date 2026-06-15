@@ -1,6 +1,9 @@
+import * as path from 'path';
+
 export const config = {
   serverPort: process.env.SERVER_PORT ?? "3000",
   corsOrigin: process.env.ALLOWED_ORIGIN ?? "http://localhost:4200",
+  fileStorageLocation: path.resolve(process.env.FILE_STORAGE_LOCATION ?? './answer-sheets'),
   jwt: {
     secret: process.env.JWT_SECRET,
     issuer: process.env.JWT_ISSUER,
