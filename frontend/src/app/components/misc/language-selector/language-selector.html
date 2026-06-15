@@ -1,0 +1,4 @@
+@for (language of languages; track language.code){
+  <a href="#" [class.disabled]="language.code === currentLocale" (click)="selectLanguage($event, language.code)" >{{language.name}}</a>
+  @if(!$last){ | }
+}

@@ -1,9 +1,12 @@
 import { Component } from '@angular/core';
 import { environment } from '../../../../environments/environment';
+import {LanguageSelector} from '../language-selector/language-selector';
 
 @Component({
   selector: 'app-footer',
-  imports: [],
+  imports: [
+    LanguageSelector
+  ],
   templateUrl: './footer.html',
   styleUrl: './footer.scss',
 })

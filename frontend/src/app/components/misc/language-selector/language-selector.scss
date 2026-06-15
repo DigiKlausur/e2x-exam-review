@@ -1,0 +1,10 @@
+a{
+  &:not(:hover), &.disabled{
+    color: var(--bs-body-color);
+    text-decoration: none;
+  }
+  &.disabled{
+    cursor: default;
+    opacity: 0.7;
+  }
+}
