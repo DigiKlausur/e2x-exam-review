@@ -10,6 +10,8 @@ import {Router} from '@angular/router';
 import { ToastService } from '../../../services/toast-service/toast-service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ShowInvalid } from '../../../directives/show-invalid/show-invalid';
+import {DateTimeInput} from '../../inputs/date-time-input/date-time-input.component';
+import {dateSequenceValidator, minDateValidator} from '../../../utils/DateUtil';
 
 @Component({
   selector: 'app-exam-editor',
@@ -21,6 +23,7 @@ import { ShowInvalid } from '../../../directives/show-invalid/show-invalid';
     ReactiveFormsModule,
     ShowInvalid,
     NgbPopover,
+    DateTimeInput,
   ],
   templateUrl: './exam-editor.html',
   styleUrl: './exam-editor.scss',
@@ -34,6 +37,8 @@ export class ExamEditor implements OnChanges {
   private isNewExam: boolean = false;
   @Input() examId!: string;
   protected exam?: IExam;
+
+  private readonly now: Date = new Date();
 
   protected examForm: FormGroup = new FormGroup({
     title: new FormControl<string>('', [
@@ -50,7 +55,8 @@ export class ExamEditor implements OnChanges {
       endDate: new FormControl<Date | null>(null),
       showDownloadButton: new FormControl<boolean>(false),
       showTextLayer: new FormControl<boolean>(false),
-    }),
+    },
+    {validators: dateSequenceValidator('startDate', 'endDate'),}),
   });
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -92,6 +98,7 @@ export class ExamEditor implements OnChanges {
 
   saveExam(): void {
     this.examForm.markAllAsTouched();
+    console.log(this.examForm.get('reviewParameters')?.errors, this.examForm.hasError('dateSequence', 'reviewParameters'));
     if(!this.examForm.valid) return;
     if (this.isNewExam) {
       this.managementService.createExam(this.getFormValues()).subscribe({

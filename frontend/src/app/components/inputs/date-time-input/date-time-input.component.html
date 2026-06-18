@@ -11,3 +11,4 @@
   />
   <button class="btn btn-primary" (click)="d.toggle()" type="button"><i class="bi bi-calendar-event"></i></button>
 </div>
+<ngb-timepicker [(ngModel)]="currentTime" (ngModelChange)="handleValueChange()" [class.is-invalid]="isInvalid" [spinners]="false"></ngb-timepicker>

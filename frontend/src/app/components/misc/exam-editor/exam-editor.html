@@ -23,30 +23,38 @@
       <app-user-search-input appShowInvalid formControlName="secondaryExaminer"></app-user-search-input>
     </div>
   </div>
-  <div class="row mt-3" formGroupName="reviewParameters" [(ngbCollapse)]="collapseReviewSettings" #collapse="ngbCollapse">
-    <div class="col-2">
+  <div class="row mt-3" formGroupName="reviewParameters">
+    <div class="col-4">
       <label class="form-label" i18n="@@app.form.label.review-start">Review Start</label>
-      <app-date-input appShowInvalid formControlName="startDate"></app-date-input>
+      <app-date-time-input appShowInvalid formControlName="startDate"></app-date-time-input>
     </div>
-    <div class="col-2">
+    <div class="col-4">
       <label class="form-label" i18n="@@app.form.label.review-end">Review End</label>
       <app-date-input appShowInvalid formControlName="endDate"></app-date-input>
+      <app-date-time-input appShowInvalid formControlName="endDate" ></app-date-time-input>
+      @if(examForm.hasError('dateSequence', 'reviewParameters') && (examForm.touched || examForm.dirty)){
+        <div class="invalid-feedback d-block" i18n="app.form.invalid-feedback.end-date-must-succeed-start-date">
+          The end date must succeed the start date!
+        </div>
+      }
     </div>
     <div class="col-auto">
       <div class="form-check form-switch" style="margin-top: 2.5rem">
         <input class="form-check-input" formControlName="showDownloadButton" type="checkbox" role="switch" id="showDownloadButtonSwitch">
-        <label class="form-check-label" for="showDownloadButtonSwitch"  i18n="@@app.form.label.show-download-button">Show Download Button</label>
+        <label class="form-check-label" for="showDownloadButtonSwitch"  i18n="@@app.form.label.show-download-button">Allow Answer-Sheet Download</label>
       </div>
     </div>
+  </div>
+  <div class="row" formGroupName="reviewParameters" [(ngbCollapse)]="collapseReviewSettings" #collapse="ngbCollapse">
     <div class="col-auto">
       <div class="form-check form-switch" style="margin-top: 2.5rem">
         <input class="form-check-input" formControlName="showTextLayer" type="checkbox" role="switch" id="showTextLayerSwitch">
-        <label class="form-check-label" for="showTextLayerSwitch"  i18n="@@app.form.label.show-text-layer">Show Text Layer<i class="bi bi-question-circle ms-2" role="button" (click)="$event.preventDefault()" ngbPopover="If the text layer is enabled, users are able to search, highlight and copy text. Regardless of this configuration, the text layer will only be displayed, if the PDF file contains this information." i18n-ngbPopover="@@app.popover.text-layer.description" popoverTitle="Text Layer" i18n-popoverTitle="@@app.popover.text-layer.title"></i></label>
+        <label class="form-check-label" for="showTextLayerSwitch"  i18n="@@app.form.label.show-text-layer">Allow Interaction with Text<i class="bi bi-question-circle ms-2" role="button" (click)="$event.preventDefault()" ngbPopover="If the text layer is enabled, users are able to search, highlight and copy text. Regardless of this configuration, the text layer will only be displayed, if the PDF file contains this information." i18n-ngbPopover="@@app.popover.text-layer.description" popoverTitle="Text Layer" i18n-popoverTitle="@@app.popover.text-layer.title"></i></label>
       </div>
     </div>
   </div>
   <div class="d-flex justify-content-center mt-3">
-    <a (click)="collapse.toggle()" role="button" i18n="@@app.exam-editor.details-toggle">@if(collapseReviewSettings) {<i class="bi bi-caret-down-fill"></i> show} @else {<i class="bi bi-caret-up-fill"></i> hide} exam review settings</a>
+    <a (click)="collapse.toggle()" role="button" i18n="@@app.exam-editor.details-toggle">@if(collapseReviewSettings) {<i class="bi bi-caret-down-fill"></i> show} @else {<i class="bi bi-caret-up-fill"></i> hide} advanced settings</a>
   </div>
   <div class="d-flex justify-content-end gap-2">
     <button class="btn btn-primary" (click)="saveExam()"><i class="bi bi-floppy me-2"></i><span  i18n="@@app.form.save-button">Save</span></button>
