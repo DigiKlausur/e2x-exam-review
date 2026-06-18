@@ -98,8 +98,15 @@ export class ExamEditor implements OnChanges {
 
   saveExam(): void {
     this.examForm.markAllAsTouched();
-    console.log(this.examForm.get('reviewParameters')?.errors, this.examForm.hasError('dateSequence', 'reviewParameters'));
-    if(!this.examForm.valid) return;
+    if(!this.examForm.valid) {
+      this.toastService.show({
+        header: $localize`:@@app.toast.header.exam-editor:Exam Editor`,
+        body: $localize`:@@app.toast.body.exam-save-validation-error:Input invalid! Please fill in the form according to the instructions.`,
+        classname: 'bg-warning',
+        delay: 10000,
+      });
+      return;
+    }
     if (this.isNewExam) {
       this.managementService.createExam(this.getFormValues()).subscribe({
         next: (response) => {

@@ -30,7 +30,6 @@
     </div>
     <div class="col-4">
       <label class="form-label" i18n="@@app.form.label.review-end">Review End</label>
-      <app-date-input appShowInvalid formControlName="endDate"></app-date-input>
       <app-date-time-input appShowInvalid formControlName="endDate" ></app-date-time-input>
       @if(examForm.hasError('dateSequence', 'reviewParameters') && (examForm.touched || examForm.dirty)){
         <div class="invalid-feedback d-block" i18n="app.form.invalid-feedback.end-date-must-succeed-start-date">
