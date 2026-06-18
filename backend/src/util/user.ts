@@ -6,6 +6,7 @@ import {User} from "../models/User";
 export function getUserFromJwt(request: JwtRequest): IUser | IStudent | undefined {
     if(!request.auth) return undefined;
     return {
+        uniqueId: request.auth[config.jwt.attributeMappings.uniqueId],
         email: request.auth[config.jwt.attributeMappings.email],
         firstname: request.auth[config.jwt.attributeMappings.firstname],
         lastname: request.auth[config.jwt.attributeMappings.lastname],
@@ -15,5 +16,5 @@ export function getUserFromJwt(request: JwtRequest): IUser | IStudent | undefine
 
 export async function getCurrentUser(req: JwtRequest): Promise<IUser | null | undefined> {
     const currentUserData: IUser | undefined = getUserFromJwt(req) as IUser | undefined;
-    return User.findOne({email: currentUserData!.email as string}).lean();
+    return User.findOne({uniqueId: currentUserData!.uniqueId as string}).lean();
 }

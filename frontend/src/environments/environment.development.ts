@@ -10,15 +10,18 @@ export const environment: Environment = {
     authorityUrl: 'http://localhost:8080/auth/realms/e2x-exam-review',
     clientId: 'e2x-exam-review-client',
     attributeMappings: {
+      uniqueId: 'email',
       studentId: 'studentId',
       displayName: 'name',
       firstname: 'given_name',
       lastname: 'family_name',
       email: 'email',
+      roles: 'roles'
     },
     roleMappings: {
       lecturer: 'lecturer',
       student: 'student',
     },
+    scopes: ['openid', 'profile', 'offline_access']
   },
 };

@@ -1,5 +1,6 @@
 import {NextFunction, Request, Response} from "express";
 import {Request as JWTRequest} from "express-jwt";
+import {config} from "../globals";
 
 /**
  * @param spec one / a list of alternative accepted roles
@@ -19,7 +20,7 @@ export function jwtProtect(spec: string | string[]){
 }
 
 export function hasRole(request: JWTRequest, role: string): boolean {
-    return request.auth?.realm_access.roles.includes(role) ?? false;
+    return request.auth?.realm_access[config.jwt.attributeMappings.roles].includes(role) ?? false;
 }
 
 export function accessDenied(request: Request, response: Response, next: NextFunction){
