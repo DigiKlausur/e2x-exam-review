@@ -41,10 +41,12 @@ npm run start
 | `JWT_SECRET`                 | (mandatory)                          | public key for JWT verification                                     |
 | `JWT_LECTURER_ROLE`          | `lecturer`                           | role that must be present in the JWT to identify a teacher/lecturer |
 | `JWT_STUDENT_ROLE`           | `student`                            | role that must be present in the JWT to identify a student          |
+| `JWT_UNIQUE_ID`              | `email`                              | name of the unique-id attribute in the JWT (e.g. Campus-ID)         |
 | `JWT_EMAIL_ATTRIBUTE`        | `email`                              | name of the email attribute in the JWT                              |
 | `JWT_STUDENT_ID_ATTRIBUTE`   | `student_id`                         | name of the student-ID (Matrikelnummer) attribute in the JWT        |
 | `JWT_FIRSTNAME`              | `given_name`                         | name of the given name (first name) attribute in the JWT            |
 | `JWT_LASTNAME`               | `last_name`                          | name of the family name (last name) attribute in the JWT            |
+| `JWT_ROLES`                  | `roles`                              | name of the roles attribute in the JWT                              |
 | `MONGODB_USERNAME`           | (optional)                           |                                                                     |
 | `MONGODB_PASSWORD`           | (optional)                           |                                                                     |
 | `MONGODB_HOST`               | `localhost`                          |                                                                     |
