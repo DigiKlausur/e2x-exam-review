@@ -2,7 +2,7 @@ import {Router} from 'express';
 import * as multer from 'multer';
 import {
     addAnswerSheet,
-    createExam, deleteAnswerSheet, deleteAnswerSheetFile, getAnswerSheetsByExamId,
+    createExam, deleteAnswerSheet, deleteAnswerSheetFile, deleteExam, getAnswerSheetsByExamId,
     getExamById,
     getExamsByExaminer,
     searchUsers,
@@ -54,6 +54,12 @@ export function applyManagementRoutes(parentRouter: Router) {
         body('reviewParameters.showTextLayer').isBoolean(),
         enforceValidity,
         createExam
+    );
+    managementRouter.delete(
+        '/exams/:id',
+        param('id').isMongoId(),
+        enforceValidity,
+        deleteExam
     );
 
     managementRouter.get(

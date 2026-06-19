@@ -6,7 +6,6 @@ import {
   catchError,
   debounceTime,
   distinctUntilChanged,
-  map,
   Observable,
   of,
   OperatorFunction,
@@ -35,7 +34,7 @@ export class UserSearchInput extends CustomInput implements ControlValueAccessor
 
   protected currentValue: IUser | undefined | '';
 
-  onChange: (value: IUser | undefined) => any = (value: IUser | undefined) => {};
+  onChange: (value: IUser | undefined) => any = () => {};
   onTouched: () => any = () => {};
 
   registerOnChange(fn: (value: IUser | undefined) => any): void {

@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, inject, OnInit} from '@angular/core';
 import {ExamEditor} from '../../misc/exam-editor/exam-editor';
-import {IAnswerSheet, IExam, IExamReviewParameters} from 'e2x-exam-review-backend';
+import {IAnswerSheet} from 'e2x-exam-review-backend';
 import {ActivatedRoute} from '@angular/router';
 import {ManagementService} from '../../../services/management-service/management-service';
 import {NgbAlert, NgbPopover} from '@ng-bootstrap/ng-bootstrap';

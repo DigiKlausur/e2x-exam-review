@@ -1,5 +1,5 @@
 import {inject, Injectable} from '@angular/core';
-import {HttpClient, HttpResponse} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {map, Observable} from 'rxjs';
 import {IAnswerSheet, IExam, IUser} from 'e2x-exam-review-backend';
 import {environment} from '../../../environments/environment';
@@ -21,12 +21,16 @@ export class ManagementService {
       .pipe(map((response: IExam) => prepareExam(response)));
   }
 
-  createExam(exam: IExam): Observable<IExam> {
+  createExam(exam: Omit<IExam, '_id'>): Observable<IExam> {
     return this.http.post<IExam>(environment.apiUrl + '/api/v1/manage/exams', exam);
   }
 
   updateExam(exam: IExam) {
     return this.http.put(environment.apiUrl + '/api/v1/manage/exams', exam);
+  }
+
+  deleteExam(id: string): Observable<void> {
+    return this.http.delete<void>(environment.apiUrl + '/api/v1/manage/exams/' + id);
   }
 
   listAnswerSheets(examId: string): Observable<IAnswerSheet[]> {

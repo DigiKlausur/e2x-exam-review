@@ -2,15 +2,19 @@ import {Request, Response} from "express";
 import {User} from "../models/User";
 import {Exam} from "../models/Exam";
 import {writeFile, mkdir, rm} from "node:fs/promises";
-import {ObjectId} from "mongodb";
 import {AnswerSheet} from "../models/AnswerSheet";
 import {Student} from "../models/Student";
-import { IAnswerSheet, IExam, IFile, IUser } from "../interfaces";
+import {IAnswerSheetBase, IAnswerSheetPopulated} from "../interfaces/IAnswerSheet";
+import {IExamBase} from "../interfaces/IExam";
+import {IFileBase} from "../interfaces/IFile";
+import {IUserBase} from "../interfaces/IUser";
 import {Request as JwtRequest} from 'express-jwt';
 import {getCurrentUser, getUserFromJwt} from "../util/user";
 import * as path from 'path';
 import {config} from "../globals";
 import {ANSWER_SHEETS_PATH} from "../app";
+import {ObjectId} from "mongodb";
+import {QueryFilter, Document} from "mongoose";
 
 export async function getExamsByExaminer(req: Request, res: Response) {
     /*
@@ -28,15 +32,12 @@ export async function getExamsByExaminer(req: Request, res: Response) {
             }
         }
      */
-    const currentUser: IUser | null | undefined = await getCurrentUser(req);
+    const currentUser: IUserBase | null | undefined = await getCurrentUser<IUserBase>(req);
     if(!currentUser) {
         return res.status(400).send({error: 'Unable to find current user!'});
     }
-    res.send(await Exam.find({$or: [
-            {"primaryExaminer": {_id: currentUser._id?.toString()}},
-            {"secondaryExaminer": {_id: currentUser._id?.toString()}},
-            {"owner": {_id: currentUser._id?.toString()}},
-        ]}).lean().sort([['semester.year', -1], ['semester.season', -1], ['title', 1]]).populate(['primaryExaminer', 'secondaryExaminer']));
+
+    res.send(await Exam.find<IExamBase>(Private.buildAccessFilter(currentUser)).lean().sort([['semester.year', -1], ['semester.season', -1], ['title', 1]]).populate(['primaryExaminer', 'secondaryExaminer']).exec());
 }
 
 export async function getExamById(req: Request, res: Response) {
@@ -58,18 +59,14 @@ export async function getExamById(req: Request, res: Response) {
             }
         }
      */
-    const currentUser: IUser | null | undefined = await getCurrentUser(req);
+    const currentUser: IUserBase | null | undefined = await getCurrentUser<IUserBase>(req);
     if(!currentUser) {
         return res.status(400).send({error: 'Unable to find current user!'});
     }
 
-    await Exam.findOne({$and: [
-            {_id: req.params.id as string},
-            {$or: [
-                    {"primaryExaminer": {_id: currentUser._id?.toString()}},
-                    {"secondaryExaminer": {_id: currentUser._id?.toString()}},
-                    {"owner": {_id: currentUser._id?.toString()}},
-                ]}
+    await Exam.findOne<IExamBase>({$and: [
+            {_id: new ObjectId(req.params.id as string)},
+            Private.buildAccessFilter(currentUser)
         ]})
         .lean()
         .populate(['primaryExaminer', 'secondaryExaminer'])
@@ -162,12 +159,12 @@ export async function createExam(req: Request, res: Response) {
             }
         }
      */
-    const currentUser: IUser | null | undefined = await getCurrentUser(req);
+    const currentUser: IUserBase | null | undefined = await getCurrentUser<IUserBase>(req);
     if(!currentUser) {
         return res.status(400).send({error: 'Unable to find current user!'});
     }
 
-    res.send(await Exam.insertOne({
+    const newExam = new Exam({
         title: req.body.title,
         semester: {
             year: req.body.semester.year,
@@ -182,8 +179,10 @@ export async function createExam(req: Request, res: Response) {
             showDownloadButton: req.body.reviewParameters.showDownloadButton,
             showTextLayer: req.body.reviewParameters.showTextLayer
         },
-        owner: currentUser
-    }));
+        owner: currentUser._id!
+    })
+
+    res.send(await newExam.save());
 }
 
 export async function updateExam(req: Request, res: Response) {
@@ -264,7 +263,7 @@ export async function updateExam(req: Request, res: Response) {
         }
      */
 
-  const currentUser: IUser | null | undefined = await getCurrentUser(req);
+  const currentUser: IUserBase | null | undefined = await getCurrentUser<IUserBase>(req);
   if (!currentUser) {
     return res.status(400).send({ error: "Unable to find current user!" });
   }
@@ -272,13 +271,10 @@ export async function updateExam(req: Request, res: Response) {
   res.send(
     await Exam.updateOne(
       {
-        // @ts-ignore
-        _id: req.body._id as string,
-        $or: [
-          { primaryExaminer: currentUser._id!.toString() },
-          { secondaryExaminer: currentUser._id!.toString() },
-          { owner: currentUser._id!.toString() },
-        ],
+        $and: [
+          {_id: req.body._id as string},
+          Private.buildAccessFilter(currentUser)
+        ]
       },
       {
         $set: {
@@ -325,18 +321,17 @@ export async function getAnswerSheetsByExamId(req: Request, res: Response) {
             }
         }
      */
-    const currentUser: IUser | null | undefined = await getCurrentUser(req);
+    const currentUser: IUserBase | null | undefined = await getCurrentUser<IUserBase>(req);
     if(!currentUser) {
         return res.status(400).send({error: 'Unable to find current user!'});
     }
 
     return res.send(
         [...
-        await AnswerSheet.find(
-            // @ts-ignore
+        await AnswerSheet.find<IAnswerSheetBase>(
             {'exam': new ObjectId(req.params.id as string)}
         ).populate(['submitter', {path: 'exam', populate: ['primaryExaminer', 'secondaryExaminer']}])
-        .lean()].filter((answerSheet: IAnswerSheet) =>
+        .lean<IAnswerSheetPopulated[]>()].filter((answerSheet: IAnswerSheetPopulated) =>
             answerSheet.exam.primaryExaminer._id?.toString() === currentUser._id?.toString()
             || answerSheet.exam.secondaryExaminer?._id?.toString() === currentUser._id?.toString()
             || answerSheet.exam.owner._id?.toString() === currentUser._id?.toString()
@@ -390,7 +385,7 @@ export async function addAnswerSheet(req: Request, res: Response) {
         }
      */
 
-  const currentUser: IUser | null | undefined = await getCurrentUser(req);
+  const currentUser: IUserBase | null | undefined = await getCurrentUser<IUserBase>(req);
   if (!currentUser) {
     return res.status(400).send({ error: "Unable to find current user!" });
   }
@@ -399,16 +394,10 @@ export async function addAnswerSheet(req: Request, res: Response) {
     return res.status(400).send({ error: "No files present!" });
   }
 
-  const exam: IExam | null | undefined = await Exam.findOne({
+  const exam = await Exam.findOne({
     $and: [
       { _id: req.params.id as string },
-      {
-        $or: [
-          { primaryExaminer: { _id: currentUser._id as string } },
-          { secondaryExaminer: { _id: currentUser._id as string } },
-          { owner: { _id: currentUser._id as string } },
-        ],
-      },
+      Private.buildAccessFilter(currentUser),
     ],
   });
 
@@ -426,7 +415,7 @@ export async function addAnswerSheet(req: Request, res: Response) {
   const directoryPath: string = path.join(config.fileStorageLocation, exam._id!.toString());
   await mkdir(directoryPath, { recursive: true });
 
-  const files: (Omit<IFile, "_id"> & { _id: ObjectId })[] = (
+  const files: (Omit<IFileBase, "_id"> & { _id: ObjectId })[] = (
     req.files as Express.Multer.File[]
   ).map((file: Express.Multer.File) => {
     const fileId = new ObjectId();
@@ -438,20 +427,18 @@ export async function addAnswerSheet(req: Request, res: Response) {
     };
   });
 
-  const existingAnswerSheet: IAnswerSheet | null = await AnswerSheet.findOne({
-      // @ts-ignore
+  const existingAnswerSheet: IAnswerSheetBase | null = await AnswerSheet.findOne({
       exam: exam._id.toString(),
       submitter: submitter._id.toString()
-  }).lean();
+  }).lean().exec();
 
-  if(existingAnswerSheet && files.some((file: (Omit<IFile, "_id"> & { _id: ObjectId })) => existingAnswerSheet.files.map((f: IFile) => f.originalFileName).includes(file.originalFileName))) {
+  if(existingAnswerSheet && files.some((file: (Omit<IFileBase, "_id"> & { _id: ObjectId })) => existingAnswerSheet.files.map((f: IFileBase) => f.originalFileName).includes(file.originalFileName))) {
       return res.status(400).send({ error: "Unable to assign multiple files with the same name to one answer sheet!" });
   }
 
   await submitter.save();
   await AnswerSheet.findOneAndUpdate(
   {
-      // @ts-ignore
       exam: exam._id.toString(),
       submitter: submitter._id.toString()
   },
@@ -461,10 +448,10 @@ export async function addAnswerSheet(req: Request, res: Response) {
     $push: {files: {$each: files}}
   },
   {upsert: true}).lean()
-    .then(async (answerSheet: IAnswerSheet | null) => {
+    .then(async (answerSheet: IAnswerSheetBase | null) => {
       await Promise.all(
         files.map(
-          async (file: Omit<IFile, "_id"> & { _id: ObjectId }, index: number) =>
+          async (file: Omit<IFileBase, "_id"> & { _id: ObjectId }, index: number) =>
             writeFile(
               file.sysFilePath,
               (req.files as Express.Multer.File[])[index]!.buffer,
@@ -493,23 +480,12 @@ export async function deleteAnswerSheet(req: Request, res: Response) {
             pattern: '^[0-9a-fA-F]{24}$'
         }
      */
-    const currentUser: IUser | null | undefined = await getCurrentUser(req);
+    const currentUser: IUserBase | null | undefined = await getCurrentUser<IUserBase>(req);
     if(!currentUser) {
       return res.status(400).send({ error: "Unable to find current user!" });
     }
-    await AnswerSheet.findOne({_id: req.params.id as string}).populate({
-            path: 'exam',
-            populate: ['primaryExaminer', 'secondaryExaminer', 'owner']
-        })
-        .then(async (answerSheet: IAnswerSheet | undefined | null) => {
-            /*if(!(answerSheet?.exam.primaryExaminer._id === currentUser._id || answerSheet?.exam.secondaryExaminer._id === currentUser._id || answerSheet?.exam.owner._id === currentUser._id)) {
-              throw Error("user invalid");
-            }*/ //todo fix
-            if(!answerSheet) {throw Error('answer sheet not found');}
-            await AnswerSheet.deleteOne({_id: answerSheet._id as string});
-            await Promise.all(answerSheet.files.map(async (file) => rm(file.sysFilePath)));
-            res.send();
-        });
+
+    await Private.deleteAnswerSheet(req.params.id as string, currentUser._id!.toString()).then(() => res.status(204).send());
 }
 
 export async function deleteAnswerSheetFile(req: Request, res: Response) {
@@ -529,28 +505,71 @@ export async function deleteAnswerSheetFile(req: Request, res: Response) {
             pattern: '^[0-9a-fA-F]{24}$'
         }
      */
-    const currentUser: IUser | null | undefined = await getCurrentUser(req);
+    const currentUser: IUserBase | null | undefined = await getCurrentUser<IUserBase>(req);
     if(!currentUser) {
         return res.status(400).send({ error: "Unable to find current user!" });
     }
-    await AnswerSheet.findOne({_id: req.params.answerSheetId as string}).populate({
-        path: 'exam',
-        populate: ['primaryExaminer', 'secondaryExaminer', 'owner']
-    })
-        .then(async (answerSheet: IAnswerSheet | undefined | null) => {
-            /*if(!(answerSheet?.exam.primaryExaminer._id === currentUser._id || answerSheet?.exam.secondaryExaminer._id === currentUser._id || answerSheet?.exam.owner._id === currentUser._id)) {
-              throw Error("user invalid");
-            }*/ //todo fix
+    await AnswerSheet.findOne({_id: req.params.answerSheetId as string})
+        .populate({
+            path: 'exam',
+            populate: ['primaryExaminer', 'secondaryExaminer', 'owner']
+        })
+        .lean<IAnswerSheetPopulated>()
+        .exec()
+        .then(async (answerSheet: IAnswerSheetPopulated | null) => {
             if(!answerSheet) {throw Error('answer sheet not found');}
-            const file: IFile | undefined = answerSheet.files.find((file: IFile) => file._id!.toString() === req.params.fileId);
+            if(!(answerSheet?.exam.primaryExaminer._id?.toString() === currentUser._id!.toString() || answerSheet?.exam.secondaryExaminer?._id?.toString() === currentUser._id!.toString() || answerSheet?.exam.owner._id?.toString() === currentUser._id!.toString())) {
+              return res.status(403).send('not permitted to access this answer sheet');
+            }
+
+            const file: IFileBase | undefined = answerSheet.files.find((file: IFileBase) => file._id!.toString() === req.params.fileId);
             if(!file){{throw Error('file not found');}}
             if(answerSheet.files.length === 1) {
-                await AnswerSheet.deleteOne({_id: answerSheet._id as string});
+                await AnswerSheet.deleteOne({_id: answerSheet._id});
             }else {
-                await AnswerSheet.updateOne({_id: answerSheet._id as string}, {$pull: {files: {_id: file._id}}});
+                await AnswerSheet.updateOne({_id: answerSheet._id}, {$pull: {files: {_id: file._id}}});
             }
             await rm(file.sysFilePath);
             res.send();
+        });
+}
+
+export async function deleteExam(req: Request, res: Response) {
+    /*
+        #swagger.parameters['id'] = {
+            in: 'path',
+            description: 'ID of the exam',
+            required: true,
+            type: 'string'
+        }
+        #swagger.responses[204] = {
+            description: 'exam',
+            content: {}
+        }
+     */
+    const currentUser: IUserBase | null | undefined = await getCurrentUser<IUserBase>(req);
+    if(!currentUser) {
+        return res.status(400).send({error: 'Unable to find current user!'});
+    }
+
+    const exam = await Exam.findOne<Document<IExamBase>>({$and: [
+            {_id: req.params.id as string},
+            Private.buildAccessFilter(currentUser)
+        ]})
+        .exec();
+    if(!exam) return res.status(404).send({error: 'Unable to find exam'});
+
+    await AnswerSheet.find<Document<IAnswerSheetBase>>({exam: new ObjectId(exam._id.toString())})
+        .exec()
+        .then(async (answerSheets: Document<IAnswerSheetBase>[] = []) => {
+            await Promise.all(
+                answerSheets.map(
+                    async (answerSheet) => Private.deleteAnswerSheet(answerSheet._id!.toString(), currentUser._id!.toString()) //remove each answer sheet
+                )
+            );
+            await rm(path.join(config.fileStorageLocation, exam._id.toString())); //remove directory
+            await Exam.deleteOne({_id: exam._id});
+            res.status(204).send();
         });
 }
 
@@ -604,14 +623,41 @@ export async function updateUser(req: JwtRequest, res: Response) {
             }
         }
      */
-    const currentUserData: IUser | undefined = getUserFromJwt(req) as IUser | undefined;
+    const currentUserData: IUserBase | undefined = getUserFromJwt(req) as IUserBase | undefined;
     if(!currentUserData) {
         return res.status(400).send({error: 'Unable to extract user-data from token!'});
     }
-    await User.findOneAndUpdate({email: currentUserData.email}, currentUserData, {upsert: true}).lean()
-        .then((updatedUser: IUser|null) => {
+    await User.findOneAndUpdate({uniqueId: currentUserData.uniqueId}, currentUserData, {upsert: true}).lean()
+        .then((updatedUser: IUserBase|null) => {
             res.send(updatedUser);
         })
+}
+
+namespace Private {
+    export async function deleteAnswerSheet(answerSheetId: string, currentUserId: string) {
+        await AnswerSheet.findOne<IAnswerSheetPopulated>({_id: answerSheetId as string}).populate({
+                path: 'exam',
+                populate: ['primaryExaminer', 'secondaryExaminer', 'owner']
+            })
+            .lean<IAnswerSheetPopulated>()
+            .exec()
+            .then(async (answerSheet) => {
+                if(!(answerSheet?.exam.primaryExaminer._id?.toString() === currentUserId || answerSheet?.exam.secondaryExaminer?._id?.toString() === currentUserId || answerSheet?.exam.owner._id?.toString() === currentUserId)) {
+                    throw Error('not permitted to access this answer sheet');
+                }
+                if(!answerSheet) {throw Error('answer sheet not found');}
+                await AnswerSheet.deleteOne({_id: answerSheet._id}); //remove database-enty
+                await Promise.all(answerSheet.files.map(async (file) => rm(file.sysFilePath))); //remove all files belonging to this answer-sheet
+            });
+    }
+
+    export function buildAccessFilter(currentUser: IUserBase): QueryFilter<IExamBase>{
+        return {$or: [
+                {primaryExaminer: new ObjectId(currentUser._id!.toString())},
+                {secondaryExaminer: new ObjectId(currentUser._id!.toString())},
+                {owner: new ObjectId(currentUser._id!.toString())}
+            ]};
+    }
 }
 
 

@@ -1,7 +1,7 @@
 import {model, Model, Schema} from "mongoose";
-import {IStudent} from "../interfaces";
+import {IStudentBase} from "../interfaces/IStudent";
 
-export const StudentSchema: Schema<IStudent> = new Schema<IStudent>({
+export const StudentSchema: Schema<IStudentBase> = new Schema<IStudentBase>({
     uniqueId: {type: String, unique: true, optional: true, sparse: true},
     email: {type: String, unique: true, optional: true, sparse: true},
     firstname: {type: String, optional: true},
@@ -9,4 +9,4 @@ export const StudentSchema: Schema<IStudent> = new Schema<IStudent>({
     studentId: {type: Number, unique: true, required: true}
 });
 
-export const Student: Model<IStudent> = model<IStudent>('Student', StudentSchema);
+export const Student: Model<IStudentBase> = model<IStudentBase>('Student', StudentSchema);

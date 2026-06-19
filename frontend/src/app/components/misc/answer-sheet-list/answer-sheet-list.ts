@@ -41,10 +41,10 @@ export class AnswerSheetList {
 
   confirmDeleteAnswerSheet() {
     if(!this.selectedAnswerSheet) return;
-    this.managementService.deleteAnswerSheet(this.selectedAnswerSheet._id!).subscribe(result => {
+    this.managementService.deleteAnswerSheet(this.selectedAnswerSheet._id!).subscribe(() => {
       this.onChange.emit();
       this.confirmDeleteModalRef?.close();
-      this.toastService.show({header: 'Delete Answer Sheet', body: 'Answer sheet deleted successfully'});
+      this.toastService.show({header: $localize`:@@app.toast.header.delete-answer-sheet:Delete Answer Sheet`, body: $localize`:@@app.toast.body.delete-answer-sheet:Answer sheet deleted successfully`});
     });
   }
 
@@ -62,10 +62,10 @@ export class AnswerSheetList {
 
   confirmDeleteAnswerSheetFile() {
     if(!this.selectedAnswerSheet || !this.selectedFile) return;
-    this.managementService.deleteAnswerSheetFile(this.selectedAnswerSheet._id!, this.selectedFile._id!).subscribe(result => {
+    this.managementService.deleteAnswerSheetFile(this.selectedAnswerSheet._id!, this.selectedFile._id!).subscribe(() => {
       this.onChange.emit();
       this.confirmDeleteModalRef?.close();
-      this.toastService.show({header: 'Delete Answer Sheet File', body: 'File deleted successfully'});
+      this.toastService.show({header: $localize`:@@app.toast.header.delete-answer-sheet-file:Delete Answer Sheet File`, body: $localize`:@@app.toast.body.delete-answer-sheet-file:File deleted successfully`});
     });
   }
 

@@ -1,7 +1,7 @@
-import {Component, EventEmitter, inject, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import {Component, inject, Input, OnChanges, SimpleChanges, ViewChild} from '@angular/core';
 import {DateInput} from "../../inputs/date-input/date-input";
 import {UserSearchInput} from "../../inputs/user-search-input/user-search-input";
-import {NgbCollapse, NgbPopover} from '@ng-bootstrap/ng-bootstrap';
+import {NgbCollapse, NgbModal, NgbModalRef, NgbPopover} from '@ng-bootstrap/ng-bootstrap';
 import {SemesterInput} from '../../inputs/semester-input/semester-input';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {IExam, ISemester, IUser} from 'e2x-exam-review-backend';
@@ -11,7 +11,7 @@ import { ToastService } from '../../../services/toast-service/toast-service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ShowInvalid } from '../../../directives/show-invalid/show-invalid';
 import {DateTimeInput} from '../../inputs/date-time-input/date-time-input.component';
-import {dateSequenceValidator, minDateValidator} from '../../../utils/DateUtil';
+import {dateSequenceValidator} from '../../../utils/DateUtil';
 
 @Component({
   selector: 'app-exam-editor',
@@ -23,7 +23,7 @@ import {dateSequenceValidator, minDateValidator} from '../../../utils/DateUtil';
     ReactiveFormsModule,
     ShowInvalid,
     NgbPopover,
-    DateTimeInput,
+    DateTimeInput
   ],
   templateUrl: './exam-editor.html',
   styleUrl: './exam-editor.scss',
@@ -32,13 +32,15 @@ export class ExamEditor implements OnChanges {
   private managementService: ManagementService = inject(ManagementService);
   private toastService: ToastService = inject(ToastService);
   private router: Router = inject(Router);
+  private modalService: NgbModal = inject(NgbModal);
   protected collapseReviewSettings: boolean = true;
 
   private isNewExam: boolean = false;
   @Input() examId!: string;
   protected exam?: IExam;
 
-  private readonly now: Date = new Date();
+  @ViewChild('confirmDeleteExamModal') confirmDeleteExamModal!: NgbModal;
+  confirmDeleteModalRef?: NgbModalRef;
 
   protected examForm: FormGroup = new FormGroup({
     title: new FormControl<string>('', [
@@ -62,16 +64,20 @@ export class ExamEditor implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['examId']) {
       if (this.examId !== 'new') {
-        this.managementService.getExamById(this.examId).subscribe((response) => {
-          this.exam = response;
-          this.isNewExam = false;
-          this.loadValues();
-        });
+        this.loadExam();
       } else {
         this.examForm.reset();
         this.isNewExam = true;
       }
     }
+  }
+
+  loadExam(): void {
+    this.managementService.getExamById(this.examId).subscribe((response) => {
+      this.exam = response;
+      this.isNewExam = false;
+      this.loadValues();
+    });
   }
 
   loadValues(): void {
@@ -80,8 +86,8 @@ export class ExamEditor implements OnChanges {
     }
   }
 
-  getFormValues(): IExam {
-    const formValues: IExam = this.examForm.value;
+  getFormValues(): (Omit<IExam, '_id'> & {_id: string | undefined}) {
+    const formValues: (Omit<IExam, '_id'> & {_id: string | undefined}) = this.examForm.value;
     formValues._id = this.exam?._id ?? undefined;
     if (formValues.reviewParameters.startDate === null)
       formValues.reviewParameters.startDate = this.exam?.reviewParameters.startDate ?? null;
@@ -94,6 +100,10 @@ export class ExamEditor implements OnChanges {
       formValues.reviewParameters.showTextLayer =
         this.exam?.reviewParameters.showTextLayer ?? false;
     return formValues;
+  }
+
+  handleDeleteExam() {
+    this.confirmDeleteModalRef = this.modalService.open(this.confirmDeleteExamModal, {size: 'md'});
   }
 
   saveExam(): void {
@@ -116,8 +126,8 @@ export class ExamEditor implements OnChanges {
         error: (error) => this.showErrorResponse(error),
       });
     } else {
-      this.managementService.updateExam(this.getFormValues()).subscribe({
-        next: (response) => this.showSuccessfulResponse(),
+      this.managementService.updateExam(this.getFormValues() as IExam).subscribe({
+        next: () => this.showSuccessfulResponse(),
         error: (error: HttpErrorResponse) => this.showErrorResponse(error),
       });
     }
@@ -139,5 +149,21 @@ export class ExamEditor implements OnChanges {
       classname: 'bg-danger text-white',
       delay: -1,
     });
+  }
+
+  confirmDeleteExam(): void{
+    this.managementService.deleteExam(this.examId)
+      .subscribe({
+        next: () => {
+          this.confirmDeleteModalRef?.close();
+          this.toastService.show({header: $localize`:@@app.toast.header.delete-exam:Delete Exam`, body: $localize`:@@app.toast.body.delete-exam:Exam deleted successfully`});
+          this.router.navigate(['/', 'manage']);
+        },
+        error: (error: HttpErrorResponse) => {
+          this.toastService.show({header: $localize`:@@app.toast.header.delete-exam:Delete Exam`, body: $localize`:@@app.toast.body.delete-exam-failed:Failed to delete exam`, classname: 'bg-danger text-white', delay: 20000});
+          console.warn('unable to delete exam:', error);
+          this.router.navigate(['/', 'manage', this.examId]);
+        }
+      });
   }
 }

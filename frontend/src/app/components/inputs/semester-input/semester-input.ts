@@ -2,7 +2,6 @@ import {Component, inject, LOCALE_ID, OnInit} from '@angular/core';
 import {ISemester, Season} from 'e2x-exam-review-backend';
 import {getFullSemesterName} from '../../../utils/SemesterUtil';
 import {ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR} from '@angular/forms';
-import { ShowInvalid } from '../../../directives/show-invalid/show-invalid';
 import { CustomInput } from '../../../directives/custom-input/custom-input';
 
 @Component({
@@ -26,7 +25,7 @@ export class SemesterInput extends CustomInput implements OnInit, ControlValueAc
 
   currentValue: ISemester | undefined;
 
-  onChange: (value: ISemester|undefined) => any = (value: ISemester|undefined) => {};
+  onChange: (value: ISemester|undefined) => any = () => {};
   onTouched: () => any = () => {};
 
   ngOnInit(): void {

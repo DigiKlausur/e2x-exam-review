@@ -32,7 +32,7 @@
       <label class="form-label" i18n="@@app.form.label.review-end">Review End</label>
       <app-date-time-input appShowInvalid formControlName="endDate" ></app-date-time-input>
       @if(examForm.hasError('dateSequence', 'reviewParameters') && (examForm.touched || examForm.dirty)){
-        <div class="invalid-feedback d-block" i18n="app.form.invalid-feedback.end-date-must-succeed-start-date">
+        <div class="invalid-feedback d-block" i18n="@@app.form.invalid-feedback.end-date-must-succeed-start-date">
           The end date must succeed the start date!
         </div>
       }
@@ -55,7 +55,22 @@
   <div class="d-flex justify-content-center mt-3">
     <a (click)="collapse.toggle()" role="button" i18n="@@app.exam-editor.details-toggle">@if(collapseReviewSettings) {<i class="bi bi-caret-down-fill"></i> show} @else {<i class="bi bi-caret-up-fill"></i> hide} advanced settings</a>
   </div>
-  <div class="d-flex justify-content-end gap-2">
+  <div class="d-flex justify-content-end gap-3">
+    <button class="btn btn-outline-danger" (click)="handleDeleteExam()"><i class="bi bi-trash me-2"></i><span  i18n="@@app.form.delete-exam-button">Delete Exam</span></button>
     <button class="btn btn-primary" (click)="saveExam()"><i class="bi bi-floppy me-2"></i><span  i18n="@@app.form.save-button">Save</span></button>
   </div>
 </form>
+
+<ng-template #confirmDeleteExamModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" i18n="@@app.modal.title.delete-exam" >Delete Exam</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body" i18n="@@app.modal.body.delete-exam">
+    Are your sure, that you want to delete the exam <span class="font-monospace">{{exam?.title}}</span> ?
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Abort')"><i class="bi bi-x-lg"></i><span i18n="@@app.modal.button.abort">Abort</span></button>
+    <button type="button" class="btn btn-danger" (click)="confirmDeleteExam()"><i class="bi bi-trash"></i><span i18n="@@app.modal.button.delete">Delete</span></button>
+  </div>
+</ng-template>

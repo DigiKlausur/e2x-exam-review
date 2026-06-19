@@ -1,5 +1,5 @@
 import {Schema} from "mongoose";
-import {ISemester} from "../interfaces";
+import {ISemester} from "../interfaces/ISemester";
 
 export const SemesterSchema: Schema<ISemester> = new Schema<ISemester>({
    year: {type: Number, required: true},

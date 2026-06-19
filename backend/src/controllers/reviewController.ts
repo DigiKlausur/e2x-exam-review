@@ -1,9 +1,8 @@
 import {Request, Response} from 'express';
 import {Request as JwtRequest} from 'express-jwt';
 import {AnswerSheet} from "../models/AnswerSheet";
-import {findCurrentStudent} from "../util/student";
-import {IStudent, IUser} from "../interfaces";
-import {getUserFromJwt} from "../util/user";
+import {IStudentBase} from "../interfaces/IStudent";
+import {getCurrentUser, getUserFromJwt} from "../util/user";
 import {Student} from "../models/Student";
 
 export async function getAnswerSheets(req: JwtRequest, res: Response) {
@@ -23,10 +22,10 @@ export async function getAnswerSheets(req: JwtRequest, res: Response) {
         }
      */
 
-    const student = await findCurrentStudent(req, res);
+    const student = await getCurrentUser<IStudentBase>(req);
     if(!student) return;
     return res.send(
-      await AnswerSheet.find({ submitter: student })
+      await AnswerSheet.find({ 'submitter': student._id!.toString() })
         .populate({
           path: "exam",
           populate: ["primaryExaminer", "secondaryExaminer"]
@@ -75,12 +74,12 @@ export async function updateStudent(req: JwtRequest, res: Response) {
             }
         }
      */
-    const userData: IStudent | undefined = getUserFromJwt(req) as IStudent | undefined;
+    const userData: IStudentBase | undefined = getUserFromJwt(req) as IStudentBase | undefined;
     if(!userData) {
         return res.status(400).send({error: 'Unable to extract user-data from token!'});
     }
     await Student.findOneAndUpdate({studentId: userData.studentId}, userData, {upsert: true}).lean()
-        .then((updatedStudent: IStudent|null) => {
+        .then((updatedStudent: IStudentBase|null) => {
             res.send(updatedStudent);
         })
 }

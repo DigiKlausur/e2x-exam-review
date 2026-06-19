@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {map, Observable} from 'rxjs';
-import {HttpClient, HttpResponse} from '@angular/common/http';
-import {IAnswerSheet, IExam, IStudent} from 'e2x-exam-review-backend';
+import {HttpClient} from '@angular/common/http';
+import {IAnswerSheet, IStudent} from 'e2x-exam-review-backend';
 import {environment} from '../../../environments/environment';
 import {prepareExam} from '../../utils/ExamUtil';
 

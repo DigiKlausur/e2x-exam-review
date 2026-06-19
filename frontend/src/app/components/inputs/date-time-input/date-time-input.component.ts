@@ -28,7 +28,7 @@ export class DateTimeInput extends CustomInput implements ControlValueAccessor {
   protected currentDate: NgbDateStruct | null = null;
   protected currentTime: NgbTimeStruct | null = null;
 
-  onChange: (value: Date|null) => any = (value: Date|null) => {};
+  onChange: (value: Date|null) => any = () => {};
   onTouched: () => any = () => {};
 
   registerOnChange(fn: (value: Date|null) => any): void {

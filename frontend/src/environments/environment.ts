@@ -7,7 +7,7 @@ export const environment: Environment = {
   bugReportEmail: 'e2x@h-brs.de',
   studentIdRegex: '(?<!\\d)(90[\\d]{5})(?!\\d)',
   openId: {
-    authorityUrl: 'https://idp.h-brs.de/nidp/oauth/e2xeinsicht',
+    authorityUrl: '',
     clientId: '',
     attributeMappings: {
       uniqueId: 'preferred_username',

@@ -1,9 +1,9 @@
 import {model, Model, Schema} from "mongoose";
-import {IExam} from "../interfaces/IExam";
+import {IExamBase} from "../interfaces/IExam";
 import {ExamReviewParametersSchema} from "./ExamReviewParameters";
 import {SemesterSchema} from "./Semester";
 
-export const ExamSchema: Schema<IExam> = new Schema<IExam>({
+export const ExamSchema: Schema<IExamBase> = new Schema<IExamBase>({
     title: {type: String, required: true},
     semester: SemesterSchema,
     primaryExaminer: {type: Schema.Types.ObjectId, ref: "User", required: true},
@@ -13,4 +13,4 @@ export const ExamSchema: Schema<IExam> = new Schema<IExam>({
     owner: {type: Schema.Types.ObjectId, ref: "User", required: true}
 });
 
-export const Exam: Model<IExam> = model<IExam>('Exam', ExamSchema);
+export const Exam: Model<IExamBase> = model<IExamBase>('Exam', ExamSchema);

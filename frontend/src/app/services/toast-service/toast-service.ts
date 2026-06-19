@@ -1,4 +1,4 @@
-import {Injectable, signal, Signal} from '@angular/core';
+import {Injectable, signal} from '@angular/core';
 import {Toast} from '../../models/Toast';
 
 @Injectable({

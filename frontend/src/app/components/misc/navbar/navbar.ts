@@ -28,6 +28,7 @@ export class Navbar implements OnInit {
       if (authenticationResult.isAuthenticated) {
         this.oidcSecurityService.getPayloadFromAccessToken().subscribe((token) => {
           this.authenticatedUser = {
+            _id: '',
             firstname: token[environment.openId.attributeMappings.firstname],
             lastname: token[environment.openId.attributeMappings.lastname],
             email: token[environment.openId.attributeMappings.email],

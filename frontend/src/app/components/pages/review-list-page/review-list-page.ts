@@ -1,13 +1,11 @@
 import {ChangeDetectorRef, Component, inject, OnInit} from '@angular/core';
-import {ExamList} from "../../misc/exam-list/exam-list";
 import {ReviewService} from '../../../services/review-service/review-service';
 import {IAnswerSheet, IExam} from 'e2x-exam-review-backend';
-import {isReviewAvailable} from '../../../utils/AnswerSheet';
 import { ReviewList } from '../../misc/review-list/review-list';
 
 @Component({
   selector: 'app-review-list-page',
-  imports: [ExamList, ReviewList],
+  imports: [ReviewList],
   templateUrl: './review-list-page.html',
   styleUrl: './review-list-page.scss',
 })

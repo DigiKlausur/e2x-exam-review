@@ -4,8 +4,6 @@ import {hasRole} from '../../../utils/AccessToken';
 import {environment} from '../../../../environments/environment';
 import {Router} from '@angular/router';
 import {NgbAlert} from '@ng-bootstrap/ng-bootstrap';
-import {ReviewService} from '../../../services/review-service/review-service';
-import {ManagementService} from '../../../services/management-service/management-service';
 
 @Component({
   selector: 'app-landing-page',
