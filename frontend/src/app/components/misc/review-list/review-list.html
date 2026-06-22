@@ -1,37 +1,25 @@
-<table class="table">
-  <thead>
-  <tr>
-    <th i18n="@@app.table.header.semster">Semester</th>
-    <th i18n="@@app.table.header.exam-title">Exam Title</th>
-    <th i18n="@@app.table.header.primary-examiner">Primary Examiner</th>
-    <th i18n="@@app.table.header.secondary-examiner">Secondary Examiner</th>
-    <th i18n="@@app.table.header.Date">Date</th>
-  </tr>
-  </thead>
-  <tbody>
-    @for (answerSheet of answerSheets; track answerSheet._id){
-      <tr [class.disabled]="!isAvailable(answerSheet)" [routerLink]="isSingleFile(answerSheet) ? [answerSheet._id, answerSheet.files[0]._id] : undefined " [attr.role]="isSingleFile(answerSheet) ? 'button' : undefined">
-        <td>{{answerSheet.exam.semester | semesterDisplayName}}</td>
-        <td>{{answerSheet.exam.title}}</td>
-        <td>{{answerSheet.exam.primaryExaminer | userDisplayName}}</td>
-        <td>{{answerSheet.exam.secondaryExaminer | userDisplayName}}</td>
-        <td>{{answerSheet.exam.date | date}}</td>
-      </tr>
-      @if (!isSingleFile(answerSheet)) {
-        @for (file of answerSheet.files; track file._id) {
-          <tr class="answer-sheet-file" [routerLink]="[answerSheet._id, file._id]" role="button">
-            <td class="text-end fs-5 py-0 fw-lighter align-middle">@if($index < (answerSheet.files.length - 1)){├}@else{└}</td>
-            <td>{{file.originalFileName}}</td>
-            <td colspan="3">
-            </td>
-          </tr>
-        }
+<ngx-datatable [rows]="answerSheets" [columns]="columns" [limit]="10" [footerHeight]="answerSheets.length > 5 ? 55 : 0" [messages]="messages" (activate)="handleActivate($event)" rowHeight="auto" columnMode="flex">
+  <ngx-datatable-row-detail [rowHeight]="getDetailsRowHeight">
+    <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+      @for (file of row.files; track file._id){
+        <div class="answer-sheet-file" (click)="showAnswerSheetFile(row._id, file)"><span class="fs-5 py-0 fw-lighter me-3">@if(!$last){├}@else{└}</span><div class="file-name">{{file.originalFileName}}</div></div>
       }
-    } @empty {
-      <tr class="disabled">
-        <td class="text-center fst-italic" colspan="5" i18n="@@app.table.body.no-exams-notice">No exams available</td>
-      </tr>
-    }
-  </tbody>
-</table>
+    </ng-template>
+  </ngx-datatable-row-detail>
+
+  <ngx-datatable-footer>
+    <ng-template
+      ngx-datatable-footer-template
+      let-rowCount="rowCount"
+      let-pageSize="pageSize"
+      let-selectedCount="selectedCount"
+      let-curPage="curPage"
+      let-offset="offset"
+    >
+      <div class="page-count fst-italic" i18n="@@app.table.footer.stats">showing {{Math.min(rowCount - (offset * pageSize), pageSize)}} of {{rowCount}} rows ({{Math.ceil(rowCount / pageSize)}} pages)</div>
+      <ngx-datatable-pager></ngx-datatable-pager>
+    </ng-template>
+  </ngx-datatable-footer>
+</ngx-datatable>
+
 

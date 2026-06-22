@@ -8,3 +8,23 @@ tr[role=button]:not(.disabled):hover td {
     background-color: transparent;
   }
 }
+
+::ng-deep.datatable-body-row{
+  cursor: pointer;
+}
+
+::ng-deep.answer-sheet-file{
+  padding: 0 1rem;
+  cursor: pointer;
+  position: relative;
+
+  .file-name{
+    padding: 0.75rem 0;
+    position: relative;
+    display: inline-block;
+  }
+
+  &:hover {
+    background-color: var(--bs-secondary-bg);
+  }
+}

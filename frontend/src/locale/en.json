@@ -78,7 +78,7 @@
     "app.table.header.exam-title": "Exam Title",
     "app.table.header.primary-examiner": "Primary Examiner",
     "app.table.header.secondary-examiner": "Secondary Examiner",
-    "app.table.header.Date": "Date",
+    "app.table.header.date": "Date",
     "app.table.body.no-exams-notice": "No exams available",
     "app.footer.link.imprint": "Imprint",
     "app.footer.link.privacy-policy": "Privacy Policy",
@@ -87,6 +87,7 @@
     "app.navbar.item.review": "Review",
     "app.navbar.item.manage": "Manage",
     "app.navbar.logout-button": "Logout",
+    "app.table.header.Date": "Date",
     "app.alert.save-exam-before-upload-info": " An exam needs to be saved once, before answer sheets can be added. ",
     "app.label.answer-sheets-section": "Answer Sheets",
     "app.popover.answer-sheet-upload-info-title": "Supported formats",
@@ -95,6 +96,14 @@
     "app.alert.unsufficiant-permissions": "It seems that your account does not have the permissions, that are necessary to use this service.",
     "app.spinner.authentication-failed": "Authentication failed.",
     "app.spinner.authenticating": "Authenticating...",
-    "app.alert.answer-sheet-not-found": " Answer sheet could not be found! "
+    "app.alert.answer-sheet-not-found": " Answer sheet could not be found! ",
+    "app.table.body.empty-notice": "No data available",
+    "app.table.footer.total": "in total",
+    "app.table.body.selected": "selected",
+    "app.table.footer.button.tooltip.first-page": "go to first page",
+    "app.table.footer.button.tooltip.prev-page": "go to previous page",
+    "app.table.footer.button.tooltip.page-n": "page",
+    "app.table.footer.button.tooltip.next-page": "go to next page",
+    "app.table.footer.button.tooltip.last-page": "go to last page"
   }
 }

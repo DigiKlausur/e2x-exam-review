@@ -23,6 +23,7 @@
     "@fontsource/inter": "^5.2.8",
     "@ng-bootstrap/ng-bootstrap": "^20.0.0",
     "@popperjs/core": "^2.11.8",
+    "@siemens/ngx-datatable": "^26.2.0",
     "@zip.js/zip.js": "^2.8.26",
     "angular-auth-oidc-client": "21.0.1",
     "bootstrap": "^5.3.8",

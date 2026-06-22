@@ -1,3 +1,7 @@
 tr:not(.disabled):hover td {
   background-color: var(--bs-secondary-bg);
 }
+
+::ng-deep.datatable-body-row{
+  cursor: pointer;
+}

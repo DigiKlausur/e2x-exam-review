@@ -54,7 +54,7 @@
     "app.table.body.no-answer-sheets-notice": "Keine Einreichungen verfügbar",
     "app.table.body.no-exams-notice": "Keine Prüfungen verfügbar",
     "app.table.footer.answer-sheet-stats": "{$INTERPOLATION} Einreichung(en), {$INTERPOLATION_1} Datei(en)",
-    "app.table.header.Date": "Datum",
+    "app.table.header.date": "Datum",
     "app.table.header.exam-title": "Prüfungstitel",
     "app.table.header.file-name": "Datei",
     "app.table.header.primary-examiner": "Erstprüfer:in",
