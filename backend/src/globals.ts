@@ -5,6 +5,7 @@ export const config = {
   corsOrigin: process.env.ALLOWED_ORIGIN ?? "http://localhost:4200",
   fileStorageLocation: path.resolve(process.env.FILE_STORAGE_LOCATION ?? './answer-sheets'),
   jwt: {
+    openIdConfigUrl: process.env.OPENID_CONFIG_URL,
     secret: process.env.JWT_SECRET,
     issuer: process.env.JWT_ISSUER,
     roleMappings: {
