@@ -1,7 +1,7 @@
 import {Request, Response} from "express";
 import {User} from "../models/User";
 import {Exam} from "../models/Exam";
-import {writeFile, mkdir, rm} from "node:fs/promises";
+import {writeFile, mkdir, rm, rmdir} from "node:fs/promises";
 import {AnswerSheet} from "../models/AnswerSheet";
 import {Student} from "../models/Student";
 import {IAnswerSheetBase, IAnswerSheetPopulated} from "../interfaces/IAnswerSheet";
@@ -567,7 +567,7 @@ export async function deleteExam(req: Request, res: Response) {
                     async (answerSheet) => Private.deleteAnswerSheet(answerSheet._id!.toString(), currentUser._id!.toString()) //remove each answer sheet
                 )
             );
-            await rm(path.join(config.fileStorageLocation, exam._id.toString())); //remove directory
+            await rmdir(path.join(config.fileStorageLocation, exam._id.toString())); //remove directory
             await Exam.deleteOne({_id: exam._id});
             res.status(204).send();
         });
