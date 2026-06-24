@@ -249,6 +249,32 @@
             "description": "Not Found"
           }
         }
+      },
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the exam"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "exam",
+            "content": {}
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
       }
     },
     "/exams/{id}/answer-sheets": {
@@ -360,8 +386,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
+          "204": {
+            "description": "No Content"
           },
           "400": {
             "description": "Bad Request"
@@ -395,6 +421,44 @@
           },
           "400": {
             "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/answer-sheets/{answerSheetId}/{fileId}": {
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "answerSheetId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the answer-sheet",
+            "pattern": "^[0-9a-fA-F]{24}$"
+          },
+          {
+            "name": "fileId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "ID of the answer-sheet",
+            "pattern": "^[0-9a-fA-F]{24}$"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "403": {
+            "description": "Forbidden"
           }
         }
       }

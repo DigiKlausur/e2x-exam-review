@@ -3,7 +3,7 @@ import {Application} from "express";
 import {applyReviewRoutes} from "./routes/reviewApi";
 import * as cors from 'cors';
 import {answerSheetProtection} from "./middlewares/answerSheetProtection";
-import {connect, Types} from 'mongoose';
+import {connect} from 'mongoose';
 import {applyManagementRoutes} from "./routes/managementApi";
 import {expressjwt} from "express-jwt";
 import {config} from "./globals";
