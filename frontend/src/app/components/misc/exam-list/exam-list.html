@@ -1,14 +1,12 @@
-<ngx-datatable [rows]="exams" [columns]="columns" [limit]="10" [footerHeight]="exams.length > 5 ? 55 : 0" [messages]="messages" (activate)="handleActivate($event)" rowHeight="auto" columnMode="flex">
+<ngx-datatable [rows]="exams" [columns]="columns" [sorts]="sorts" [limit]="environment.dataTable.rowsPerPage" [footerHeight]="exams.length > environment.dataTable.footerMinRows ? 55 : 0" [messages]="messages" (activate)="handleActivate($event)" rowHeight="auto" columnMode="flex">
   <ngx-datatable-footer>
     <ng-template
       ngx-datatable-footer-template
       let-rowCount="rowCount"
       let-pageSize="pageSize"
-      let-selectedCount="selectedCount"
-      let-curPage="curPage"
       let-offset="offset"
     >
-      <div class="page-count fst-italic" i18n="@@app.table.footer.stats">showing {{Math.min(rowCount - (offset * pageSize), pageSize)}} of {{rowCount}} rows ({{Math.ceil(rowCount / pageSize)}} pages)</div>
+      <div class="page-count fst-italic" i18n="@@app.exam.table.footer.stats">showing {{Math.min(rowCount - (offset * pageSize), pageSize)}} of {{rowCount}} {rowCount, plural, =1 {row} other {rows}} ({{Math.ceil(rowCount / pageSize)}} {Math.ceil(rowCount / pageSize), plural, =1 {page} other {pages}})</div>
       <ngx-datatable-pager></ngx-datatable-pager>
     </ng-template>
   </ngx-datatable-footer>

@@ -119,9 +119,9 @@ export class ExamEditor implements OnChanges {
     }
     if (this.isNewExam) {
       this.managementService.createExam(this.getFormValues()).subscribe({
-        next: (response) => {
+        next: async (response) => {
           this.showSuccessfulResponse();
-          this.router.navigate(['/', 'manage', 'exam', response._id]);
+          await this.router.navigate(['/', 'manage', 'exam', response._id]);
         },
         error: (error) => this.showErrorResponse(error),
       });
@@ -154,15 +154,15 @@ export class ExamEditor implements OnChanges {
   confirmDeleteExam(): void{
     this.managementService.deleteExam(this.examId)
       .subscribe({
-        next: () => {
+        next: async () => {
           this.confirmDeleteModalRef?.close();
           this.toastService.show({header: $localize`:@@app.toast.header.delete-exam:Delete Exam`, body: $localize`:@@app.toast.body.delete-exam:Exam deleted successfully`});
-          this.router.navigate(['/', 'manage']);
+          await this.router.navigate(['/', 'manage']);
         },
-        error: (error: HttpErrorResponse) => {
+        error: async (error: HttpErrorResponse) => {
           this.toastService.show({header: $localize`:@@app.toast.header.delete-exam:Delete Exam`, body: $localize`:@@app.toast.body.delete-exam-failed:Failed to delete exam`, classname: 'bg-danger text-white', delay: 20000});
           console.warn('unable to delete exam:', error);
-          this.router.navigate(['/', 'manage', this.examId]);
+          await this.router.navigate(['/', 'manage', this.examId]);
         }
       });
   }

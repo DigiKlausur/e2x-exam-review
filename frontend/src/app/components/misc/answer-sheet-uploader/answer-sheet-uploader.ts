@@ -52,7 +52,7 @@ export class AnswerSheetUploader {
       return this.readZipArchive(files.item(0)!);
     }
     this.toastService.show({
-      header: $localize`:@@app.toast.header.answer-sheet-upload:Answer Sheet Upload`,
+      header: $localize`:@@app.toast.header.answer-sheet-upload:Graded Exam Upload`,
       body: $localize`:@@app.toast.body.answer-sheet-upload-failed.unsupported-format:Unable to upload files, as they does not match the supported formats!`,
       classname: 'bg-danger text-white',
       delay: -1,
@@ -95,7 +95,7 @@ export class AnswerSheetUploader {
     )
       .then((results) => {
         this.toastService.show({
-          header: $localize`:@@app.toast.header.answer-sheet-upload:Answer Sheet Upload`,
+          header: $localize`:@@app.toast.header.answer-sheet-upload:Graded Exam Upload`,
           body: $localize`:@@app.toast.body.answer-sheet-upload-successful:Upload finished: ${results.reduce((acc, cur) => (cur.status === 'fulfilled' ? acc + 1 : acc), 0)} / ${files.length} uploads successful`,
         });
       })
@@ -158,7 +158,7 @@ export class AnswerSheetUploader {
     )
       .then((results) => {
         this.toastService.show({
-          header: $localize`:@@app.toast.header.answer-sheet-upload:Answer Sheet Upload`,
+          header: $localize`:@@app.toast.header.answer-sheet-upload:Graded Exam Upload`,
           body: $localize`:@@app.toast.body.answer-sheet-upload-successful.zip:Upload finished: ${results.reduce((acc, cur) => (cur.status === 'fulfilled' ? acc + 1 : acc), 0)} / ${numberOfSubmitters} uploads successful`,
         });
       })
@@ -169,9 +169,9 @@ export class AnswerSheetUploader {
 
   showWarning(message?: string): void {
     this.toastService.show({
-      header: $localize`:@@app.toast.header.answer-sheet-upload:Answer Sheet Upload`,
+      header: $localize`:@@app.toast.header.answer-sheet-upload:Graded Exam Upload`,
       body:
-        $localize`:@@app.toast.body.answer-sheet-upload-failed.warning:Failed to upload answer sheet: ` +
+        $localize`:@@app.toast.body.answer-sheet-upload-failed.warning:Failed to upload graded exam: ` +
         (message ?? '[unknown error]'),
       classname: 'bg-danger text-white',
       delay: -1,

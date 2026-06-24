@@ -10,9 +10,10 @@ import {
   DatatableFooterDirective,
   DataTableFooterTemplateDirective,
   DatatablePagerComponent, DatatableRowDetailDirective,
-  DatatableRowDetailTemplateDirective, NgxDatatableMessages, TableColumn
+  DatatableRowDetailTemplateDirective, NgxDatatableMessages, SortPropDir, TableColumn
 } from '@siemens/ngx-datatable';
-import {dataTableDefaultMessages} from '../../../utils/DataTable';
+import {datatableDefaultColumnSettings, dataTableDefaultMessages} from '../../../utils/DataTable';
+import {environment} from '../../../../environments/environment';
 
 @Component({
   selector: 'app-review-list',
@@ -59,11 +60,20 @@ export class ReviewList {
   }
 
   columns: TableColumn[] = [
-    {prop: 'exam.semester', name: $localize`:@@app.table.header.semster:Semester`, pipe: new SemesterDisplayNamePipe(), flexGrow: 2},
-    {prop: 'exam.title', name:  $localize`:@@app.table.header.exam-title:Exam Title`, flexGrow: 4},
-    {prop: 'exam.primaryExaminer', name: $localize`:@@app.table.header.primary-examiner:Primary Examiner`, pipe: this.userDisplayNamePipe, flexGrow: 2},
-    {prop: 'exam.secondaryExaminer', name: $localize`:@@app.table.header.secondary-examiner:Secondary Examiner`, pipe: this.userDisplayNamePipe, flexGrow: 2},
-    {prop: 'exam.date', name: $localize`:@@app.table.header.date:Date`, pipe: new DatePipe(this.currentLocale), flexGrow: 1}
+    {prop: 'exam.semester', name: $localize`:@@app.table.header.semster:Semester`, pipe: new SemesterDisplayNamePipe(), flexGrow: 2, ...datatableDefaultColumnSettings},
+    {prop: 'exam.title', name:  $localize`:@@app.table.header.exam-title:Exam Title`, flexGrow: 4, ...datatableDefaultColumnSettings},
+    {prop: 'exam.primaryExaminer', name: $localize`:@@app.table.header.primary-examiner:Primary Examiner`, pipe: this.userDisplayNamePipe, flexGrow: 2, ...datatableDefaultColumnSettings},
+    {prop: 'exam.secondaryExaminer', name: $localize`:@@app.table.header.secondary-examiner:Secondary Examiner`, pipe: this.userDisplayNamePipe, flexGrow: 2, ...datatableDefaultColumnSettings},
+    {prop: 'exam.date', name: $localize`:@@app.table.header.date:Date`, pipe: new DatePipe(this.currentLocale), flexGrow: 1, ...datatableDefaultColumnSettings}
   ];
+
+  sorts: SortPropDir[] = [
+    {
+      prop: 'exam.semester',
+      dir: 'desc'
+    }
+  ];
+
   protected readonly Math = Math;
+  protected readonly environment = environment;
 }

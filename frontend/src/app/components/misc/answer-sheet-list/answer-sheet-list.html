@@ -1,68 +1,69 @@
-<table class="table">
-  <thead>
-    <tr>
-      <th i18n="@@app.table.header.student-id">Student ID</th>
-      <th i18n="@@app.table.header.file-name">File</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    @for (answerSheet of answerSheets; track answerSheet._id){
-      <tr>
-        <td>{{answerSheet.submitter.studentId}}</td>
-        @if (answerSheet.files.length === 1){
-          <td>{{answerSheet.files[0].originalFileName}}</td>
-          <td class="text-end w-auto">
-            <div class="controls">
-              <i class="bi bi-eye" role="button" [routerLink]="['/','review', answerSheet._id, answerSheet.files[0]._id]" i18n-ngbTooltip="@@app.button.tooltip.view-answer-sheet" ngbTooltip="View answer sheet"></i>
-              <i class="bi bi-trash" role="button" (click)="handleDeleteAnswerSheet(answerSheet)" i18n-ngbTooltip="@@app.button.tooltip.delete-answer-sheet" ngbTooltip="Delete answer sheet"></i>
-            </div>
-          </td>
-        } @else {
-          <td></td>
-          <td class="text-end w-auto">
-            <div class="controls">
-              <i class="bi bi-trash" role="button" (click)="handleDeleteAnswerSheet(answerSheet)" i18n-ngbTooltip="@@app.button.tooltip.delete-answer-sheet" ngbTooltip="Delete answer sheet"></i>
-            </div>
-          </td>
+<ngx-datatable [rows]="answerSheets" [sorts]="sorts" [limit]="environment.dataTable.rowsPerPage" [footerHeight]="55" (activate)="handleActivate($event)" [messages]="messages" rowHeight="auto" columnMode="flex">
+  <ngx-datatable-column [draggable]="false" [sortable]="false" [resizeable]="false">
+    <ng-template ngx-datatable-cell-template class="test" let-row="row" let-expanded="expanded">
+      @if(row.files.length > 1){
+        <i class="bi" [class.bi-chevron-down]="expanded" [class.bi-chevron-right]="!expanded"></i>
+      }
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="Student Id" i18n-name="@@app.table.header.student-id" prop="submitter.studentId" [flexGrow]="1" [draggable]="false" [resizeable]="false" >
+  </ngx-datatable-column>
+
+  <ngx-datatable-column name="File" i18n-name="@@app.table.header.file-name" prop="files" [flexGrow]="2" [draggable]="false" [resizeable]="false" >
+    <ng-template ngx-datatable-cell-template let-value="value">@if(value.length === 1){{{value[0].originalFileName}}}</ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column flexGrow="1" [draggable]="false" [sortable]="false" [resizeable]="false">
+    <ng-template ngx-datatable-cell-template let-row="row">
+      <div class="controls">
+        @if(row.files.length === 1) {
+          <i class="bi bi-eye" role="button" [routerLink]="['/','review', row._id, row.files[0]._id]" i18n-ngbTooltip="@@app.button.tooltip.view-answer-sheet" ngbTooltip="View graded exam"></i>
         }
-      </tr>
-      @if (answerSheet.files.length > 1) {
-        @for (file of answerSheet.files; track file._id) {
-          <tr class="answer-sheet-file">
-            <td class="text-end fs-5 py-0 fw-lighter align-middle">@if($index < (answerSheet.files.length - 1)){├}@else{└}</td>
-            <td>{{file.originalFileName}}</td>
-            <td class="text-end w-auto">
-              <div class="controls">
-                <i class="bi bi-eye" role="button" [routerLink]="['/','review', answerSheet._id, file._id]" i18n-ngbTooltip="@@app.button.tooltip.view-answer-sheet-file" ngbTooltip="View answer sheet file"></i>
-                <i class="bi bi-trash" role="button" (click)="handleDeleteAnswerSheetFile(answerSheet, file)" i18n-ngbTooltip="@@app.button.tooltip.delete-answer-sheet-file" ngbTooltip="Delete answer sheet file"></i>
-              </div>
-            </td>
-          </tr>
+        <i class="bi bi-trash" role="button" (click)="$event.stopPropagation(); handleDeleteAnswerSheet(row)" i18n-ngbTooltip="@@app.button.tooltip.delete-answer-sheet" ngbTooltip="Delete graded exam"></i>
+      </div>
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-row-detail [rowHeight]="getDetailsRowHeight">
+    <ng-template let-row="row" ngx-datatable-row-detail-template>
+      @if (row.files.length > 1) {
+        @for (file of row.files; track file._id){
+          <div class="answer-sheet-file d-flex align-items-center" >
+            <span class="fs-5 py-0 fw-lighter me-3">@if(!$last){├}@else{└}</span>
+            <div class="file-name">{{file.originalFileName}}</div>
+            <div class="controls text-end ms-auto">
+              <i class="bi bi-eye" role="button" [routerLink]="['/','review', row._id, file._id]" i18n-ngbTooltip="@@app.button.tooltip.view-answer-sheet-file" ngbTooltip="View graded exam file"></i>
+              <i class="bi bi-trash" role="button" (click)="handleDeleteAnswerSheetFile(row, file)" i18n-ngbTooltip="@@app.button.tooltip.delete-answer-sheet-file" ngbTooltip="Delete graded exam file"></i>
+            </div>
+          </div>
         }
       }
-    } @empty {
-      <tr class="disabled">
-        <td class="text-center fst-italic" colspan="3" i18n="@@app.table.body.no-answer-sheets-notice">No answer sheets available</td>
-      </tr>
-    }
-  </tbody>
-  @if (answerSheets.length > 0){
-    <tfoot>
-      <tr>
-        <td colspan="3" class="text-end fst-italic" i18n="@@app.table.footer.answer-sheet-stats">{{answerSheets.length}} Answer Sheet(s), {{numberOfFiles}} File(s)</td>
-      </tr>
-    </tfoot>
-  }
-</table>
+    </ng-template>
+  </ngx-datatable-row-detail>
+
+  <ngx-datatable-footer>
+    <ng-template
+      ngx-datatable-footer-template
+      let-rowCount="rowCount"
+      let-pageSize="pageSize"
+      let-offset="offset"
+    >
+      <div class="page-count fst-italic" i18n="@@app.answer-sheet.table.footer.stats">
+        showing {{Math.min(rowCount - (offset * pageSize), pageSize)}} of {{rowCount}} graded {rowCount, plural, =1 {exam} other {exams}}
+        ({{numberOfFiles}} {numberOfFiles, plural, =1 {file} other {files}}; {{Math.ceil(rowCount / pageSize)}} {Math.ceil(rowCount / pageSize), plural, =1 {page} other {pages}})</div>
+      <ngx-datatable-pager style="flex: 1 1 50%"></ngx-datatable-pager>
+    </ng-template>
+  </ngx-datatable-footer>
+</ngx-datatable>
 
 <ng-template #confirmDeleteAnswerSheetModal let-modal>
   <div class="modal-header">
-    <h4 class="modal-title" i18n="@@app.modal.title.delete-answer-sheet" >Delete Answer Sheet</h4>
+    <h4 class="modal-title" i18n="@@app.modal.title.delete-answer-sheet" >Delete Graded Exam</h4>
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
   </div>
   <div class="modal-body" i18n="@@app.modal.body.delete-answer-sheet">
-    Are your sure, that you want to delete the answer sheet of student <span class="font-monospace">{{selectedAnswerSheet?.submitter?.studentId}}</span>&nbsp;@if(selectedAnswerSheet?.submitter){{{selectedAnswerSheet?.submitter! | userDisplayName}}}?
+    Are your sure, that you want to delete the graded exam of student <span class="font-monospace">{{selectedAnswerSheet?.submitter?.studentId}}</span>&nbsp;@if(selectedAnswerSheet?.submitter){{{selectedAnswerSheet?.submitter! | userDisplayName}}}?
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Abort')"><i class="bi bi-x-lg"></i><span i18n="@@app.modal.button.abort">Abort</span></button>
@@ -72,11 +73,11 @@
 
 <ng-template #confirmDeleteAnswerSheetFileModal let-modal>
   <div class="modal-header">
-    <h4 class="modal-title" i18n="@@app.modal.title.delete-answer-sheet-file" >Delete Answer Sheet File</h4>
+    <h4 class="modal-title" i18n="@@app.modal.title.delete-answer-sheet-file" >Delete Graded Exam File</h4>
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
   </div>
   <div class="modal-body" i18n="@@app.modal.body.delete-answer-sheet-file">
-    Are your sure, that you want to delete <span class="font-monospace">{{selectedFile?.originalFileName}}</span>&nbsp; from the answer sheet of student <span class="font-monospace">{{selectedAnswerSheet?.submitter?.studentId}}</span>&nbsp;@if(selectedAnswerSheet?.submitter){{{selectedAnswerSheet?.submitter! | userDisplayName}}}?
+    Are your sure, that you want to delete <span class="font-monospace">{{selectedFile?.originalFileName}}</span>&nbsp; from the graded exam of student <span class="font-monospace">{{selectedAnswerSheet?.submitter?.studentId}}</span>&nbsp;@if(selectedAnswerSheet?.submitter){{{selectedAnswerSheet?.submitter! | userDisplayName}}}?
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" (click)="modal.dismiss('Abort')"><i class="bi bi-x-lg"></i><span i18n="@@app.modal.button.abort">Abort</span></button>

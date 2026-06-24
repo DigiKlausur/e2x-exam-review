@@ -1,6 +1,6 @@
-<ngx-datatable [rows]="answerSheets" [columns]="columns" [limit]="10" [footerHeight]="answerSheets.length > 5 ? 55 : 0" [messages]="messages" (activate)="handleActivate($event)" rowHeight="auto" columnMode="flex">
+<ngx-datatable [rows]="answerSheets" [columns]="columns" [limit]="environment.dataTable.rowsPerPage" [sorts]="sorts" [footerHeight]="answerSheets.length > environment.dataTable.footerMinRows ? 55 : 0" [messages]="messages" (activate)="handleActivate($event)" rowHeight="auto" columnMode="flex">
   <ngx-datatable-row-detail [rowHeight]="getDetailsRowHeight">
-    <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
+    <ng-template let-row="row" ngx-datatable-row-detail-template>
       @for (file of row.files; track file._id){
         <div class="answer-sheet-file" (click)="showAnswerSheetFile(row._id, file)"><span class="fs-5 py-0 fw-lighter me-3">@if(!$last){├}@else{└}</span><div class="file-name">{{file.originalFileName}}</div></div>
       }
@@ -12,11 +12,9 @@
       ngx-datatable-footer-template
       let-rowCount="rowCount"
       let-pageSize="pageSize"
-      let-selectedCount="selectedCount"
-      let-curPage="curPage"
       let-offset="offset"
     >
-      <div class="page-count fst-italic" i18n="@@app.table.footer.stats">showing {{Math.min(rowCount - (offset * pageSize), pageSize)}} of {{rowCount}} rows ({{Math.ceil(rowCount / pageSize)}} pages)</div>
+      <div class="page-count fst-italic" i18n="@@app.review.table.footer.stats">showing {{Math.min(rowCount - (offset * pageSize), pageSize)}} of {{rowCount}} {rowCount, plural, =1 {row} other {rows}} ({{Math.ceil(rowCount / pageSize)}} {Math.ceil(rowCount / pageSize), plural, =1 {page} other {pages}})</div>
       <ngx-datatable-pager></ngx-datatable-pager>
     </ng-template>
   </ngx-datatable-footer>

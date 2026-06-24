@@ -68,6 +68,21 @@
                 }
               ]
             },
+            "development-i18n": {
+              "localize": [
+                "en",
+                "de"
+              ],
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.development.ts"
+                }
+              ]
+            },
             "de": {
               "localize": [
                 "de"

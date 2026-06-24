@@ -21,5 +21,9 @@ export interface Environment {
       student: string;
     },
     scopes: string[]
+  },
+  dataTable: {
+    rowsPerPage: number,
+    footerMinRows: number
   }
 }

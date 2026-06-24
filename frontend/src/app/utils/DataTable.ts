@@ -1,4 +1,4 @@
-import {NgxDatatableMessages} from '@siemens/ngx-datatable';
+import {NgxDatatableMessages, TableColumn} from '@siemens/ngx-datatable';
 
 export const dataTableDefaultMessages: NgxDatatableMessages = {
   emptyMessage: $localize`:@@app.table.body.empty-notice:No data available`,
@@ -12,4 +12,9 @@ export const dataTableDefaultMessages: NgxDatatableMessages = {
   ariaGroupHeaderCheckboxMessage: '',
   ariaHeaderCheckboxMessage: '',
   ariaRowCheckboxMessage: ''
+}
+
+export const datatableDefaultColumnSettings: TableColumn = {
+  draggable: false,
+  resizeable: false
 }

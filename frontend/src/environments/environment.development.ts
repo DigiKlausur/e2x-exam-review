@@ -24,4 +24,8 @@ export const environment: Environment = {
     },
     scopes: ['openid', 'profile', 'offline_access']
   },
+  dataTable: {
+    rowsPerPage: 10,
+    footerMinRows: 5
+  }
 };
