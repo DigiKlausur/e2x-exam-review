@@ -33,14 +33,14 @@
       <app-date-time-input appShowInvalid formControlName="endDate" ></app-date-time-input>
       @if(examForm.hasError('dateSequence', 'reviewParameters') && (examForm.touched || examForm.dirty)){
         <div class="invalid-feedback d-block" i18n="@@app.form.invalid-feedback.end-date-must-succeed-start-date">
-          The end date must succeed the start date!
+          The end date must be after the start date!
         </div>
       }
     </div>
     <div class="col-auto">
       <div class="form-check form-switch" style="margin-top: 2.5rem">
         <input class="form-check-input" formControlName="showDownloadButton" type="checkbox" role="switch" id="showDownloadButtonSwitch">
-        <label class="form-check-label" for="showDownloadButtonSwitch"  i18n="@@app.form.label.show-download-button">Allow Students to Download their Graded Exam</label>
+        <label class="form-check-label" for="showDownloadButtonSwitch"  i18n="@@app.form.label.show-download-button">Allow students to download their graded exam</label>
       </div>
     </div>
   </div>

@@ -12,7 +12,7 @@ export const answerSheetProtection = async (req: JwtRequest, res: Response, next
         .findOne<IAnswerSheetPopulated>({'files.filePath': 'answer-sheets' + req.path})
         .populate([{path: 'exam', populate: ['primaryExaminer', 'secondaryExaminer']}, 'submitter'])
         .lean<IAnswerSheetPopulated>();
-    if(!answerSheet) return res.status(400).send('No such answer sheet');
+    if(!answerSheet) return res.status(404).send('No such answer sheet');
     if(hasRole(req, config.jwt.roleMappings.lecturer)){
         if(!req.auth?.[config.jwt.attributeMappings.email]) return res.status(400).send('Email not present in JWT');
 
@@ -24,6 +24,9 @@ export const answerSheetProtection = async (req: JwtRequest, res: Response, next
         }
     }else if(hasRole(req, config.jwt.roleMappings.student)){
         if(!req.auth?.[config.jwt.attributeMappings.studentId]) return res.status(400).send('Student ID not present in JWT');
+        const now = new Date();
+        if(answerSheet.exam.reviewParameters.startDate && answerSheet.exam.reviewParameters.startDate > now) return res.status(403).send('Exam has not yet started!');
+        if(answerSheet.exam.reviewParameters.endDate && answerSheet.exam.reviewParameters.endDate < now) return res.status(410).send('Exam review has ended!');
         if(answerSheet.submitter.studentId.toString() === req.auth[config.jwt.attributeMappings.studentId]) return next();
     }
     res.status(403).send('forbidden');

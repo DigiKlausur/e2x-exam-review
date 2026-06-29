@@ -4,6 +4,7 @@ import {AnswerSheet} from "../models/AnswerSheet";
 import {IStudentBase} from "../interfaces/IStudent";
 import {getCurrentUser, getUserFromJwt} from "../util/user";
 import {Student} from "../models/Student";
+import {IAnswerSheet} from "../interfaces";
 
 export async function getAnswerSheets(req: JwtRequest, res: Response) {
     /*
@@ -25,16 +26,20 @@ export async function getAnswerSheets(req: JwtRequest, res: Response) {
     const student = await getCurrentUser<IStudentBase>(req);
     if(!student) return;
     return res.send(
-      await AnswerSheet.find({ 'submitter': student._id!.toString() })
-        .populate({
-          path: "exam",
-          populate: ["primaryExaminer", "secondaryExaminer"]
-        })
-        .sort([
-          ["exam.semester.year", -1],
-          ["exam.semester.season", -1],
-          ["exam.title", 1],
-        ])
+      (await AnswerSheet.find({'submitter': student._id!.toString()})
+          .populate({
+              path: "exam",
+              populate: ["primaryExaminer", "secondaryExaminer"]
+          })
+          .sort([
+              ["exam.semester.year", -1],
+              ["exam.semester.season", -1],
+              ["exam.title", 1],
+          ])
+          .lean<IAnswerSheet[]>()
+          .exec())
+          .filter((answerSheet: IAnswerSheet) => !answerSheet.exam.reviewParameters.startDate || answerSheet.exam.reviewParameters.startDate < new Date())
+          .map((answerSheet: IAnswerSheet) => ({...answerSheet, files: (!answerSheet.exam.reviewParameters.endDate || answerSheet.exam.reviewParameters.endDate >= new Date()) ? answerSheet.files : []}))
     );
 }
 

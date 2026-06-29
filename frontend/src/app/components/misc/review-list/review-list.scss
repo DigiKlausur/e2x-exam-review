@@ -6,7 +6,13 @@
 }
 
 ::ng-deep.datatable-body-row{
-  cursor: pointer;
+  .datatable-body-cell.disabled{
+    opacity: 50%;
+  }
+
+  &:not(:has(.datatable-body-cell.disabled)) {
+    cursor: pointer;
+  }
 }
 
 ::ng-deep.answer-sheet-file{

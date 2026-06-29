@@ -14,6 +14,7 @@ import {
 } from '@siemens/ngx-datatable';
 import {datatableDefaultColumnSettings, dataTableDefaultMessages} from '../../../utils/DataTable';
 import {environment} from '../../../../environments/environment';
+import {ToastService} from '../../../services/toast-service/toast-service';
 
 @Component({
   selector: 'app-review-list',
@@ -25,6 +26,7 @@ export class ReviewList {
   private currentLocale: string =  inject(LOCALE_ID);
   private router: Router = inject(Router);
   private activatedRoute: ActivatedRoute = inject(ActivatedRoute);
+  private toastService: ToastService = inject(ToastService);
 
   @Input() answerSheets: IAnswerSheet[] = [];
 
@@ -45,6 +47,10 @@ export class ReviewList {
 
   async handleActivate(event: ActivateEvent<IAnswerSheet>): Promise<void> {
     if(event.type !== 'click') return;
+    if(!event.row.files || event.row.files.length === 0) {
+      this.toastService.show({header: $localize`:@@app.toast.header.exam-review-ended:Exam Review Expired`, body: $localize`:@@app.toast.body.exam-review-ended:This exam's review-period has already ended. You are not able to access it anymore.`});
+      return;
+    }
     if(this.isSingleFile(event.row)) await this.showAnswerSheetFile(event.row._id, event.row.files[0]);
     else {
       this.dataTable.rowDetail?.toggleExpandRow(event.row);
@@ -59,12 +65,16 @@ export class ReviewList {
     return (row?.files.length ?? 0) * 45;
   }
 
+  cellClass({row}: {row: IAnswerSheet}){
+    return row.files?.length < 1 ? 'disabled' : '';
+  }
+
   columns: TableColumn[] = [
-    {prop: 'exam.semester', name: $localize`:@@app.table.header.semster:Semester`, pipe: new SemesterDisplayNamePipe(), flexGrow: 2, ...datatableDefaultColumnSettings},
-    {prop: 'exam.title', name:  $localize`:@@app.table.header.exam-title:Exam Title`, flexGrow: 4, ...datatableDefaultColumnSettings},
-    {prop: 'exam.primaryExaminer', name: $localize`:@@app.table.header.primary-examiner:Primary Examiner`, pipe: this.userDisplayNamePipe, flexGrow: 2, ...datatableDefaultColumnSettings},
-    {prop: 'exam.secondaryExaminer', name: $localize`:@@app.table.header.secondary-examiner:Secondary Examiner`, pipe: this.userDisplayNamePipe, flexGrow: 2, ...datatableDefaultColumnSettings},
-    {prop: 'exam.date', name: $localize`:@@app.table.header.date:Date`, pipe: new DatePipe(this.currentLocale), flexGrow: 1, ...datatableDefaultColumnSettings}
+    {prop: 'exam.semester', name: $localize`:@@app.table.header.semster:Semester`, pipe: new SemesterDisplayNamePipe(), flexGrow: 2, ...datatableDefaultColumnSettings, cellClass: this.cellClass},
+    {prop: 'exam.title', name:  $localize`:@@app.table.header.exam-title:Exam Title`, flexGrow: 4, ...datatableDefaultColumnSettings, cellClass: this.cellClass},
+    {prop: 'exam.primaryExaminer', name: $localize`:@@app.table.header.primary-examiner:Primary Examiner`, pipe: this.userDisplayNamePipe, flexGrow: 2, ...datatableDefaultColumnSettings, cellClass: this.cellClass},
+    {prop: 'exam.secondaryExaminer', name: $localize`:@@app.table.header.secondary-examiner:Secondary Examiner`, pipe: this.userDisplayNamePipe, flexGrow: 2, ...datatableDefaultColumnSettings, cellClass: this.cellClass},
+    {prop: 'exam.date', name: $localize`:@@app.table.header.date:Date`, pipe: new DatePipe(this.currentLocale), flexGrow: 1, ...datatableDefaultColumnSettings, cellClass: this.cellClass}
   ];
 
   sorts: SortPropDir[] = [
