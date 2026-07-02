@@ -6,6 +6,7 @@ export const environment: Environment = {
   privacyUrl: 'https://www.h-brs.de/en/data-privacy-statement',
   bugReportEmail: 'e2x@h-brs.de',
   studentIdRegex: '(?<!\\d)(90[\\d]{5})(?!\\d)',
+  uploadConcurrency: 5,
   openId: {
     authorityUrl: '',
     clientId: '',

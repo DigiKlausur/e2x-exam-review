@@ -4,6 +4,8 @@ import {map, Observable} from 'rxjs';
 import {IAnswerSheet, IExam, IUser} from 'e2x-exam-review-backend';
 import {environment} from '../../../environments/environment';
 import {prepareExam} from '../../utils/ExamUtil';
+import {IAnswerSheetProto} from '../../models/IAnswerSheetProto';
+import {IFileProto} from '../../models/IFileProto';
 
 @Injectable({
   providedIn: 'root',
@@ -37,11 +39,12 @@ export class ManagementService {
     return this.http.get<IAnswerSheet[]>(`${environment.apiUrl}/api/v1/manage/exams/${examId}/answer-sheets`);
   }
 
-  addAnswerSheet(examId: string, studentId: string, files: File[]): Observable<IAnswerSheet> {
+  addAnswerSheet(answerSheetProto: Required<IAnswerSheetProto>, enableFileOverwrite: boolean = false): Observable<IAnswerSheet> {
     const body: FormData = new FormData();
-    files.forEach((file: File) => body.append('files', file));
-    body.append('studentId', studentId.toString());
-    return this.http.post<IAnswerSheet>(`${environment.apiUrl}/api/v1/manage/exams/${examId}/answer-sheets`, body);
+    answerSheetProto.files.forEach((fileProto: IFileProto) => body.append('files', fileProto.file));
+    body.append('studentId', answerSheetProto.studentId);
+    body.append('fileOverwrite', enableFileOverwrite.toString());
+    return this.http.post<IAnswerSheet>(`${environment.apiUrl}/api/v1/manage/exams/${answerSheetProto.examId}/answer-sheets`, body);
   }
 
   deleteAnswerSheet(answerSheetId: string): Observable<void>{

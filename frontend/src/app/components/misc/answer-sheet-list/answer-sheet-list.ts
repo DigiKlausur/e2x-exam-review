@@ -17,6 +17,7 @@ import {
 } from '@siemens/ngx-datatable';
 import {dataTableDefaultMessages} from '../../../utils/DataTable';
 import {environment} from '../../../../environments/environment';
+import {DatePipe} from '@angular/common';
 @Component({
   selector: 'app-answer-sheet-list',
   templateUrl: './answer-sheet-list.html',
@@ -32,7 +33,8 @@ import {environment} from '../../../../environments/environment';
     DatatableRowDetailDirective,
     DatatableRowDetailTemplateDirective,
     DataTableColumnDirective,
-    DataTableColumnCellDirective
+    DataTableColumnCellDirective,
+    DatePipe
   ]
 })
 export class AnswerSheetList implements AfterViewInit {

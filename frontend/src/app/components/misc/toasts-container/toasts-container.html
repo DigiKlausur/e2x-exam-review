@@ -6,6 +6,10 @@
     (hidden)="toastService.remove(toast)"
     [header]="toast.header"
   >
-    {{toast.body}}
+    @if(isBodyTemplate(toast)){
+      <ng-container [ngTemplateOutlet]="asTemplateRef(toast.body)"></ng-container>
+    } @else {
+      {{asSignal(toast.body)()}}
+    }
   </ngb-toast>
 }

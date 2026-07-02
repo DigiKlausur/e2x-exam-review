@@ -4,6 +4,7 @@ export interface Environment {
   privacyUrl: string;
   bugReportEmail: string;
   studentIdRegex: string;
+  uploadConcurrency: number;
   openId: {
     authorityUrl: string;
     clientId: string;

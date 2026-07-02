@@ -1,0 +1,92 @@
+<div class="header d-flex justify-content-between align-items-center mb-2">
+  <div class="stats" (click)="expandAllRows()">
+    <span i18n="@@app.answer-sheet-upload-preview.stats">{{numberOfMatchedFiles}} {numberOfMatchedFiles, plural, =1 {file} other {files}} could be matched to {{numberOfStudents}} {numberOfStudents, plural, =1 {student} other {students}}</span><br>
+    @if(numberOfUnmatchesFiles > 0){
+      <span class="text-danger" i18n="@@app.answer-sheet-upload-preview.stats.unmatched"
+            ngbTooltip="These files do not match any of the supported patterns for identifying the respective student. They will not be uploaded!"
+            i18n-ngbTooltip="@@app.answer-sheet-upload-preview.stats.unmatched.tooltip" >
+        {{numberOfUnmatchesFiles}} {numberOfUnmatchesFiles, plural, =1 {file} other {files}} could not be matched
+      </span><br>
+    }
+    @if(numberOfDuplicateFiles > 0){
+      <span class="text-info" i18n="@@app.answer-sheet-upload-preview.stats.duplicates"
+            ngbTooltip="Duplicates share their file-name with a file that was already uploaded. They can either be dismissed or used to overwrite the existing file(s)."
+            i18n-ngbTooltip="@@app.answer-sheet-upload-preview.stats.duplicates.tooltip" >
+        {{numberOfDuplicateFiles}} {numberOfDuplicateFiles, plural, =1 {file is a duplicate} other {files are duplicates}}
+      </span>
+    }
+  </div>
+  <div class="controls d-flex gap-2">
+    @if(numberOfDuplicateFiles > 0) {
+      <button class="btn btn-light" (click)="uploadAnswerSheets.emit('dismiss')"><i class="bi bi-x-circle"></i><span i18n="@@app.answer-sheet-upload-preview.button.upload-dismiss-duplicates">Dismiss Duplicates & Upload Remaining</span></button>
+      <button class="btn btn-info" (click)="uploadAnswerSheets.emit('overwrite')"><i class="bi bi-box-arrow-in-up-right"></i><span i18n="@@app.answer-sheet-upload-preview.button.upload-overwrite-duplicates">Upload Graded Exams & Overwrite Duplicates</span></button>
+    } @else {
+      <button class="btn btn-primary" (click)="uploadAnswerSheets.emit('dismiss')"><i class="bi bi-cloud-upload"></i><span i18n="@@app.answer-sheet-upload-preview.button.upload">Upload Graded Exams</span></button>
+    }
+  </div>
+</div>
+<ngx-datatable [rows]="uploadQueue" [sorts]="sorts" [limit]="environment.dataTable.rowsPerPage" [footerHeight]="55" [messages]="dataTableDefaultMessages" rowHeight="auto" columnMode="flex">
+  <ngx-datatable-column prop="studentId" name="Student Id" [flexGrow]="2" [resizeable]="false" [draggable]="false" >
+    <ng-template ngx-datatable-cell-template let-row="row">
+      {{row.studentId ?? '[unknown]'}}
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column prop="warnings" [flexGrow]="4" [resizeable]="false" [draggable]="false" [comparator]="severityComparator">
+    <ng-template ngx-datatable-cell-template let-value="value">
+      @if (hasWarning(value, AnswerSheetIdMatchWarning.NO_MATCH)) {
+        <div class="warning text-danger">
+          <i class="bi bi-person-slash"></i>
+          <span i18n="@@app.answer-sheet-upload-preview.warning.student-id-not-matched">Student ID could not be identified!</span>
+        </div>
+      }
+      @if (hasWarning(value, AnswerSheetIdMatchWarning.UNAMBIGUOUS_MATCH)) {
+        <div class="warning text-danger">
+          <i class="bi bi-person-exclamation"></i>
+          <span i18n="@@app.answer-sheet-upload-preview.warning.student-id-unambiguous">Student ID is not unambiguous!</span>
+        </div>
+      }
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-row-detail [rowHeight]="getDetailsRowHeight">
+    <ng-template let-row="row" ngx-datatable-row-detail-template>
+      @for (fileProto of row.files; track fileProto._id){
+        <div class="answer-sheet-file preview d-flex align-items-center gap-2" >
+          <span class="fs-5 py-0 fw-lighter me-3 gap-1">@if(!$last){├}@else{└}</span>
+          <div class="file-name" >
+            <span class="d-block text-truncate" [ngbTooltip]="fileProto.file.name">{{fileProto.file.name}}</span>
+          </div>
+          <div>
+            @if (hasWarning(fileProto.warnings, AnswerSheetFileUploadWarning.DUPLICATE)) {
+              <div class="warning text-info">
+                <i class="bi bi-copy"></i>
+                <span i18n="@@app.answer-sheet-upload-preview.warning.duplicate">Duplicate file</span>
+              </div>
+            }
+            @if (hasWarning(fileProto.warnings, AnswerSheetFileUploadWarning.INVALID_TYPE)) {
+              <div class="warning text-danger">
+                <i class="bi bi-file-earmark-excel"></i>
+                <span i18n="@@app.answer-sheet-upload-preview.warning.invalid-file-type">File type is not supported!</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </ng-template>
+  </ngx-datatable-row-detail>
+
+  <ngx-datatable-footer>
+    <ng-template
+      ngx-datatable-footer-template
+      let-rowCount="rowCount"
+      let-pageSize="pageSize"
+      let-offset="offset"
+    >
+      <div class="page-count fst-italic" i18n="@@app.answer-sheet.table.footer.stats">
+        showing {{Math.min(rowCount - (offset * pageSize), pageSize)}} of {{rowCount}} graded {rowCount, plural, =1 {exam} other {exams}}
+        ({{numberOfFiles}} {numberOfFiles, plural, =1 {file} other {files}}; {{Math.ceil(rowCount / pageSize)}} {Math.ceil(rowCount / pageSize), plural, =1 {page} other {pages}})</div>
+      <ngx-datatable-pager style="flex: 1 1 50%"></ngx-datatable-pager>
+    </ng-template>
+  </ngx-datatable-footer>
+</ngx-datatable>

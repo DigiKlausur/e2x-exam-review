@@ -1,7 +1,15 @@
-import {Component, ElementRef, EventEmitter, inject, Input, Output, ViewChild} from '@angular/core';
+import {
+  Component, ElementRef,
+  EventEmitter,
+  inject,
+  Input,
+  Output, signal, TemplateRef,
+  ViewChild,
+  WritableSignal
+} from '@angular/core';
 import {environment} from '../../../../environments/environment';
 import {ManagementService} from '../../../services/management-service/management-service';
-import {IAnswerSheet} from 'e2x-exam-review-backend';
+import {IAnswerSheet, IFile} from 'e2x-exam-review-backend';
 import {ToastService} from '../../../services/toast-service/toast-service';
 import {
   FS as zipFS,
@@ -9,12 +17,24 @@ import {
   ZipEntry,
   ZipDirectoryEntry, ZipFileEntry
 } from '@zip.js/zip.js';
+import {AnswerSheetUploadPreview} from '../answer-sheet-upload-preview/answer-sheet-upload-preview';
+import {IAnswerSheetProto} from '../../../models/IAnswerSheetProto';
+import {AnswerSheetFileUploadWarning} from '../../../enums/AnswerSheetFileUploadWarning';
+import {AnswerSheetIdMatchWarning} from '../../../enums/AnswerSheetIdMatchWarning';
+import {IFileProto} from '../../../models/IFileProto';
+import {hasWarning} from '../../../utils/UploadUtil';
+import {Toast} from '../../../models/Toast';
+import {NgbProgressbar} from '@ng-bootstrap/ng-bootstrap';
+import {default as PQueue} from 'p-queue';
 
 export const SUPPORTED_ZIP_FORMATS: string[] = ['application/zip', 'application/x-zip-compressed'];
 
 @Component({
   selector: 'app-answer-sheet-uploader',
-  imports: [],
+  imports: [
+    AnswerSheetUploadPreview,
+    NgbProgressbar
+  ],
   templateUrl: './answer-sheet-uploader.html',
   styleUrl: './answer-sheet-uploader.scss',
 })
@@ -23,9 +43,14 @@ export class AnswerSheetUploader {
   private toastService: ToastService = inject(ToastService);
 
   @Input() examId!: string;
+  @Input() existingAnswerSheets: IAnswerSheet[] = [];
+  uploadQueue: IAnswerSheetProto[] = [];
+
   @Output() onChange: EventEmitter<void> = new EventEmitter<void>();
+
   @ViewChild('dropZone') dropZone!: ElementRef<HTMLDivElement>;
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('uploadProgressBody') uploadProgressBody!: TemplateRef<HTMLDivElement>;
 
   handleDragOver(dragEvent: DragEvent): void {
     dragEvent.preventDefault();
@@ -53,58 +78,72 @@ export class AnswerSheetUploader {
     }
     this.toastService.show({
       header: $localize`:@@app.toast.header.answer-sheet-upload:Graded Exam Upload`,
-      body: $localize`:@@app.toast.body.answer-sheet-upload-failed.unsupported-format:Unable to upload files, as they does not match the supported formats!`,
+      body: $localize`:@@app.toast.body.answer-sheet-upload-failed.unsupported-format:Unable to upload files, as they do not match the supported formats!`,
       classname: 'bg-danger text-white',
       delay: -1,
     });
   }
 
+  clearUploadQueue(): void {
+    this.uploadQueue = [];
+  }
+
+  enqueueAnswerSheet(answerSheetProto: IAnswerSheetProto): void {
+    const existingAnswerSheet: IAnswerSheetProto | undefined = this.uploadQueue.find(exAnswerSheet => exAnswerSheet.studentId === answerSheetProto.studentId && this.warningsMatch(exAnswerSheet.warnings, answerSheetProto.warnings));
+    if(existingAnswerSheet) existingAnswerSheet.files.push(...answerSheetProto.files);
+    else this.uploadQueue.push(answerSheetProto);
+  }
+
+  warningsMatch(warningsA: AnswerSheetIdMatchWarning[], warningsB: AnswerSheetIdMatchWarning[]): boolean {
+    if(warningsA.length !== warningsB.length) return false;
+    for(const wA of warningsA) {
+      if(!warningsB.includes(wA)) return false;
+    }
+    return true;
+  }
+
   addAnswerSheets(files: FileList): void {
-    Promise.allSettled(
-      Array.from(files).map(async (file: File) => {
-        return new Promise<IAnswerSheet>(async (resolve, reject) => {
-          if (file.type !== 'application/pdf') {
-            const e = `<${file.name}> file type is not supported`;
-            this.showWarning(e);
-            return reject(e);
-          }
-          const matches: string[] = this.matchStudentId(file.name);
-          if (matches && matches.length > 1) {
-            const e = `<${file.name}> student ID is not unambiguous`;
-            this.showWarning(e);
-            return reject(e);
-          }
-          if (matches.length < 1) {
-            const e = `<${file.name}> student ID could not be identified`;
-            this.showWarning(e);
-            return reject(e);
-          }
-          this.managementService.addAnswerSheet(this.examId, matches[0], [file]).subscribe({
-            next: (response) => resolve(response),
-            error: (error) => {
-              this.showWarning(
-                error.error.error
-                  ? `student ${matches[0]} <${file.name}> ${error.error.error}`
-                  : undefined,
-              );
-              reject(error);
-            },
-          });
-        });
-      }),
-    )
-      .then((results) => {
-        this.toastService.show({
-          header: $localize`:@@app.toast.header.answer-sheet-upload:Graded Exam Upload`,
-          body: $localize`:@@app.toast.body.answer-sheet-upload-successful:Upload finished: ${results.reduce((acc, cur) => (cur.status === 'fulfilled' ? acc + 1 : acc), 0)} / ${files.length} uploads successful`,
-        });
-      })
-      .finally(() => {
-        this.onChange.emit();
-      });
+    this.clearUploadQueue();
+    Array.from(files).forEach((file: File) => {
+      this.checkAndEnqueueFiles(this.matchStudentId(file.name), [file]);
+    });
+    console.log(this.uploadQueue);
+  }
+
+  checkAndEnqueueFiles(studentIdMatches: string[], files: File[]): void{
+    const answerSheetProto: IAnswerSheetProto = {
+      examId: this.examId,
+      studentId: studentIdMatches.length === 1 ? studentIdMatches[0] : undefined,
+      files: [] as IFileProto[],
+      warnings: [] as AnswerSheetIdMatchWarning[]
+    }
+
+    if (studentIdMatches.length > 1) {
+      answerSheetProto.warnings.push(AnswerSheetIdMatchWarning.UNAMBIGUOUS_MATCH);
+    }else if (studentIdMatches.length < 1) {
+      answerSheetProto.warnings.push(AnswerSheetIdMatchWarning.NO_MATCH);
+    } else {
+      answerSheetProto.studentId = studentIdMatches[0];
+    }
+
+    answerSheetProto.files = files.map((file: File): {file: File, warnings: AnswerSheetFileUploadWarning[]} => {
+      const fileProto = {file: file, warnings: [] as AnswerSheetFileUploadWarning[]};
+      if (file.type !== 'application/pdf') {
+        fileProto.warnings.push(AnswerSheetFileUploadWarning.INVALID_TYPE);
+      }
+      if(this.existingAnswerSheets
+        .find((answerSheet: IAnswerSheet) => answerSheet.submitter.studentId?.toString() === answerSheetProto.studentId)
+        ?.files.find((existingFile: IFile) => existingFile.originalFileName === file.name)
+      ){
+        fileProto.warnings.push(AnswerSheetFileUploadWarning.DUPLICATE);
+      }
+      return fileProto;
+    });
+    this.enqueueAnswerSheet(answerSheetProto);
   }
 
   async readZipArchive(file: File): Promise<void> {
+    this.clearUploadQueue();
     const zFs: zipFS = new zipFsFactory.FS();
     await zFs.importBlob(file);
     const rootDirectory =
@@ -114,23 +153,15 @@ export class AnswerSheetUploader {
     const submitterDirectories: ZipDirectoryEntry[] = rootDirectory.children.filter(
       (child: ZipEntry) => (child as ZipDirectoryEntry).directory ?? false,
     ) as ZipDirectoryEntry[];
-    let numberOfSubmitters: number = 0;
-    await Promise.allSettled(
-      submitterDirectories.map(async (directory: ZipDirectoryEntry) => {
-        const studentIdMatches = this.matchStudentId(directory.name);
-        if (studentIdMatches.length !== 1) {
-          this.showWarning(`Student ID could not be found in directory-name <${directory.name}>`);
-          return Promise.reject(
-            $localize`:@@app.error.student-id-not-matched:student ID could not be matched (directory-name: ${directory.name})`,
-          );
-        }
-        numberOfSubmitters++;
 
-        const files: File[] = await Promise.all(
+    await Promise.all(submitterDirectories.map(async (directory: ZipDirectoryEntry) => {
+      this.checkAndEnqueueFiles(
+        this.matchStudentId(directory.name),
+        await Promise.all(
           directory.children
             .filter(
               (child: ZipEntry) =>
-                !(child as ZipDirectoryEntry).directory && child.name.endsWith('.pdf'),
+                !(child as ZipDirectoryEntry).directory,
             )
             .map(
               async (entry: ZipEntry) =>
@@ -138,44 +169,73 @@ export class AnswerSheetUploader {
                   [await (entry as ZipFileEntry<Blob, Blob>).getBlob()],
                   entry.getFullname(),
                 ),
-            ),
-        );
-
-        return new Promise<IAnswerSheet>((resolve, reject) => {
-          this.managementService.addAnswerSheet(this.examId, studentIdMatches[0], files).subscribe({
-            next: (response) => resolve(response),
-            error: (error) => {
-              this.showWarning(
-                error.error.error
-                  ? `student ${studentIdMatches[0]} <${files.map((file) => file.name).join('>, <')}> ${error.error.error}`
-                  : undefined,
-              );
-              reject(error);
-            },
-          });
-        });
-      }),
-    )
-      .then((results) => {
-        this.toastService.show({
-          header: $localize`:@@app.toast.header.answer-sheet-upload:Graded Exam Upload`,
-          body: $localize`:@@app.toast.body.answer-sheet-upload-successful.zip:Upload finished: ${results.reduce((acc, cur) => (cur.status === 'fulfilled' ? acc + 1 : acc), 0)} / ${numberOfSubmitters} uploads successful`,
-        });
-      })
-      .finally(() => {
-        this.onChange.emit();
-      });
+            )
+        )
+      )
+    }));
   }
 
-  showWarning(message?: string): void {
-    this.toastService.show({
+  protected numberOfAnswerSheets: number = 0;
+  protected overallNumberOfFiles: number = 0;
+  protected numberOfUploadedAnswerSheets: WritableSignal<number> = signal<number>(0);
+  protected numberOfUploadedFiles: WritableSignal<number> = signal<number>(0);
+  protected numberOfUploadErrors: WritableSignal<number> = signal<number>(0);
+
+  async performUpload(duplicateHandlingStrategy: 'dismiss'|'overwrite'): Promise<void>{
+    const preparedData = (this.uploadQueue.filter((answerSheetProto: IAnswerSheetProto) => answerSheetProto.studentId && answerSheetProto.warnings.length === 0) as Required<IAnswerSheetProto>[])
+      .map((answerSheetProto: Required<IAnswerSheetProto>) => {
+        answerSheetProto.files = answerSheetProto.files.filter((file: IFileProto) => (duplicateHandlingStrategy === 'dismiss' ? !hasWarning(file.warnings, AnswerSheetFileUploadWarning.DUPLICATE) : true) && !hasWarning(file.warnings, AnswerSheetFileUploadWarning.INVALID_TYPE));
+        return answerSheetProto;
+      })
+      .filter((answerSheetProto: Required<IAnswerSheetProto>) => answerSheetProto.files.length > 0);
+
+    this.numberOfAnswerSheets = preparedData.length;
+    this.overallNumberOfFiles = preparedData.reduce((acc: number, current: IAnswerSheetProto) => acc + current.files.length,0);
+    this.numberOfUploadedAnswerSheets.set(0);
+    this.numberOfUploadedFiles.set(0);
+    this.numberOfUploadErrors.set(0);
+    const uploadErrorAnswerSheets: {answerSheet: IAnswerSheetProto, error: any}[] = [];
+
+    const uploadProgressToast: Toast = {
       header: $localize`:@@app.toast.header.answer-sheet-upload:Graded Exam Upload`,
-      body:
-        $localize`:@@app.toast.body.answer-sheet-upload-failed.warning:Failed to upload graded exam: ` +
-        (message ?? '[unknown error]'),
-      classname: 'bg-danger text-white',
-      delay: -1,
-    });
+      body: this.uploadProgressBody,
+      delay: -1
+    };
+    this.toastService.show(uploadProgressToast);
+
+    const queue = new PQueue({concurrency: environment.uploadConcurrency});
+
+    await Promise.allSettled(
+      preparedData
+        .map(async (answerSheetProto: Required<IAnswerSheetProto>) => queue.add(() => new Promise<IAnswerSheet>((resolve, reject) => this.managementService.addAnswerSheet(answerSheetProto, duplicateHandlingStrategy === 'overwrite').subscribe({
+          next: (response) => {
+            this.numberOfUploadedAnswerSheets.update((prev: number) => prev + 1);
+            this.numberOfUploadedFiles.update((prev: number) => prev + answerSheetProto.files.length);
+            resolve(response)
+          },
+          error: (error) => {
+            this.numberOfUploadErrors.update((prev: number) => prev + answerSheetProto.files.length);
+            uploadErrorAnswerSheets.push({answerSheet: answerSheetProto, error: error});
+            reject(error);
+          }
+        }))))
+    )
+      .then(() => {
+        if(uploadErrorAnswerSheets.length === 0) setTimeout(() => {this.toastService.remove(uploadProgressToast)}, 5000);
+      })
+      .finally(() => {
+        if(uploadErrorAnswerSheets.length > 0) {
+          this.toastService.show({
+            header: $localize`:@@app.toast.header.answer-sheet-upload:Graded Exam Upload`,
+            body: $localize`:@@app.warning.answer-sheet-upload-failure:The graded exams matching the following student IDs could not be uploaded: ${uploadErrorAnswerSheets.map(err => err.answerSheet.studentId).join(', ')} (more details about this error can be found in the browser console)`,
+            classname: 'bg-danger text-white',
+            delay: -1,
+          });
+          uploadErrorAnswerSheets.forEach(err => console.error(`unable to upload the graded exam of ${err.answerSheet.studentId}`, err.error, err.answerSheet));
+        }
+        this.clearUploadQueue();
+        this.onChange.emit();
+      });
   }
 
   handleFileInputChange(event: Event) {

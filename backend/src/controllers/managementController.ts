@@ -1,7 +1,7 @@
 import {Request, Response} from "express";
 import {User} from "../models/User";
 import {Exam} from "../models/Exam";
-import {writeFile, mkdir, rm, rmdir} from "node:fs/promises";
+import {promises as fs} from "fs";
 import {AnswerSheet} from "../models/AnswerSheet";
 import {Student} from "../models/Student";
 import {IAnswerSheetBase, IAnswerSheetPopulated} from "../interfaces/IAnswerSheet";
@@ -361,12 +361,16 @@ export async function addAnswerSheet(req: Request, res: Response) {
                             },
                             files: {
                                 type: "array",
-                                requires: true,
+                                required: true,
                                 items: {
                                   type: "string",
                                   format: "binary",
                                   description: "answer-sheet as a PDF file"
                                 }
+                            },
+                            fileOverwrite: {
+                                type: "string",
+                                required: true
                             }
                         }
                     }
@@ -413,9 +417,9 @@ export async function addAnswerSheet(req: Request, res: Response) {
   }
 
   const directoryPath: string = path.join(config.fileStorageLocation, exam._id!.toString());
-  await mkdir(directoryPath, { recursive: true });
+  await fs.mkdir(directoryPath, { recursive: true });
 
-  const files: (Omit<IFileBase, "_id"> & { _id: ObjectId })[] = (
+  const newFiles: (Omit<IFileBase, "_id"> & { _id: ObjectId })[] = (
     req.files as Express.Multer.File[]
   ).map((file: Express.Multer.File) => {
     const fileId = new ObjectId();
@@ -427,13 +431,24 @@ export async function addAnswerSheet(req: Request, res: Response) {
     };
   });
 
-  const existingAnswerSheet: IAnswerSheetBase | null = await AnswerSheet.findOne({
+  const existingAnswerSheet: IAnswerSheetBase & {_id: string} | null = await AnswerSheet.findOne<IAnswerSheetBase & {_id: string}>({
       exam: exam._id.toString(),
       submitter: submitter._id.toString()
-  }).lean().exec();
+  }).lean<IAnswerSheetBase & {_id: string}>().exec();
 
-  if(existingAnswerSheet && files.some((file: (Omit<IFileBase, "_id"> & { _id: ObjectId })) => existingAnswerSheet.files.map((f: IFileBase) => f.originalFileName).includes(file.originalFileName))) {
-      return res.status(400).send({ error: "Unable to assign multiple files with the same name to one answer sheet!" });
+  const newFileNames: string[] = newFiles.map(file => file.originalFileName);
+  const fileNameIntersection = existingAnswerSheet?.files.filter((f: IFileBase) => newFileNames.includes(f.originalFileName)) ?? [];
+  console.log(fileNameIntersection);
+  if(existingAnswerSheet && fileNameIntersection.length > 0) {
+      if (req.body.fileOverwrite === 'true'){
+          await Promise.all(fileNameIntersection.map(async (file) => {
+              console.log(existingAnswerSheet, file);
+              await AnswerSheet.updateOne({_id: existingAnswerSheet._id}, {$pull: {files: {_id: file._id}}});
+              await fs.rm(file.sysFilePath);
+          }))
+      } else {
+          return res.status(400).send({error: "Unable to assign multiple files with the same name to one answer sheet!"});
+      }
   }
 
   await submitter.save();
@@ -445,14 +460,14 @@ export async function addAnswerSheet(req: Request, res: Response) {
   {
     exam: exam,
     submitter: submitter,
-    $push: {files: {$each: files}}
+    $push: {files: {$each: newFiles}}
   },
   {upsert: true}).lean()
     .then(async (answerSheet: IAnswerSheetBase | null) => {
       await Promise.all(
-        files.map(
+        newFiles.map(
           async (file: Omit<IFileBase, "_id"> & { _id: ObjectId }, index: number) =>
-            writeFile(
+            fs.writeFile(
               file.sysFilePath,
               (req.files as Express.Multer.File[])[index]!.buffer,
               {},
@@ -529,7 +544,7 @@ export async function deleteAnswerSheetFile(req: Request, res: Response) {
             }else {
                 await AnswerSheet.updateOne({_id: answerSheet._id}, {$pull: {files: {_id: file._id}}});
             }
-            await rm(file.sysFilePath);
+            await fs.rm(file.sysFilePath);
             res.send();
         });
 }
@@ -567,7 +582,7 @@ export async function deleteExam(req: Request, res: Response) {
                     async (answerSheet) => Private.deleteAnswerSheet(answerSheet._id!.toString(), currentUser._id!.toString()) //remove each answer sheet
                 )
             );
-            await rmdir(path.join(config.fileStorageLocation, exam._id.toString())); //remove directory
+            await fs.rmdir(path.join(config.fileStorageLocation, exam._id.toString())); //remove directory
             await Exam.deleteOne({_id: exam._id});
             res.status(204).send();
         });
@@ -647,7 +662,7 @@ namespace Private {
                 }
                 if(!answerSheet) {throw Error('answer sheet not found');}
                 await AnswerSheet.deleteOne({_id: answerSheet._id}); //remove database-enty
-                await Promise.all(answerSheet.files.map(async (file) => rm(file.sysFilePath))); //remove all files belonging to this answer-sheet
+                await Promise.all(answerSheet.files.map(async (file) => fs.rm(file.sysFilePath))); //remove all files belonging to this answer-sheet
             });
     }
 

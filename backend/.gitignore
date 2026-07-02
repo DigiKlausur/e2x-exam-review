@@ -1,3 +1,7 @@
 /dist/
 /node_modules/
 /answer-sheets/*
+/example-files/*
+!/example-files/.gitkeep
+/test/util/example-payload-images/*
+!/test/util/example-payload-images/.gitkeep

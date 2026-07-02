@@ -1,0 +1,13 @@
+.warning{
+  &>.bi{
+    font-size: 1.1rem;
+    line-height: 1rem;
+    margin-right: 0.5rem;
+  }
+}
+
+::ng-deep.answer-sheet-file.preview{
+  .file-name{
+    width: 500px;
+  }
+}

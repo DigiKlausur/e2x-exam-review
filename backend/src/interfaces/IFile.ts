@@ -5,6 +5,7 @@ export interface IFileBase {
   originalFileName: string;
   sysFilePath: string;
   filePath: string;
+  uploadTimeStamp?: Date;
 }
 
-export type IFile = Omit<IFileBase, '_id'> & {_id: string};
+export type IFile = Omit<IFileBase, '_id'|'uploadTimeStamp'> & {_id: string; uploadTimeStamp: Date};

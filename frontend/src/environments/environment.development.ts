@@ -6,6 +6,7 @@ export const environment: Environment = {
   privacyUrl: 'https://www.h-brs.de/en/data-privacy-statement',
   bugReportEmail: '',
   studentIdRegex: '(?<!\\d)(90[\\d]{5})(?!\\d)',
+  uploadConcurrency: 5,
   openId: {
     authorityUrl: 'http://localhost:8080/auth/realms/e2x-exam-review',
     clientId: 'e2x-exam-review-client',

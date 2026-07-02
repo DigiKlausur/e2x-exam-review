@@ -14,6 +14,11 @@
     <ng-template ngx-datatable-cell-template let-value="value">@if(value.length === 1){{{value[0].originalFileName}}}</ng-template>
   </ngx-datatable-column>
 
+  <ngx-datatable-column name="Upload Timestamp" i18n-name="@@app.table.header.upload-timestamp" prop="files" [flexGrow]="1" [draggable]="false" [resizeable]="false" >
+    <ng-template ngx-datatable-cell-template let-value="value">@if(value.length === 1){{{value[0].uploadTimeStamp | date: 'yyyy-MM-dd, HH:mm'}}}</ng-template>
+  </ngx-datatable-column>
+
+
   <ngx-datatable-column flexGrow="1" [draggable]="false" [sortable]="false" [resizeable]="false">
     <ng-template ngx-datatable-cell-template let-row="row">
       <div class="controls">
@@ -29,9 +34,11 @@
     <ng-template let-row="row" ngx-datatable-row-detail-template>
       @if (row.files.length > 1) {
         @for (file of row.files; track file._id){
-          <div class="answer-sheet-file d-flex align-items-center" >
+          <div class="answer-sheet-file d-flex align-items-center gap-1" >
             <span class="fs-5 py-0 fw-lighter me-3">@if(!$last){├}@else{└}</span>
-            <div class="file-name">{{file.originalFileName}}</div>
+            <div class="file-name">
+              <span class="d-block text-truncate" [ngbTooltip]="file.originalFileName">{{file.originalFileName}}</span></div>
+            <div class="timestamp">{{file.uploadTimeStamp | date: 'yyyy-MM-dd, HH:mm'}}</div>
             <div class="controls text-end ms-auto">
               <i class="bi bi-eye" role="button" [routerLink]="['/','review', row._id, file._id]" i18n-ngbTooltip="@@app.button.tooltip.view-answer-sheet-file" ngbTooltip="View graded exam file"></i>
               <i class="bi bi-trash" role="button" (click)="handleDeleteAnswerSheetFile(row, file)" i18n-ngbTooltip="@@app.button.tooltip.delete-answer-sheet-file" ngbTooltip="Delete graded exam file"></i>

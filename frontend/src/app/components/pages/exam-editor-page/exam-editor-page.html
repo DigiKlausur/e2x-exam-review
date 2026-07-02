@@ -9,7 +9,7 @@
   } @else {
     <div class="answer-sheets card p-4">
       <label><span i18n="@@app.label.answer-sheets-section">Graded Exams</span> <i class="bi bi-info-circle ms-2" role="button" [ngbPopover]="answerSheetUploaderDescription" popoverTitle="Supported formats" i18n-popoverTitle="@@app.popover.answer-sheet-upload-info-title" placement="right"></i></label>
-      <app-answer-sheet-uploader class="mt-3" [examId]="examId" (onChange)="loadAnswerSheets()"></app-answer-sheet-uploader>
+      <app-answer-sheet-uploader class="mt-3" [examId]="examId" [existingAnswerSheets]="answerSheets" (onChange)="loadAnswerSheets()"></app-answer-sheet-uploader>
       <app-answer-sheet-list class="mt-3" [answerSheets]="answerSheets" (onChange)="loadAnswerSheets()"></app-answer-sheet-list>
     </div>
   }

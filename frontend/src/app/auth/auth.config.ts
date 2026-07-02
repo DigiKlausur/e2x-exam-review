@@ -5,6 +5,7 @@ export const authConfig: PassedInitialConfig = {
   config: {
     authority: environment.openId.authorityUrl,
     redirectUrl: window.location.origin + window.location.pathname,
+    // checkRedirectUrlWhenCheckingIfIsCallback: false, //todo: check if this is necessary
     postLogoutRedirectUri: window.location.origin,
     clientId: environment.openId.clientId,
     scope: environment.openId.scopes?.join(' '),
