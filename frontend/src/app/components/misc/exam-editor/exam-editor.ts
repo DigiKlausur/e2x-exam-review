@@ -53,8 +53,8 @@ export class ExamEditor implements OnChanges {
     secondaryExaminer: new FormControl<IUser | undefined>(undefined),
     date: new FormControl<Date | undefined>(undefined, [Validators.required]),
     reviewParameters: new FormGroup({
-      startDate: new FormControl<Date | null>(null),
-      endDate: new FormControl<Date | null>(null),
+      startDate: new FormControl<Date | undefined>(undefined, [Validators.required]),
+      endDate: new FormControl<Date | undefined>(undefined, [Validators.required]),
       showDownloadButton: new FormControl<boolean>(false),
       showTextLayer: new FormControl<boolean>(false),
     },
@@ -89,10 +89,6 @@ export class ExamEditor implements OnChanges {
   getFormValues(): (Omit<IExam, '_id'> & {_id: string | undefined}) {
     const formValues: (Omit<IExam, '_id'> & {_id: string | undefined}) = this.examForm.value;
     formValues._id = this.exam?._id ?? undefined;
-    if (formValues.reviewParameters.startDate === null)
-      formValues.reviewParameters.startDate = this.exam?.reviewParameters.startDate ?? null;
-    if (formValues.reviewParameters.endDate === null)
-      formValues.reviewParameters.endDate = this.exam?.reviewParameters.endDate ?? null;
     if (formValues.reviewParameters.showDownloadButton === null)
       formValues.reviewParameters.showDownloadButton =
         this.exam?.reviewParameters.showDownloadButton ?? false;

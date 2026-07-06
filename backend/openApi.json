@@ -103,14 +103,12 @@
                       "startDate": {
                         "type": "string",
                         "format": "date",
-                        "required": true,
-                        "nullable": true
+                        "required": true
                       },
                       "endDate": {
                         "type": "string",
                         "format": "date",
-                        "required": true,
-                        "nullable": true
+                        "required": true
                       },
                       "showDownloadButton": {
                         "required": true,
@@ -356,12 +354,16 @@
                   },
                   "files": {
                     "type": "array",
-                    "requires": true,
+                    "required": true,
                     "items": {
                       "type": "string",
                       "format": "binary",
                       "description": "answer-sheet as a PDF file"
                     }
+                  },
+                  "fileOverwrite": {
+                    "type": "string",
+                    "required": true
                   }
                 }
               }

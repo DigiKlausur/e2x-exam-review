@@ -237,14 +237,12 @@ export async function updateExam(req: Request, res: Response) {
                                     startDate: {
                                         type: 'string',
                                         format: 'date',
-                                        required: true,
-                                        nullable: true
+                                        required: true
                                     },
                                     endDate: {
                                         type: 'string',
                                         format: 'date',
-                                        required: true,
-                                        nullable: true
+                                        required: true
                                     },
                                     showDownloadButton: {
                                         required: true,
