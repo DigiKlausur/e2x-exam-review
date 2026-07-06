@@ -55,7 +55,7 @@
         <div class="answer-sheet-file preview d-flex align-items-center gap-2" >
           <span class="fs-5 py-0 fw-lighter me-3 gap-1">@if(!$last){├}@else{└}</span>
           <div class="file-name" >
-            <span class="d-block text-truncate" [ngbTooltip]="fileProto.file.name">{{fileProto.file.name}}</span>
+            <span class="d-block text-truncate" [ngbTooltip]="fileProto.name">{{fileProto.name}}</span>
           </div>
           <div>
             @if (hasWarning(fileProto.warnings, AnswerSheetFileUploadWarning.DUPLICATE)) {

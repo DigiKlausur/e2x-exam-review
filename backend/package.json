@@ -39,6 +39,7 @@
     "swagger-autogen": "^2.23.7",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
-    "jspdf": "^4.2.1"
+    "jspdf": "^4.2.1",
+    "@zip.js/zip.js": "^2.8.26"
   }
 }

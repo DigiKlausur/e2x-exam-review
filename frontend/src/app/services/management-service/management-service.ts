@@ -39,9 +39,9 @@ export class ManagementService {
     return this.http.get<IAnswerSheet[]>(`${environment.apiUrl}/api/v1/manage/exams/${examId}/answer-sheets`);
   }
 
-  addAnswerSheet(answerSheetProto: Required<IAnswerSheetProto>, enableFileOverwrite: boolean = false): Observable<IAnswerSheet> {
+  async addAnswerSheet(answerSheetProto: Required<IAnswerSheetProto>, enableFileOverwrite: boolean = false): Promise<Observable<IAnswerSheet>> {
     const body: FormData = new FormData();
-    answerSheetProto.files.forEach((fileProto: IFileProto) => body.append('files', fileProto.file));
+    await Promise.all(answerSheetProto.files.map(async (fileProto: IFileProto) => body.append('files', await fileProto.getFile())));
     body.append('studentId', answerSheetProto.studentId);
     body.append('fileOverwrite', enableFileOverwrite.toString());
     return this.http.post<IAnswerSheet>(`${environment.apiUrl}/api/v1/manage/exams/${answerSheetProto.examId}/answer-sheets`, body);

@@ -30,6 +30,7 @@
     "app.button.tooltip.view-answer-sheet": "Einreichung ansehen",
     "app.button.tooltip.view-answer-sheet-file": "Einreichungsdatei ansehen",
     "app.dropzone.teaser.answer-sheets": "Einreichungen hier ablegen",
+    "app.dropzone.teaser.loading-upload-preview": "Lade Uploadvorschau",
     "app.exam-editor.details-toggle": "{$START_BLOCK_IF}{$START_ITALIC_TEXT}{$CLOSE_ITALIC_TEXT} zeige{$CLOSE_BLOCK_IF}{$START_BLOCK_ELSE}{$START_ITALIC_TEXT_1}{$CLOSE_ITALIC_TEXT} verstecke{$CLOSE_BLOCK_ELSE} Einstellungen für die Klausureinsicht",
     "app.exam.table.footer.stats": "zeige {$INTERPOLATION} von {$INTERPOLATION_1} {$ICU} ({$INTERPOLATION_2} {$ICU_1})",
     "app.footer.link.bug-report": "Fehler melden",

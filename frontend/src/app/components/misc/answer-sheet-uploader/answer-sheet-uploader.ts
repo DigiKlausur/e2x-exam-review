@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component, ElementRef,
   EventEmitter,
   inject,
@@ -15,7 +16,7 @@ import {
   FS as zipFS,
   fs as zipFsFactory,
   ZipEntry,
-  ZipDirectoryEntry, ZipFileEntry
+  ZipDirectoryEntry, ZipFileEntry, getMimeType
 } from '@zip.js/zip.js';
 import {AnswerSheetUploadPreview} from '../answer-sheet-upload-preview/answer-sheet-upload-preview';
 import {IAnswerSheetProto} from '../../../models/IAnswerSheetProto';
@@ -41,6 +42,10 @@ export const SUPPORTED_ZIP_FORMATS: string[] = ['application/zip', 'application/
 export class AnswerSheetUploader {
   private managementService: ManagementService = inject(ManagementService);
   private toastService: ToastService = inject(ToastService);
+  private changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
+
+  private zipUploadMode: boolean = false;
+  protected loadingPreview: boolean = false;
 
   @Input() examId!: string;
   @Input() existingAnswerSheets: IAnswerSheet[] = [];
@@ -62,20 +67,31 @@ export class AnswerSheetUploader {
     this.dropZone.nativeElement.classList.remove('dragover');
   }
 
-  handleDrop(dragEvent: DragEvent): void {
+  async handleDrop(dragEvent: DragEvent): Promise<void> {
     dragEvent.preventDefault();
     dragEvent.stopPropagation();
     this.dropZone.nativeElement.classList.remove('dragover');
     if (!dragEvent.dataTransfer?.files) return;
-    this.handleUpload(dragEvent.dataTransfer?.files);
+    await this.handleUpload(dragEvent.dataTransfer?.files);
   }
 
-  handleUpload(files: FileList): void | Promise<void> {
-    if ([...files].every((file: File) => file.type === 'application/pdf')) {
-      return this.addAnswerSheets(files);
-    } else if (files.length === 1 && SUPPORTED_ZIP_FORMATS.includes(files.item(0)?.type ?? '')) {
-      return this.readZipArchive(files.item(0)!);
+  async handleUpload(files: FileList): Promise<void> {
+    const loadingFinished = () => {
+      this.loadingPreview = false;
+      this.changeDetectorRef.detectChanges();
     }
+
+    this.loadingPreview = true;
+    if ([...files].every((file: File) => file.type === 'application/pdf')) {
+      this.addAnswerSheets(files);
+      loadingFinished();
+      return ;
+    } else if (files.length === 1 && SUPPORTED_ZIP_FORMATS.includes(files.item(0)?.type ?? '')) {
+      await this.readZipArchive(files.item(0)!);
+      loadingFinished();
+      return ;
+    }
+    loadingFinished();
     this.toastService.show({
       header: $localize`:@@app.toast.header.answer-sheet-upload:Graded Exam Upload`,
       body: $localize`:@@app.toast.body.answer-sheet-upload-failed.unsupported-format:Unable to upload files, as they do not match the supported formats!`,
@@ -103,14 +119,14 @@ export class AnswerSheetUploader {
   }
 
   addAnswerSheets(files: FileList): void {
+    this.zipUploadMode = false;
     this.clearUploadQueue();
     Array.from(files).forEach((file: File) => {
-      this.checkAndEnqueueFiles(this.matchStudentId(file.name), [file]);
+      this.checkAndEnqueueFiles(this.matchStudentId(file.name), [{name: file.name, type: file.type, getFile: () => Promise.resolve(file)}]);
     });
-    console.log(this.uploadQueue);
   }
 
-  checkAndEnqueueFiles(studentIdMatches: string[], files: File[]): void{
+  checkAndEnqueueFiles(studentIdMatches: string[], files: {name: string, type: string, getFile: () => Promise<File>}[]): void{
     const answerSheetProto: IAnswerSheetProto = {
       examId: this.examId,
       studentId: studentIdMatches.length === 1 ? studentIdMatches[0] : undefined,
@@ -126,8 +142,8 @@ export class AnswerSheetUploader {
       answerSheetProto.studentId = studentIdMatches[0];
     }
 
-    answerSheetProto.files = files.map((file: File): {file: File, warnings: AnswerSheetFileUploadWarning[]} => {
-      const fileProto = {file: file, warnings: [] as AnswerSheetFileUploadWarning[]};
+    answerSheetProto.files = files.map((file: {name: string, type: string, getFile: () => Promise<File>}): {name: string; getFile: () => Promise<File>; warnings: AnswerSheetFileUploadWarning[]} => {
+      const fileProto = {name: file.name, getFile: file.getFile, warnings: [] as AnswerSheetFileUploadWarning[]};
       if (file.type !== 'application/pdf') {
         fileProto.warnings.push(AnswerSheetFileUploadWarning.INVALID_TYPE);
       }
@@ -143,6 +159,7 @@ export class AnswerSheetUploader {
   }
 
   async readZipArchive(file: File): Promise<void> {
+    this.zipUploadMode = true;
     this.clearUploadQueue();
     const zFs: zipFS = new zipFsFactory.FS();
     await zFs.importBlob(file);
@@ -154,25 +171,28 @@ export class AnswerSheetUploader {
       (child: ZipEntry) => (child as ZipDirectoryEntry).directory ?? false,
     ) as ZipDirectoryEntry[];
 
-    await Promise.all(submitterDirectories.map(async (directory: ZipDirectoryEntry) => {
+    submitterDirectories.forEach((directory: ZipDirectoryEntry) => {
       this.checkAndEnqueueFiles(
         this.matchStudentId(directory.name),
-        await Promise.all(
-          directory.children
-            .filter(
-              (child: ZipEntry) =>
-                !(child as ZipDirectoryEntry).directory,
-            )
-            .map(
-              async (entry: ZipEntry) =>
-                new File(
-                  [await (entry as ZipFileEntry<Blob, Blob>).getBlob()],
-                  entry.getFullname(),
-                ),
-            )
-        )
-      )
-    }));
+        directory.children
+          .filter((child: ZipEntry) => !(child as ZipDirectoryEntry).directory)
+          .map(
+            (entry: ZipEntry) => {
+              const fileName: string = entry.getFullname().replace('/', '_');
+              const fileType: string = getMimeType(entry.name);
+              return {
+                name: fileName,
+                type: fileType,
+                getFile: async () => new File(
+                  [await(entry as ZipFileEntry<Blob, Blob>).getBlob()],
+                  fileName,
+                  {type: fileType}
+                )
+              }
+            }
+          )
+      );
+    });
   }
 
   protected numberOfAnswerSheets: number = 0;
@@ -203,11 +223,11 @@ export class AnswerSheetUploader {
     };
     this.toastService.show(uploadProgressToast);
 
-    const queue = new PQueue({concurrency: environment.uploadConcurrency});
+    const queue = new PQueue({concurrency: this.zipUploadMode ? 1 : environment.uploadConcurrency});
 
     await Promise.allSettled(
       preparedData
-        .map(async (answerSheetProto: Required<IAnswerSheetProto>) => queue.add(() => new Promise<IAnswerSheet>((resolve, reject) => this.managementService.addAnswerSheet(answerSheetProto, duplicateHandlingStrategy === 'overwrite').subscribe({
+        .map(async (answerSheetProto: Required<IAnswerSheetProto>) => queue.add(() => new Promise<IAnswerSheet>(async (resolve, reject) => (await this.managementService.addAnswerSheet(answerSheetProto, duplicateHandlingStrategy === 'overwrite')).subscribe({
           next: (response) => {
             this.numberOfUploadedAnswerSheets.update((prev: number) => prev + 1);
             this.numberOfUploadedFiles.update((prev: number) => prev + answerSheetProto.files.length);
@@ -238,9 +258,9 @@ export class AnswerSheetUploader {
       });
   }
 
-  handleFileInputChange(event: Event) {
+  async handleFileInputChange(event: Event): Promise<void> {
     const files: FileList | null = (event.target as HTMLInputElement).files;
-    if (files) this.handleUpload(files);
+    if (files) await this.handleUpload(files);
   }
 
   private matchStudentId(str: string): string[] {

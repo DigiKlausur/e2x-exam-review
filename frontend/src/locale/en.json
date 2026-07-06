@@ -30,6 +30,7 @@
     "app.button.tooltip.view-answer-sheet": "View graded exam",
     "app.button.tooltip.view-answer-sheet-file": "View graded exam file",
     "app.dropzone.teaser.answer-sheets": "Drop graded exams as PDFs or Zip here",
+    "app.dropzone.teaser.loading-upload-preview": "Loading upload preview",
     "app.exam-editor.details-toggle": "{$START_BLOCK_IF}{$START_ITALIC_TEXT}{$CLOSE_ITALIC_TEXT} show{$CLOSE_BLOCK_IF}{$START_BLOCK_ELSE}{$START_ITALIC_TEXT_1}{$CLOSE_ITALIC_TEXT} hide{$CLOSE_BLOCK_ELSE} advanced settings",
     "app.exam.table.footer.stats": "showing {$INTERPOLATION} of {$INTERPOLATION_1} {$ICU} ({$INTERPOLATION_2} {$ICU_1})",
     "app.footer.link.bug-report": "Bug Report",
