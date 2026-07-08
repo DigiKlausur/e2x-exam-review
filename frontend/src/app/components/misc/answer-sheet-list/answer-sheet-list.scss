@@ -16,15 +16,21 @@
 }
 
 ::ng-deep.answer-sheet-file{
-  padding: 0 1rem;
   position: relative;
+  height: 45px !important;
+
+  &>* {
+    padding: 0 1rem;
+  }
+
+  .directory-indicator {
+    margin-right: -1.5rem;
+  }
 
   .file-name{
-    padding: 0.75rem 0;
+    padding: 1rem;
     position: relative;
-    display: inline-block;
-    width: 500px;
-    max-width: 50%;
+    overflow: clip;
   }
 
   &:hover {

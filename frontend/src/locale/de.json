@@ -2,10 +2,9 @@
   "locale": "de",
   "translations": {
     "2714535809703714048": "{VAR_PLURAL, plural, =1 {Datei} other {Dateien}}",
-    "3864694044756573305": "{VAR_PLURAL, plural, =1 {Einreichung} other {Einreichungen}}",
     "4606149525185499759": "{VAR_PLURAL, plural, =1 {Zeile} other {Zeilen}}",
     "5936763820316425179": "{VAR_PLURAL, plural, =1 {Student:in} other {Studierende}}",
-    "8734676292200970406": "{VAR_PLURAL, plural, =1 {Einreichung} other {Einreichungen}}",
+    "6520461166029100799": "{VAR_PLURAL, plural, =1 {Einreichung} other {Einreichungen}}",
     "9094369216827374837": "{VAR_PLURAL, plural, =1 {Seite} other {Seiten}}",
     "98011056708642375": "{VAR_PLURAL, plural, =1 {Datei ist ein Duplikat} other {Dateien sind Duplikate}}",
     "app.alert.answer-sheet-not-found": " Die Einreichung konnte nicht gefunden werden! ",

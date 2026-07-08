@@ -122,11 +122,11 @@ export class AnswerSheetUploader {
     this.zipUploadMode = false;
     this.clearUploadQueue();
     Array.from(files).forEach((file: File) => {
-      this.checkAndEnqueueFiles(this.matchStudentId(file.name), [{name: file.name, type: file.type, getFile: () => Promise.resolve(file)}]);
+      this.checkAndEnqueueFiles(this.matchStudentId(file.name), [{name: file.name, pathName: file.name, type: file.type, getFile: () => Promise.resolve(file)}]);
     });
   }
 
-  checkAndEnqueueFiles(studentIdMatches: string[], files: {name: string, type: string, getFile: () => Promise<File>}[]): void{
+  checkAndEnqueueFiles(studentIdMatches: string[], files: {name: string, pathName: string, type: string, getFile: () => Promise<File>}[]): void{
     const answerSheetProto: IAnswerSheetProto = {
       examId: this.examId,
       studentId: studentIdMatches.length === 1 ? studentIdMatches[0] : undefined,
@@ -142,8 +142,8 @@ export class AnswerSheetUploader {
       answerSheetProto.studentId = studentIdMatches[0];
     }
 
-    answerSheetProto.files = files.map((file: {name: string, type: string, getFile: () => Promise<File>}): {name: string; getFile: () => Promise<File>; warnings: AnswerSheetFileUploadWarning[]} => {
-      const fileProto = {name: file.name, getFile: file.getFile, warnings: [] as AnswerSheetFileUploadWarning[]};
+    answerSheetProto.files = files.map((file: {name: string, pathName:string, type: string, getFile: () => Promise<File>}): IFileProto => {
+      const fileProto = {name: file.name, pathName: file.pathName, getFile: file.getFile, warnings: [] as AnswerSheetFileUploadWarning[]};
       if (file.type !== 'application/pdf') {
         fileProto.warnings.push(AnswerSheetFileUploadWarning.INVALID_TYPE);
       }
@@ -178,10 +178,11 @@ export class AnswerSheetUploader {
           .filter((child: ZipEntry) => !(child as ZipDirectoryEntry).directory)
           .map(
             (entry: ZipEntry) => {
-              const fileName: string = entry.getFullname().replace('/', '_');
+              const fileName: string = entry.getRelativeName(directory);
               const fileType: string = getMimeType(entry.name);
               return {
                 name: fileName,
+                pathName: entry.getFullname(),
                 type: fileType,
                 getFile: async () => new File(
                   [await(entry as ZipFileEntry<Blob, Blob>).getBlob()],

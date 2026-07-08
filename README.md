@@ -99,7 +99,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 ## Roadmap
 
 - [ ] Initial deployment
-- [ ] Answer-sheet confirmation mechanism -> make the person who uploads the files confirm the file-student-mapping
+- [ ] Answer-sheet confirmation mechanism → make the person who uploads the files confirm the file-student-mapping
 - [ ] Mobile support
 
 See the [open issues](https://github.com/DigiKlausur/e2x-exam-review/issues) for a full list of proposed features (and known issues).
