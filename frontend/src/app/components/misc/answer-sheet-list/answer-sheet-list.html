@@ -34,11 +34,15 @@
     <ng-template let-row="row" ngx-datatable-row-detail-template>
       @if (row.files.length > 1) {
         @for (file of row.files; track file._id){
-          <div class="answer-sheet-file d-flex align-items-center gap-1" >
-            <span class="fs-5 py-0 fw-lighter me-3">@if(!$last){├}@else{└}</span>
-            <div class="file-name">
-              <span class="d-block text-truncate" [ngbTooltip]="file.originalFileName">{{file.originalFileName}}</span></div>
-            <div class="timestamp">{{file.uploadTimeStamp | date: 'yyyy-MM-dd, HH:mm'}}</div>
+          <div class="answer-sheet-file d-flex align-items-center gap-1" appDatatableDetailsRow >
+            <div></div>
+            <div class="py-0 d-flex justify-content-end">
+              <span class="directory-indicator fs-5 fw-lighter" >@if(!$last){├}@else{└}</span>
+            </div>
+            <div class="file-name d-flex align-items-center text-truncate">
+              <span class="text-truncate" [ngbTooltip]="file.originalFileName" container="body">{{file.originalFileName}}</span>
+            </div>
+            <div class="timestamp"><span ngbTooltip="{{file.uploadTimeStamp | date : 'full'}}" container="body">{{file.uploadTimeStamp | date: 'yyyy-MM-dd, HH:mm'}}</span></div>
             <div class="controls text-end ms-auto">
               <i class="bi bi-eye" role="button" [routerLink]="['/','review', row._id, file._id]" i18n-ngbTooltip="@@app.button.tooltip.view-answer-sheet-file" ngbTooltip="View graded exam file"></i>
               <i class="bi bi-trash" role="button" (click)="handleDeleteAnswerSheetFile(row, file)" i18n-ngbTooltip="@@app.button.tooltip.delete-answer-sheet-file" ngbTooltip="Delete graded exam file"></i>
@@ -57,7 +61,7 @@
       let-offset="offset"
     >
       <div class="page-count fst-italic" i18n="@@app.answer-sheet.table.footer.stats">
-        showing {{Math.min(rowCount - (offset * pageSize), pageSize)}} of {{rowCount}} graded {rowCount, plural, =1 {exam} other {exams}}
+        showing {{Math.min(rowCount - (offset * pageSize), pageSize)}} of {{rowCount}} {rowCount, plural, =1 {graded exam} other {graded exams}}
         ({{numberOfFiles}} {numberOfFiles, plural, =1 {file} other {files}}; {{Math.ceil(rowCount / pageSize)}} {Math.ceil(rowCount / pageSize), plural, =1 {page} other {pages}})</div>
       <ngx-datatable-pager style="flex: 1 1 50%"></ngx-datatable-pager>
     </ng-template>

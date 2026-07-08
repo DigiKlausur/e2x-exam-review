@@ -25,6 +25,7 @@
                            [showDownloadButton]="answerSheet.exam.reviewParameters.showDownloadButton"
                            [showPrintButton]="answerSheet.exam.reviewParameters.showDownloadButton"
                            [authorization]="accessToken"
+                           [showFindButton]="answerSheet.exam.reviewParameters.showTextLayer"
                            (pdfLoadingStarts)="loadingState = loadingStates.LOADING"
                            (pdfLoadingFailed)="loadingState = loadingStates.FAILED"
                            (pdfLoaded)="loadingState = loadingStates.LOADED"

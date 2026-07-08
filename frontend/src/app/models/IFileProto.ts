@@ -2,6 +2,7 @@ import {AnswerSheetFileUploadWarning} from '../enums/AnswerSheetFileUploadWarnin
 
 export interface IFileProto {
   name: string;
+  pathName: string;
   getFile: () => Promise<File>;
   warnings:  AnswerSheetFileUploadWarning[]
 }

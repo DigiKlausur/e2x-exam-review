@@ -14,6 +14,7 @@ import {IFileProto} from '../../../models/IFileProto';
 import {AnswerSheetFileUploadWarning} from '../../../enums/AnswerSheetFileUploadWarning';
 import {AnswerSheetIdMatchWarning} from '../../../enums/AnswerSheetIdMatchWarning';
 import {hasWarning} from '../../../utils/UploadUtil';
+import {DatatableDetailsRow} from '../../../directives/datatable-details-row/datatable-details-row';
 
 const warningSeverities: Record<AnswerSheetFileUploadWarning | AnswerSheetIdMatchWarning, number> = {
   [AnswerSheetIdMatchWarning.NO_MATCH]: 3,
@@ -35,7 +36,8 @@ const highestSeverityLevel: number = Math.max(...Object.values(warningSeverities
     DatatableFooterDirective,
     DatatablePagerComponent,
     DatatableRowDetailDirective,
-    DatatableRowDetailTemplateDirective
+    DatatableRowDetailTemplateDirective,
+    DatatableDetailsRow
   ],
   templateUrl: './answer-sheet-upload-preview.html',
   styleUrl: './answer-sheet-upload-preview.scss',

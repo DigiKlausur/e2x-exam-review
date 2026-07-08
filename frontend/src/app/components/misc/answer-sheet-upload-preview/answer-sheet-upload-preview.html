@@ -52,10 +52,12 @@
   <ngx-datatable-row-detail [rowHeight]="getDetailsRowHeight">
     <ng-template let-row="row" ngx-datatable-row-detail-template>
       @for (fileProto of row.files; track fileProto._id){
-        <div class="answer-sheet-file preview d-flex align-items-center gap-2" >
-          <span class="fs-5 py-0 fw-lighter me-3 gap-1">@if(!$last){├}@else{└}</span>
-          <div class="file-name" >
-            <span class="d-block text-truncate" [ngbTooltip]="fileProto.name">{{fileProto.name}}</span>
+        <div class="answer-sheet-file preview d-flex align-items-center gap-2" appDatatableDetailsRow>
+          <div class="d-flex flex-row align-items-center text-truncate">
+            <div class="fs-5 py-0 fw-lighter h-100">@if(!$last){├}@else{└}</div>
+            <div class="flex-grow-1 file-name text-truncate">
+              <span class="d-inline-block text-truncate" [ngbTooltip]="fileProto.pathName" container="body">{{fileProto.pathName}}</span>
+            </div>
           </div>
           <div>
             @if (hasWarning(fileProto.warnings, AnswerSheetFileUploadWarning.DUPLICATE)) {
@@ -84,7 +86,7 @@
       let-offset="offset"
     >
       <div class="page-count fst-italic" i18n="@@app.answer-sheet.table.footer.stats">
-        showing {{Math.min(rowCount - (offset * pageSize), pageSize)}} of {{rowCount}} graded {rowCount, plural, =1 {exam} other {exams}}
+        showing {{Math.min(rowCount - (offset * pageSize), pageSize)}} of {{rowCount}} {rowCount, plural, =1 {graded exam} other {graded exams}}
         ({{numberOfFiles}} {numberOfFiles, plural, =1 {file} other {files}}; {{Math.ceil(rowCount / pageSize)}} {Math.ceil(rowCount / pageSize), plural, =1 {page} other {pages}})</div>
       <ngx-datatable-pager style="flex: 1 1 50%"></ngx-datatable-pager>
     </ng-template>

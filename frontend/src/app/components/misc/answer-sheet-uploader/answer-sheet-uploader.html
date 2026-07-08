@@ -22,7 +22,7 @@
     Uploading graded exams.
   </div>
   <div class="d-flex flex-column align-items-stretch mt-2 gap-1">
-    <span class="mb-2" i18n="@@app.toast.body.answer-sheet-upload-progress.answer-sheet-counter" >{{numberOfUploadedAnswerSheets()}}/{{numberOfAnswerSheets}} {numberOfAnswerSheets, plural, =1 {answer sheet} other {answer sheets}} uploaded</span>
+    <span class="mb-2" i18n="@@app.toast.body.answer-sheet-upload-progress.answer-sheet-counter" >{{numberOfUploadedAnswerSheets()}}/{{numberOfAnswerSheets}} {numberOfAnswerSheets, plural, =1 {graded exam} other {graded exams}} uploaded</span>
     <ngb-progressbar [showValue]="true" [value]="numberOfUploadedFiles()" [max]="overallNumberOfFiles - numberOfUploadErrors()"></ngb-progressbar>
     <span i18n="@@app.toast.body.answer-sheet-upload-progress.file-counter" >{{numberOfUploadedFiles()}}/{{overallNumberOfFiles}} {overallNumberOfFiles, plural, =1 {file} other {files}} uploaded</span>
   </div>

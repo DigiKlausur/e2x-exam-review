@@ -18,6 +18,7 @@ import {
 import {dataTableDefaultMessages} from '../../../utils/DataTable';
 import {environment} from '../../../../environments/environment';
 import {DatePipe} from '@angular/common';
+import {DatatableDetailsRow} from '../../../directives/datatable-details-row/datatable-details-row';
 @Component({
   selector: 'app-answer-sheet-list',
   templateUrl: './answer-sheet-list.html',
@@ -34,7 +35,8 @@ import {DatePipe} from '@angular/common';
     DatatableRowDetailTemplateDirective,
     DataTableColumnDirective,
     DataTableColumnCellDirective,
-    DatePipe
+    DatePipe,
+    DatatableDetailsRow
   ]
 })
 export class AnswerSheetList implements AfterViewInit {
