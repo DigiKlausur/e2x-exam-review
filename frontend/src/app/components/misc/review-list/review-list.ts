@@ -5,20 +5,21 @@ import {UserDisplayNamePipe} from "../../../pipes/user-display-name-pipe/user-di
 import {IAnswerSheet, IFile} from 'e2x-exam-review-backend';
 import {ActivatedRoute, Router} from '@angular/router';
 import {
-  ActivateEvent,
+  ActivateEvent, DataTableColumnCellDirective, DataTableColumnDirective,
   DatatableComponent,
   DatatableFooterDirective,
   DataTableFooterTemplateDirective,
   DatatablePagerComponent, DatatableRowDetailDirective,
   DatatableRowDetailTemplateDirective, NgxDatatableMessages, SortPropDir, TableColumn
 } from '@siemens/ngx-datatable';
-import {datatableDefaultColumnSettings, dataTableDefaultMessages} from '../../../utils/DataTable';
+import {dataTableDefaultMessages} from '../../../utils/DataTable';
 import {environment} from '../../../../environments/environment';
 import {ToastService} from '../../../services/toast-service/toast-service';
+import {NgbTooltip} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-review-list',
-  imports: [DataTableFooterTemplateDirective, DatatableComponent, DatatableFooterDirective, DatatablePagerComponent, DatatableRowDetailDirective, DatatableRowDetailTemplateDirective],
+  imports: [DataTableFooterTemplateDirective, DatatableComponent, DatatableFooterDirective, DatatablePagerComponent, DatatableRowDetailDirective, DatatableRowDetailTemplateDirective, DataTableColumnDirective, DataTableColumnCellDirective, DatePipe, NgbTooltip],
   templateUrl: './review-list.html',
   styleUrl: './review-list.scss',
 })
@@ -43,12 +44,15 @@ export class ReviewList {
     }
   };
 
-  private userDisplayNamePipe: UserDisplayNamePipe = new UserDisplayNamePipe();
+  protected readonly userDisplayNamePipe: UserDisplayNamePipe = new UserDisplayNamePipe();
+  protected readonly semesterDisplayNamePipe: SemesterDisplayNamePipe = new SemesterDisplayNamePipe();
+  protected readonly now: Date = new Date();
 
   async handleActivate(event: ActivateEvent<IAnswerSheet>): Promise<void> {
     if(event.type !== 'click') return;
     if(!event.row.files || event.row.files.length === 0) {
-      this.toastService.show({header: $localize`:@@app.toast.header.exam-review-ended:Exam Review Expired`, body: $localize`:@@app.toast.body.exam-review-ended:This exam's review-period has already ended. You are not able to access it anymore.`});
+      if(event.row.exam.reviewParameters.endDate < this.now) this.toastService.show({header: $localize`:@@app.toast.header.exam-review-ended:Exam Review Expired`, body: $localize`:@@app.toast.body.exam-review-ended:This exam's review-period has already ended. You are not able to access it anymore.`});
+      else this.toastService.show({header: $localize`:@@app.toast.header.exam-review-not-started:Exam Review Not Started`, body: $localize`:@@app.toast.body.exam-review-not-started:This exam's review-period has not started yet. You will be able to access it soon.`});
       return;
     }
     if(this.isSingleFile(event.row)) await this.showAnswerSheetFile(event.row._id, event.row.files[0]);
@@ -69,13 +73,13 @@ export class ReviewList {
     return row.files?.length < 1 ? 'disabled' : '';
   }
 
-  columns: TableColumn[] = [
-    {prop: 'exam.semester', name: $localize`:@@app.table.header.semster:Semester`, pipe: new SemesterDisplayNamePipe(), flexGrow: 2, ...datatableDefaultColumnSettings, cellClass: this.cellClass},
-    {prop: 'exam.title', name:  $localize`:@@app.table.header.exam-title:Exam Title`, flexGrow: 4, ...datatableDefaultColumnSettings, cellClass: this.cellClass},
-    {prop: 'exam.primaryExaminer', name: $localize`:@@app.table.header.primary-examiner:Primary Examiner`, pipe: this.userDisplayNamePipe, flexGrow: 2, ...datatableDefaultColumnSettings, cellClass: this.cellClass},
-    {prop: 'exam.secondaryExaminer', name: $localize`:@@app.table.header.secondary-examiner:Secondary Examiner`, pipe: this.userDisplayNamePipe, flexGrow: 2, ...datatableDefaultColumnSettings, cellClass: this.cellClass},
-    {prop: 'exam.date', name: $localize`:@@app.table.header.date:Date`, pipe: new DatePipe(this.currentLocale), flexGrow: 1, ...datatableDefaultColumnSettings, cellClass: this.cellClass}
-  ];
+  reviewPeriodCellClass({row}: {row: IAnswerSheet}){
+    return row.files?.length < 1 ? (row.exam.reviewParameters.endDate < new Date() ? 'text-danger' : 'text-info' ) : '';
+  }
+
+  getReviewPeriodTooltip(row: IAnswerSheet){
+    return row.files?.length < 1 ? (row.exam.reviewParameters.endDate < this.now ? $localize`:@@app.tooltip.review-table.review-period-ended:This exam's review-period has already ended.` : $localize`:@@app.tooltip.review-table.review-period-not-started:This exam's review-period has not started yet.`) :undefined;
+  }
 
   sorts: SortPropDir[] = [
     {

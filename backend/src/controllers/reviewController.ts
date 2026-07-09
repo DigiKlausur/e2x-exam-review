@@ -37,9 +37,9 @@ export async function getAnswerSheets(req: JwtRequest, res: Response) {
               ["exam.title", 1],
           ])
           .lean<IAnswerSheet[]>()
-          .exec())
-          .filter((answerSheet: IAnswerSheet) => !answerSheet.exam.reviewParameters.startDate || answerSheet.exam.reviewParameters.startDate < new Date())
-          .map((answerSheet: IAnswerSheet) => ({...answerSheet, files: (!answerSheet.exam.reviewParameters.endDate || answerSheet.exam.reviewParameters.endDate >= new Date()) ? answerSheet.files : []}))
+          .exec()
+      )
+          .map((answerSheet: IAnswerSheet) => ({...answerSheet, files: (!answerSheet.exam.reviewParameters.startDate || answerSheet.exam.reviewParameters.startDate < new Date()) && (!answerSheet.exam.reviewParameters.endDate || answerSheet.exam.reviewParameters.endDate >= new Date()) ? answerSheet.files : []}))
     );
 }
 

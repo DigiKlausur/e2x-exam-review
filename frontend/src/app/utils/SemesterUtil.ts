@@ -2,7 +2,7 @@ import {ISemester, Season} from 'e2x-exam-review-backend';
 
 const semesterNames: Record<'en'|'de', Record<Season, string>> = {
   'en': {
-    [Season.SUMMER]: 'Spring Semester',
+    [Season.SUMMER]: 'Summer Semester',
     [Season.WINTER]: 'Winter Semester'
   },
   'de': {

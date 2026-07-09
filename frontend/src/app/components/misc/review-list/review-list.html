@@ -1,8 +1,29 @@
-<ngx-datatable [rows]="answerSheets" [columns]="columns" [limit]="environment.dataTable.rowsPerPage" [sorts]="sorts" [footerHeight]="answerSheets.length > environment.dataTable.footerMinRows ? 55 : 0" [messages]="messages" (activate)="handleActivate($event)" rowHeight="auto" columnMode="flex">
+<ngx-datatable [rows]="answerSheets" [limit]="environment.dataTable.rowsPerPage" [sorts]="sorts" [footerHeight]="answerSheets.length > environment.dataTable.footerMinRows ? 55 : 0" [messages]="messages" (activate)="handleActivate($event)" rowHeight="auto" columnMode="flex">
+  <ngx-datatable-column name="Semester" i18n-name="@@app.table.header.semster" prop="exam.semester" [pipe]="semesterDisplayNamePipe" [flexGrow]="2" [resizeable]="false" [draggable]="false" [cellClass]="cellClass"></ngx-datatable-column>
+  <ngx-datatable-column name="Exam Title" i18n-name="@@app.table.header.exam-title" prop="exam.title" [flexGrow]="4" [resizeable]="false" [draggable]="false" [cellClass]="cellClass"></ngx-datatable-column>
+  <ngx-datatable-column name="Primary Examiner" i18n-name="@@app.table.header.primary-examiner" prop="exam.primaryExaminer" [pipe]="userDisplayNamePipe" [flexGrow]="2" [resizeable]="false" [draggable]="false" [cellClass]="cellClass"></ngx-datatable-column>
+
+  <ngx-datatable-column name="Review Period" i18n-name="@@app.table.header.review-period" prop="exam.reviewParameters.startDate" [flexGrow]="3" [resizeable]="false" [draggable]="false" [cellClass]="reviewPeriodCellClass" >
+    <ng-template ngx-datatable-cell-template let-row="row" >
+      <span [ngbTooltip]="getReviewPeriodTooltip(row)">{{ row.exam.reviewParameters.startDate |  date: 'yyyy-MM-dd, HH:mm' }} - {{ row.exam.reviewParameters.endDate |  date: 'yyyy-MM-dd, HH:mm' }}</span>
+    </ng-template>
+  </ngx-datatable-column>
+
+  <ngx-datatable-column [sortable]="false" [draggable]="false" [resizeable]="false" [flexGrow]="1" >
+    <ng-template ngx-datatable-cell-template let-row="row">
+      <div class="d-flex justify-content-end align-items-center " style="height: 55px; margin: -1rem 0;">
+        <button class="btn btn-primary btn-sm" [class.disabled]="cellClass({row})" ><i class="bi bi-eye"></i><span i18n="@@app.button.view">View</span></button>
+      </div>
+    </ng-template>
+  </ngx-datatable-column>
+
   <ngx-datatable-row-detail [rowHeight]="getDetailsRowHeight">
     <ng-template let-row="row" ngx-datatable-row-detail-template>
       @for (file of row.files; track file._id){
-        <div class="answer-sheet-file" (click)="showAnswerSheetFile(row._id, file)"><span class="fs-5 py-0 fw-lighter me-3">@if(!$last){├}@else{└}</span><div class="file-name">{{file.originalFileName}}</div></div>
+        <div class="answer-sheet-file d-flex align-items-center" (click)="showAnswerSheetFile(row._id, file)">
+          <span class="fs-5 py-0 fw-lighter me-3">@if(!$last){├}@else{└}</span><div class="file-name">{{file.originalFileName}}</div>
+          <button class="btn btn-primary btn-sm ms-auto" ><i class="bi bi-eye"></i><span i18n="@@app.button.view">View</span></button>
+        </div>
       }
     </ng-template>
   </ngx-datatable-row-detail>

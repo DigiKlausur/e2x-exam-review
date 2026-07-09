@@ -436,11 +436,9 @@ export async function addAnswerSheet(req: Request, res: Response) {
 
   const newFileNames: string[] = newFiles.map(file => file.originalFileName);
   const fileNameIntersection = existingAnswerSheet?.files.filter((f: IFileBase) => newFileNames.includes(f.originalFileName)) ?? [];
-  console.log(fileNameIntersection);
   if(existingAnswerSheet && fileNameIntersection.length > 0) {
       if (req.body.fileOverwrite === 'true'){
           await Promise.all(fileNameIntersection.map(async (file) => {
-              console.log(existingAnswerSheet, file);
               await AnswerSheet.updateOne({_id: existingAnswerSheet._id}, {$pull: {files: {_id: file._id}}});
               await fs.rm(file.sysFilePath);
           }))
@@ -580,7 +578,7 @@ export async function deleteExam(req: Request, res: Response) {
                     async (answerSheet) => Private.deleteAnswerSheet(answerSheet._id!.toString(), currentUser._id!.toString()) //remove each answer sheet
                 )
             );
-            await fs.rmdir(path.join(config.fileStorageLocation, exam._id.toString())); //remove directory
+            await fs.rmdir(path.join(config.fileStorageLocation, exam._id.toString())).catch(e => console.error(e)); //remove directory
             await Exam.deleteOne({_id: exam._id});
             res.status(204).send();
         });
