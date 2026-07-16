@@ -3,3 +3,7 @@
   flex-direction: row;
   gap: 0.75rem
 }
+
+::ng-deep  ngb-timepicker.is-invalid input.ngb-tp-input {
+  border-color: var(--bs-form-invalid-border-color);
+}
