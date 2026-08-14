@@ -4,7 +4,7 @@ import {Exam} from "../models/Exam";
 import {promises as fs} from "fs";
 import {AnswerSheet} from "../models/AnswerSheet";
 import {Student} from "../models/Student";
-import {IAnswerSheetBase, IAnswerSheetPopulated} from "../interfaces/IAnswerSheet";
+import {IAnswerSheet, IAnswerSheetBase, IAnswerSheetPopulated} from "../interfaces/IAnswerSheet";
 import {IExamBase} from "../interfaces/IExam";
 import {IFileBase} from "../interfaces/IFile";
 import {IUserBase} from "../interfaces/IUser";
@@ -570,17 +570,27 @@ export async function deleteExam(req: Request, res: Response) {
         .exec();
     if(!exam) return res.status(404).send({error: 'Unable to find exam'});
 
-    await AnswerSheet.find<Document<IAnswerSheetBase>>({exam: new ObjectId(exam._id.toString())})
+    await deleteExamById(exam._id.toString(), currentUser._id!.toString()).then(() => res.status(204).send());
+}
+
+export async function deleteExamById(examId: string, currentUserId?: string): Promise<void> {
+    await AnswerSheet.find<IAnswerSheet>({exam: new ObjectId(examId)})
+        .populate('exam')
         .exec()
-        .then(async (answerSheets: Document<IAnswerSheetBase>[] = []) => {
+        .then(async (answerSheets: IAnswerSheet[] = []) => {
             await Promise.all(
                 answerSheets.map(
-                    async (answerSheet) => Private.deleteAnswerSheet(answerSheet._id!.toString(), currentUser._id!.toString()) //remove each answer sheet
+                    async (answerSheet) => Private.deleteAnswerSheet(answerSheet._id!.toString(), currentUserId ?? answerSheet.exam.owner._id.toString()) //remove each answer sheet
                 )
             );
-            await fs.rmdir(path.join(config.fileStorageLocation, exam._id.toString())).catch(e => console.error(e)); //remove directory
-            await Exam.deleteOne({_id: exam._id});
-            res.status(204).send();
+            await fs.rmdir(path.join(config.fileStorageLocation, examId)).catch(e => {
+                console.error(e);
+                throw new Error('unable to delete exam directory', e);
+            }); //remove directory
+            await Exam.deleteOne({_id: examId}).catch(e => {
+                console.error(e);
+                throw new Error('unable to delete exam database entry', e);
+            });
         });
 }
 

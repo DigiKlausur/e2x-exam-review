@@ -10,6 +10,7 @@ import {config} from "./globals";
 import {Request} from "express";
 import {Jwt} from 'jsonwebtoken';
 import * as jwkToPem from 'jwk-to-pem';
+import {setupAutomaticArchivingCronJob} from "./controllers/archivingController";
 
 export const ANSWER_SHEETS_PATH = "answer-sheets";
 
@@ -75,6 +76,7 @@ ensureJwtIsConfigured()
         db.then(async () => {
             app.listen(config.serverPort, () => {
                 console.log(`Server started http://localhost:${config.serverPort}`);
+                setupAutomaticArchivingCronJob();
             });
         });
     });

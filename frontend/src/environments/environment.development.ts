@@ -8,7 +8,7 @@ export const environment: Environment = {
   studentIdRegex: '(?<!\\d)(90[\\d]{5})(?!\\d)',
   uploadConcurrency: 5,
   openId: {
-    authorityUrl: 'http://localhost:8080/auth/realms/e2x-exam-review',
+    authorityUrl: 'http://localhost:16520/auth/realms/e2x-exam-review',
     clientId: 'e2x-exam-review-client',
     attributeMappings: {
       uniqueId: 'email',

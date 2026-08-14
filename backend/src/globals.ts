@@ -4,6 +4,11 @@ export const config = {
   serverPort: process.env.SERVER_PORT ?? "3000",
   corsOrigin: process.env.ALLOWED_ORIGIN ?? "http://localhost:4200",
   fileStorageLocation: path.resolve(process.env.FILE_STORAGE_LOCATION ?? './answer-sheets'),
+  archiving: {
+    archiveStorageLocation: path.resolve(process.env.ARCHIVE_STORAGE_LOCATION ?? './archive'),
+    automaticArchivingPeriodDays: process.env.AUTOMATIC_ARCHIVING_PERIOD_DAYS ?? 182, // default: 182 -> circa half a year
+    automaticArchivingTime: process.env.AUTOMATIC_ARCHIVING_TIME ?? '03:00',
+  },
   jwt: {
     openIdConfigUrl: process.env.OPENID_CONFIG_URL,
     secret: process.env.JWT_SECRET,

@@ -5,7 +5,7 @@ export const authConfig: PassedInitialConfig = {
   config: {
     authority: environment.openId.authorityUrl,
     redirectUrl: window.location.origin + window.location.pathname,
-    // checkRedirectUrlWhenCheckingIfIsCallback: false, //todo: check if this is necessary
+    //checkRedirectUrlWhenCheckingIfIsCallback: false, //todo: check if this is necessary
     postLogoutRedirectUri: window.location.origin,
     clientId: environment.openId.clientId,
     scope: environment.openId.scopes?.join(' '),
@@ -14,7 +14,7 @@ export const authConfig: PassedInitialConfig = {
     useRefreshToken: true,
     triggerRefreshWhenIdTokenExpired: true,
     renewTimeBeforeTokenExpiresInSeconds: 30,
-    disablePkce: true, // disabled because of unwanted redirects
+    disablePkce: false, // disabled because of unwanted redirects
     secureRoutes: [
       environment.apiUrl
     ]
