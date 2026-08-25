@@ -72,7 +72,9 @@ jobs:
             backend/README.md
 
   build-frontend:
-    needs: changes
+    needs:
+      - changes
+      - build-backend
     if: ${{ needs.changes.outputs.frontend == 'true' }}
     name: Build Frontend
     runs-on: ubuntu-latest
