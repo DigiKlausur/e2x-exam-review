@@ -51,19 +51,25 @@ jobs:
 
       - name: Build OpenApi spec
         run: npm run openApi
+
+      - name: Archive OpenApi Specification
+        uses: actions/upload-artifact@v7
         with:
           name: openApi-spec
           path: backend/openApi.json
 
       - name: Build Application
         run: npm run build
+
+      - name: Archive Build Artifacts
+        uses: actions/upload-artifact@v7
         with:
           name: build-output
           path: |
-            dist
-            package.json
-            package-lock.json
-            README.md
+            backend/dist
+            backend/package.json
+            backend/package-lock.json
+            backend/README.md
 
   build-frontend:
     needs: changes
