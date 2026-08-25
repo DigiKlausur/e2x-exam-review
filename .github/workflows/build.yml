@@ -103,9 +103,10 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           name: backend-build-output
+          path: backend
 
-      - name: List Directories
-        run: ls && ls ../
+      - name: List Backend Directory
+        run: ls -la ../backend
 
       - name: Install Dependencies
         run: npm ci
