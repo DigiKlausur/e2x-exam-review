@@ -30,7 +30,7 @@ jobs:
   build-backend:
     needs: changes
     if: ${{ true || needs.changes.outputs.frontend == 'true' || needs.changes.outputs.frontend == 'true' }}
-    name: Build Frontend
+    name: Build Backend
     runs-on: ubuntu-latest
     defaults:
       run:
