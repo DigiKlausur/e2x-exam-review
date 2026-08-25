@@ -32,6 +32,8 @@ jobs:
     if: ${{ true || needs.changes.outputs.frontend == 'true' || needs.changes.outputs.frontend == 'true' }}
     name: Build Backend
     runs-on: ubuntu-latest
+    outputs:
+      buildArtifactId: ${{ steps.artifact-upload.outputs.artifact-id }}
     defaults:
       run:
         working-directory: ./backend
@@ -55,16 +57,18 @@ jobs:
       - name: Archive OpenApi Specification
         uses: actions/upload-artifact@v7
         with:
-          name: openApi-spec
+          name: backend-openApi-spec
           path: backend/openApi.json
+          archive: false
 
       - name: Build Application
         run: npm run build
 
       - name: Archive Build Artifacts
+        id: artifact-upload
         uses: actions/upload-artifact@v7
         with:
-          name: build-output
+          name: backend-build-output
           path: |
             backend/dist
             backend/package.json
@@ -94,6 +98,14 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
           cache-dependency-path: './frontend/package-lock.json'
+
+      - name: Download Backend Build
+        uses: actions/download-artifact@v8
+        with:
+          name: backend-build-output
+
+      - name: List Directories
+        run: ls && ls ../
 
       - name: Install Dependencies
         run: npm ci
