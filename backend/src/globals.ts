@@ -18,7 +18,7 @@ export const config = {
       student: process.env.JWT_STUDENT_ROLE ?? "student",
     },
     attributeMappings: {
-      uniqueId: process.env.JWT_UNIQUE_ID ?? "email",
+      uniqueId: process.env.JWT_UNIQUE_ID ?? "preferred_username",
       email: process.env.JWT_EMAIL_ATTRIBUTE ?? "email",
       studentId: process.env.JWT_STUDENT_ID_ATTRIBUTE ?? "student_id",
       firstname: process.env.JWT_FIRSTNAME ?? "given_name",

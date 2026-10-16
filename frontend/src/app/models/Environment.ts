@@ -5,8 +5,9 @@ export interface Environment {
   bugReportEmail: string;
   studentIdRegex: string;
   uploadConcurrency: number;
-  openId: {
-    authorityUrl: string;
+  keycloak: {
+    url: string;
+    realm: string;
     clientId: string;
     attributeMappings: {
       uniqueId: string;
@@ -20,8 +21,7 @@ export interface Environment {
     roleMappings: {
       lecturer: string;
       student: string;
-    },
-    scopes: string[]
+    }
   },
   dataTable: {
     rowsPerPage: number,

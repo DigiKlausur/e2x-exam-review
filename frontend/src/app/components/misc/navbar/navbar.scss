@@ -11,3 +11,9 @@
   --bs-btn-active-border-color: transparent;
   --bs-btn-box-shadow: none;
 }
+
+span.user-info{
+  &:hover, &:active, &:focus {
+    text-decoration: underline;
+  }
+}

@@ -60,7 +60,6 @@ export class AnswerSheetUploadPreview implements AfterViewInit {
 
   expandAllRows(): void {
     setTimeout(() => {
-      console.log(this.dataTable);
       this.dataTable?.rowDetail?.expandAllRows();
     }, 1000);
   }

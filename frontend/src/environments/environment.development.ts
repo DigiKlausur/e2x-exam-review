@@ -7,12 +7,13 @@ export const environment: Environment = {
   bugReportEmail: '',
   studentIdRegex: '(?<!\\d)(90[\\d]{5})(?!\\d)',
   uploadConcurrency: 5,
-  openId: {
-    authorityUrl: 'http://localhost:16520/auth/realms/e2x-exam-review',
-    clientId: 'e2x-exam-review-client',
+  keycloak: {
+    url: 'http://localhost:8080/auth',
+    realm: 'e2x-exam-review',
+    clientId: 'e2x-exam-review-dev',
     attributeMappings: {
-      uniqueId: 'email',
-      studentId: 'studentId',
+      uniqueId: 'preferred_username',
+      studentId: 'student_id',
       displayName: 'name',
       firstname: 'given_name',
       lastname: 'family_name',
@@ -22,8 +23,7 @@ export const environment: Environment = {
     roleMappings: {
       lecturer: 'lecturer',
       student: 'student',
-    },
-    scopes: ['openid', 'profile', 'offline_access']
+    }
   },
   dataTable: {
     rowsPerPage: 10,

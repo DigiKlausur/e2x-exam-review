@@ -14,7 +14,7 @@
         </li>
       </ul>
       <div class="ms-auto d-flex align-items-center gap-3">
-        @if(authenticatedUser) {<span class="text-white">{{authenticatedUser | userDisplayName}}</span>}
+        @if(authenticatedUser) {<span role="button" class="text-white user-info" (click)="handleManageAccount()">{{authenticatedUser | userDisplayName}}</span>}
         <button class="btn btn-sm btn-logoff" (click)="handleLogout()"><span i18n="@@app.navbar.logout-button">Logout</span><i class="bi bi-box-arrow-right"></i></button>
       </div>
     </div>
