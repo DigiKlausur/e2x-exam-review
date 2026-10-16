@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { CanActivateFn } from '@angular/router';
 
-import oidcCanActivateGuard from './oidc-can-activate-guard';
+import { keycloakAuthGuard } from './keycloak-auth-guard';
 
-describe('oidcCanActivateGuard', () => {
+describe('keycloakAuthGuard', () => {
   const executeGuard: CanActivateFn = (...guardParameters) =>
-    TestBed.runInInjectionContext(() => oidcCanActivateGuard(...guardParameters));
+    TestBed.runInInjectionContext(() => keycloakAuthGuard(...guardParameters));
 
   beforeEach(() => {
     TestBed.configureTestingModule({});

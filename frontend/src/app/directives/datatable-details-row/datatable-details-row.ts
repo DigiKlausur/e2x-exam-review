@@ -17,6 +17,5 @@ export class DatatableDetailsRow implements AfterViewInit{
   private updateColumnWidths(){
     const parentCells: HTMLCollectionOf<HTMLDivElement> = this.elementRef.nativeElement.parentElement.parentElement.querySelectorAll('datatable-body-row .datatable-body-cell');
     Array.from(this.elementRef.nativeElement.children as HTMLCollectionOf<HTMLDivElement>).forEach((element: HTMLDivElement, index: number) => {element.style.width = parentCells[index]?.offsetWidth ? parentCells[index].offsetWidth + 'px' : ''});
-    console.log('updating', parentCells);
   }
 }

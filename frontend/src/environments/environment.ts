@@ -7,12 +7,13 @@ export const environment: Environment = {
   bugReportEmail: 'e2x@h-brs.de',
   studentIdRegex: '(?<!\\d)(90[\\d]{5})(?!\\d)',
   uploadConcurrency: 5,
-  openId: {
-    authorityUrl: '',
-    clientId: '',
+  keycloak: {
+    url: 'https://diarchitect.inf.h-brs.de/auth',
+    realm: 'e2x-exam-review',
+    clientId: 'e2x-exam-review',
     attributeMappings: {
       uniqueId: 'preferred_username',
-      studentId: 'matriculationnumber',
+      studentId: 'student_id',
       displayName: 'name',
       firstname: 'given_name',
       lastname: 'family_name',
@@ -22,8 +23,7 @@ export const environment: Environment = {
     roleMappings: {
       lecturer: 'lecturer',
       student: 'student',
-    },
-    scopes: ['openid', 'profile', 'offline_access', 'e2xeinsicht']
+    }
   },
   dataTable: {
     rowsPerPage: 10,

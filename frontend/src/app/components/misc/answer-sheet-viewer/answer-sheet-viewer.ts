@@ -2,7 +2,7 @@ import {Component, inject, Input, OnInit} from '@angular/core';
 import {NgxExtendedPdfViewerModule} from "ngx-extended-pdf-viewer";
 import {IAnswerSheet, IFile} from 'e2x-exam-review-backend';
 import {environment} from '../../../../environments/environment';
-import {OidcSecurityService} from 'angular-auth-oidc-client';
+import {AuthService} from '../../../services/auth-service/auth-service';
 
 enum loadingStates {
   INITIAL,
@@ -27,7 +27,7 @@ const loadingMessages: Record<loadingStates, string> = {
   styleUrl: './answer-sheet-viewer.scss',
 })
 export class AnswerSheetViewer implements OnInit {
-  private readonly oidcSecurityService: OidcSecurityService = inject(OidcSecurityService);
+  private readonly authService: AuthService = inject(AuthService);
 
   @Input() answerSheet!: IAnswerSheet;
   @Input() file!: IFile;
@@ -37,9 +37,7 @@ export class AnswerSheetViewer implements OnInit {
   accessToken?: string;
 
   ngOnInit(): void {
-    this.oidcSecurityService.getAccessToken().subscribe((accessToken: string) => {
-      this.accessToken = 'Bearer ' + accessToken;
-    });
+    this.accessToken = 'Bearer ' + this.authService.getAccessToken();
   }
 
   get fileUrl(): string {
