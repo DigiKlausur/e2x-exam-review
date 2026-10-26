@@ -1,6 +1,7 @@
 import {Environment} from '../app/models/Environment';
 
 export const environment: Environment = {
+  i18nActive: false,
   apiUrl: 'http://localhost:3000',
   imprintUrl: 'https://www.h-brs.de/en/kum/imprint',
   privacyUrl: 'https://www.h-brs.de/en/data-privacy-statement',
@@ -8,7 +9,7 @@ export const environment: Environment = {
   studentIdRegex: '(?<!\\d)(90[\\d]{5})(?!\\d)',
   uploadConcurrency: 5,
   keycloak: {
-    url: 'http://localhost:8080/auth',
+    url: 'https://diarchitect.inf.h-brs.de/auth',
     realm: 'e2x-exam-review',
     clientId: 'e2x-exam-review-dev',
     attributeMappings: {

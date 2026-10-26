@@ -1,6 +1,7 @@
 import {Environment} from '../app/models/Environment';
 
 export const environment: Environment = {
+  i18nActive: true,
   apiUrl: 'https://e2x-einsicht.inf.h-brs.de',
   imprintUrl: 'https://www.h-brs.de/en/kum/imprint',
   privacyUrl: 'https://www.h-brs.de/en/data-privacy-statement',

@@ -1,4 +1,5 @@
 export interface Environment {
+  i18nActive: boolean;
   apiUrl: string;
   imprintUrl: string;
   privacyUrl: string;
