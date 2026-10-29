@@ -1,0 +1,23 @@
+services:
+  frontend:
+    build: frontend
+    ports:
+      - "4200:4200"
+  backend:
+    build: backend
+    environment:
+      ALLOWED_ORIGIN: "https://e2x-einsicht.inf.h-brs.de"
+      OPENID_CONFIG_URL: "https://diarchitect.inf.h-brs.de/auth/realms/e2x-exam-review/.well-known/openid-configuration"
+      MONGODB_HOST: ""
+      MONGODB_PORT: 27017
+      MONGODB_DATABASE_NAME: "e2xExamReview"
+      MONGODB_USERNAME: ""
+      MONGODB_PASSWORD: ""
+      AUTOMATIC_ARCHIVING_PERIOD_DAYS: 182 # 182 -> circa half a year
+      AUTOMATIC_ARCHIVING_TIME: "03:00"
+    volumes:
+      - answer-sheets:/data/answer-sheets
+      - archive:/data/archive
+volumes:
+  answer-sheets:
+  archive:
