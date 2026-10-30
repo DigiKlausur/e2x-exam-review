@@ -106,7 +106,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: ${{ env.CONTAINER_REGISTRY }}/${{github.actor}}/${{ env.FRONTEND_IMAGE_NAME }}
+          images: ${{ env.CONTAINER_REGISTRY }}/${{ env.GITHUB_REPOSITORY_OWNER }}/${{ env.FRONTEND_IMAGE_NAME }}
 
 
       - name: Build Container Image
