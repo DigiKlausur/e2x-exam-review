@@ -3,7 +3,8 @@ name: build
 env:
   CONTAINER_REGISTRY: ghcr.io
   CONTAINER_REGISTRY_USERNAME: ${{ github.actor }}
-  CONTAINER_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN  }}
+  CONTAINER_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+  ORGANIZATION: ${{ github.repository_owner }}
   FRONTEND_IMAGE_NAME: e2x-exam-review-frontend
   BACKEND_IMAGE_NAME: e2x-exam-review-backend
 
@@ -106,7 +107,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: ${{ env.CONTAINER_REGISTRY }}/${{ env.GITHUB_REPOSITORY_OWNER }}/${{ env.FRONTEND_IMAGE_NAME }}
+          images: ${{ env.CONTAINER_REGISTRY }}/${{ env.ORGANIZATION }}/${{ env.FRONTEND_IMAGE_NAME }}
 
 
       - name: Build Container Image
