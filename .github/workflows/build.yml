@@ -36,7 +36,7 @@ jobs:
               - 'packages/backend/**'
 
   prepare-docker:
-    name: Prepare docker login
+    name: Log in to container registries
     runs-on: ubuntu-latest
     steps:
       - name: Log in to dhi.io
@@ -106,7 +106,8 @@ jobs:
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: ${{ env.CONTAINER_REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}
+          images: ${{ env.CONTAINER_REGISTRY }}/${{github.actor}}/${{ env.FRONTEND_IMAGE_NAME }}
+
 
       - name: Build Container Image
         id: frontend-image-build
@@ -116,6 +117,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
 
 
   build-frontend:
