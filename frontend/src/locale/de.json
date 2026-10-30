@@ -13,7 +13,7 @@
     "app.answer-sheet-upload-preview.button.upload": "Einreichungen hochladen",
     "app.answer-sheet-upload-preview.button.upload-dismiss-duplicates": "Duplikate verwerfen & Übrige hochladen",
     "app.answer-sheet-upload-preview.button.upload-overwrite-duplicates": "Einreichungen hochladen & Duplikate überschreiben",
-    "app.answer-sheet-upload-preview.stats": "\"{$INTERPOLATION} {$ICU} konnten {$INTERPOLATION_1} {$ICU_1} zugeordnet werden",
+    "app.answer-sheet-upload-preview.stats": "{$INTERPOLATION} {$ICU} konnten {$INTERPOLATION_1} {$ICU_1} zugeordnet werden",
     "app.answer-sheet-upload-preview.stats.duplicates": " {$INTERPOLATION} {$ICU} ",
     "app.answer-sheet-upload-preview.stats.duplicates.tooltip": "Duplikate haben den selben Dateinamen wie Dateien, die bereits hochgeladen wurden. Sie können entweder verworfen werden oder die bereits hochgeladenen Dateien ersetzen.",
     "app.answer-sheet-upload-preview.stats.unmatched": " {$INTERPOLATION} {$ICU} konnten nicht zugeordnet werden ",
