@@ -11,6 +11,10 @@ import {Request} from "express";
 import {Jwt} from 'jsonwebtoken';
 import * as jwkToPem from 'jwk-to-pem';
 import {setupAutomaticArchivingCronJob} from "./controllers/archivingController";
+import {AnswerSheet} from "./models/AnswerSheet";
+import {Exam} from "./models/Exam";
+import {Student} from "./models/Student";
+import {User} from "./models/User";
 
 export const ANSWER_SHEETS_PATH = "answer-sheets";
 
@@ -74,6 +78,11 @@ ensureJwtIsConfigured()
         const db = connect(`mongodb://${authString}${config.mongoDb.host}:${config.mongoDb.port}/${config.mongoDb.database}`);
 
         db.then(async () => {
+            await AnswerSheet.syncIndexes();
+            await Exam.syncIndexes();
+            await Student.syncIndexes();
+            await User.syncIndexes();
+
             app.listen(config.serverPort, () => {
                 console.log(`Server started http://localhost:${config.serverPort}`);
                 setupAutomaticArchivingCronJob();

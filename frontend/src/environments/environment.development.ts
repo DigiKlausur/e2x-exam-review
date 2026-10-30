@@ -9,9 +9,9 @@ export const environment: Environment = {
   studentIdRegex: '(?<!\\d)(90[\\d]{5})(?!\\d)',
   uploadConcurrency: 5,
   keycloak: {
-    url: 'https://diarchitect.inf.h-brs.de/auth',
+    url: 'http://localhost:8080/auth',
     realm: 'e2x-exam-review',
-    clientId: 'e2x-exam-review-dev',
+    clientId: 'e2x-exam-review-client',
     attributeMappings: {
       uniqueId: 'preferred_username',
       studentId: 'student_id',
