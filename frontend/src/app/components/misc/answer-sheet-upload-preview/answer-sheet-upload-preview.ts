@@ -48,8 +48,14 @@ export class AnswerSheetUploadPreview implements AfterViewInit {
 
   @ViewChild(DatatableComponent) dataTable!: DatatableComponent<IAnswerSheetProto>;
 
+  protected uploadInProgress: boolean = false;
+
   ngAfterViewInit(): void {
     this.expandAllRows();
+  }
+
+  setUploadInProgress(newState: boolean): void {
+    this.uploadInProgress = newState;
   }
 
   ngOnChanges(changes: SimpleChanges<AnswerSheetUploadPreview>) {

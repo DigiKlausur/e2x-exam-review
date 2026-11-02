@@ -18,10 +18,10 @@
   </div>
   <div class="controls d-flex gap-2">
     @if(numberOfDuplicateFiles > 0) {
-      <button class="btn btn-light" (click)="uploadAnswerSheets.emit('dismiss')"><i class="bi bi-x-circle"></i><span i18n="@@app.answer-sheet-upload-preview.button.upload-dismiss-duplicates">Dismiss Duplicates & Upload Remaining</span></button>
-      <button class="btn btn-info" (click)="uploadAnswerSheets.emit('overwrite')"><i class="bi bi-box-arrow-in-up-right"></i><span i18n="@@app.answer-sheet-upload-preview.button.upload-overwrite-duplicates">Upload Graded Exams & Overwrite Duplicates</span></button>
+      <button class="btn btn-light" [disabled]="uploadInProgress" (click)="uploadAnswerSheets.emit('dismiss')"><i class="bi bi-x-circle"></i><span i18n="@@app.answer-sheet-upload-preview.button.upload-dismiss-duplicates">Dismiss Duplicates & Upload Remaining</span></button>
+      <button class="btn btn-info" [disabled]="uploadInProgress" (click)="uploadAnswerSheets.emit('overwrite')"><i class="bi bi-box-arrow-in-up-right"></i><span i18n="@@app.answer-sheet-upload-preview.button.upload-overwrite-duplicates">Upload Graded Exams & Overwrite Duplicates</span></button>
     } @else {
-      <button class="btn btn-primary" (click)="uploadAnswerSheets.emit('dismiss')"><i class="bi bi-cloud-upload"></i><span i18n="@@app.answer-sheet-upload-preview.button.upload">Upload Graded Exams</span></button>
+      <button class="btn btn-primary" [disabled]="uploadInProgress" (click)="uploadAnswerSheets.emit('dismiss')"><i class="bi bi-cloud-upload"></i><span i18n="@@app.answer-sheet-upload-preview.button.upload">Upload Graded Exams</span></button>
     }
   </div>
 </div>

@@ -1,5 +1,5 @@
 @if(uploadQueue.length > 0){
-  <app-answer-sheet-upload-preview [uploadQueue]="uploadQueue" (uploadAnswerSheets)="performUpload($event)"
+  <app-answer-sheet-upload-preview #uploadPreview [uploadQueue]="uploadQueue" (uploadAnswerSheets)="performUpload($event)"
                                    xmlns="http://www.w3.org/1999/html"></app-answer-sheet-upload-preview>
 }
 <input #fileInput type="file" accept="application/pdf,application/zip" (change)="handleFileInputChange($event)" multiple hidden>

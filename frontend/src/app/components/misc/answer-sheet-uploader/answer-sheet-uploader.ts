@@ -53,6 +53,7 @@ export class AnswerSheetUploader {
 
   @Output() onChange: EventEmitter<void> = new EventEmitter<void>();
 
+  @ViewChild('uploadPreview') uploadPreview!: AnswerSheetUploadPreview;
   @ViewChild('dropZone') dropZone!: ElementRef<HTMLDivElement>;
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   @ViewChild('uploadProgressBody') uploadProgressBody!: TemplateRef<HTMLDivElement>;
@@ -203,6 +204,7 @@ export class AnswerSheetUploader {
   protected numberOfUploadErrors: WritableSignal<number> = signal<number>(0);
 
   async performUpload(duplicateHandlingStrategy: 'dismiss'|'overwrite'): Promise<void>{
+    this.uploadPreview.setUploadInProgress(true);
     const preparedData = (this.uploadQueue.filter((answerSheetProto: IAnswerSheetProto) => answerSheetProto.studentId && answerSheetProto.warnings.length === 0) as Required<IAnswerSheetProto>[])
       .map((answerSheetProto: Required<IAnswerSheetProto>) => {
         answerSheetProto.files = answerSheetProto.files.filter((file: IFileProto) => (duplicateHandlingStrategy === 'dismiss' ? !hasWarning(file.warnings, AnswerSheetFileUploadWarning.DUPLICATE) : true) && !hasWarning(file.warnings, AnswerSheetFileUploadWarning.INVALID_TYPE));
@@ -255,6 +257,7 @@ export class AnswerSheetUploader {
           uploadErrorAnswerSheets.forEach(err => console.error(`unable to upload the graded exam of ${err.answerSheet.studentId}`, err.error, err.answerSheet));
         }
         this.clearUploadQueue();
+        this.uploadPreview.setUploadInProgress(false);
         this.onChange.emit();
       });
   }
