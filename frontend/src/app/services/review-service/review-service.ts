@@ -1,4 +1,4 @@
-import {inject, Injectable} from '@angular/core';
+import {inject, Injectable, signal, Signal, WritableSignal} from '@angular/core';
 import {map, Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {IAnswerSheet, IStudent} from 'e2x-exam-review-backend';
@@ -10,6 +10,7 @@ import {prepareExam} from '../../utils/ExamUtil';
 })
 export class ReviewService {
   private http: HttpClient = inject(HttpClient);
+  private _studentDataUpdatedSignal: WritableSignal<boolean> = signal<boolean>(false);
 
   listAnswerSheets(): Observable<IAnswerSheet[]>{
     return this.http.get<IAnswerSheet[]>(environment.apiUrl + '/api/v1/review/answer-sheets')
@@ -27,6 +28,13 @@ export class ReviewService {
   }
 
   updateStudentData(): Observable<IStudent> {
-    return this.http.post<IStudent>(environment.apiUrl + '/api/v1/review/students', {});
+    return this.http.post<IStudent>(environment.apiUrl + '/api/v1/review/students', {}).pipe(map((response) => {
+      if(response.studentId) this._studentDataUpdatedSignal.set(true);
+      return response;
+    }));
+  }
+
+  get studentDataUpdatedSignal(): Signal<boolean> {
+    return this._studentDataUpdatedSignal.asReadonly();
   }
 }
