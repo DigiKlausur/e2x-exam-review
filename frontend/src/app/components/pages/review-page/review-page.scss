@@ -1,1 +1,11 @@
+.header{
+  border-bottom: var(--bs-border-width) solid var(--bs-border-color);
 
+  a:hover, a:focus, a:active {
+    text-decoration: underline !important;
+  }
+
+  a:active {
+    color: var(--bs-primary);
+  }
+}

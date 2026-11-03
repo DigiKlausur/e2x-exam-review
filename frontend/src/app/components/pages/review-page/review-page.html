@@ -1,4 +1,9 @@
 @if (answerSheet && file){
+  <div class="header d-flex flex-row justify-content-between py-1 px-2">
+    <a role="button" (click)="goBack()"><i class="bi bi-chevron-left"></i><span>{{answerSheet.exam.title}}</span></a>
+    <span i18n>Answer Sheet of {{submitterInformation}}</span>
+    <span>{{file.originalFileName}}</span>
+  </div>
   <app-answer-sheet-viewer [answerSheet]="answerSheet" [file]="file" ></app-answer-sheet-viewer>
 } @else {
   <div class="container mt-3">

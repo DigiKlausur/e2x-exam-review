@@ -63,7 +63,7 @@ export async function getAnswerSheetById(req: Request, res: Response) {
             }
         }
      */
-    res.send(await AnswerSheet.findById(req.params.id).lean().populate('exam'));
+    res.send(await AnswerSheet.findById(req.params.id).lean().populate('exam').populate('submitter', 'studentId'));
 }
 
 export async function updateStudent(req: JwtRequest, res: Response) {

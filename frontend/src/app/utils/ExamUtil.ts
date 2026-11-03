@@ -10,7 +10,6 @@ export function prepareExam(exam: IExam): IExam {
 }
 
 export function getExamReviewStatus(exam: IExam) {
-  console.log(exam);
   const now = new Date();
   return now < exam.reviewParameters.startDate ? ExamReviewStatus.UPCOMING : (now > exam.reviewParameters.endDate ? ExamReviewStatus.CONCLUDED : ExamReviewStatus.IN_PROGRESS );
 }
