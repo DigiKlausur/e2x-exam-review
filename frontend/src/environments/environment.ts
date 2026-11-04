@@ -28,6 +28,7 @@ export const environment: Environment = {
   },
   dataTable: {
     rowsPerPage: 10,
-    footerMinRows: 5
+    footerMinRows: 5,
+    rowsPerPageOptions: [10,20,50,100,500,1000]
   }
 };

@@ -23,6 +23,7 @@ $web-font-path : false;
 .ngx-datatable{
   font-size: 0.875rem;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  overflow: unset !important;
 
   --bs-table-color-type: initial;
   --bs-table-bg-type: initial;
@@ -46,6 +47,10 @@ $web-font-path : false;
   .datatable-header {
     vertical-align: bottom;
     height: unset !important;
+    overflow: unset !important;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 
     .datatable-header-cell{
       text-transform: uppercase;
@@ -91,12 +96,17 @@ $web-font-path : false;
     padding: 1rem 1rem;
     color: var(--bs-table-color-state, var(--bs-table-color-type, var(--bs-table-color)));
     background-color: var(--bs-table-bg);
-    border-bottom-width: var(--bs-border-width);
     box-shadow: inset 0 0 0 9999px var(--bs-table-bg-state, var(--bs-table-bg-type, var(--bs-table-accent-bg)));
   }
 
-  .datatable-row-detail{
+  .datatable-header-cell, .datatable-body-cell, .empty-row .datatable-row-detail{
     border-bottom-width: var(--bs-border-width);
+  }
+
+  .datatable-row-wrapper:last-child{
+    .datatable-header-cell, .datatable-body-cell, .empty-row .datatable-row-detail {
+      border-bottom-width: 0 !important;
+    }
   }
 
   .datatable-row-detail:empty{
@@ -110,6 +120,13 @@ $web-font-path : false;
 
   .datatable-footer{
     padding: 0 1rem;
+    overflow: unset !important;
+    position: sticky;
+    bottom: 0;
+    z-index: 100;
+    background-color: var(--bs-table-bg);
+    border-color: var(--bs-table-border-color);
+    border-top-width: var(--bs-border-width);
 
     ngx-datatable-pager{
       @extend .pagination;

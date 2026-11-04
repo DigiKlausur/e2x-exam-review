@@ -15,6 +15,7 @@ import {AnswerSheetFileUploadWarning} from '../../../enums/AnswerSheetFileUpload
 import {AnswerSheetIdMatchWarning} from '../../../enums/AnswerSheetIdMatchWarning';
 import {hasWarning} from '../../../utils/UploadUtil';
 import {DatatableDetailsRow} from '../../../directives/datatable-details-row/datatable-details-row';
+import {FormsModule} from '@angular/forms';
 
 const warningSeverities: Record<AnswerSheetFileUploadWarning | AnswerSheetIdMatchWarning, number> = {
   [AnswerSheetIdMatchWarning.NO_MATCH]: 3,
@@ -37,7 +38,8 @@ const highestSeverityLevel: number = Math.max(...Object.values(warningSeverities
     DatatablePagerComponent,
     DatatableRowDetailDirective,
     DatatableRowDetailTemplateDirective,
-    DatatableDetailsRow
+    DatatableDetailsRow,
+    FormsModule
   ],
   templateUrl: './answer-sheet-upload-preview.html',
   styleUrl: './answer-sheet-upload-preview.scss',
@@ -47,6 +49,9 @@ export class AnswerSheetUploadPreview implements AfterViewInit {
   @Output() uploadAnswerSheets: EventEmitter<'dismiss'|'overwrite'> = new EventEmitter<'dismiss'|'overwrite'>();
 
   @ViewChild(DatatableComponent) dataTable!: DatatableComponent<IAnswerSheetProto>;
+
+  rowsPerPage: number = environment.dataTable.rowsPerPage;
+  rowsPerPageOptions: number[] = environment.dataTable.rowsPerPageOptions;
 
   protected uploadInProgress: boolean = false;
 
@@ -120,7 +125,6 @@ export class AnswerSheetUploadPreview implements AfterViewInit {
     }
   ];
 
-  protected readonly environment = environment;
   protected readonly Math = Math;
   protected readonly dataTableDefaultMessages = dataTableDefaultMessages;
   protected readonly AnswerSheetIdMatchWarning = AnswerSheetIdMatchWarning;

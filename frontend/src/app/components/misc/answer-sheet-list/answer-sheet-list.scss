@@ -11,6 +11,13 @@
   }
 }
 
+::ng-deep.datatable-footer-inner{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
 ::ng-deep.datatable-body-row:has(.datatable-body-cell>.datatable-body-cell-label>i.bi){
   cursor: pointer;
 }

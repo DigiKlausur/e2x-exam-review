@@ -26,6 +26,7 @@ export interface Environment {
   },
   dataTable: {
     rowsPerPage: number,
-    footerMinRows: number
+    footerMinRows: number,
+    rowsPerPageOptions: number[];
   }
 }

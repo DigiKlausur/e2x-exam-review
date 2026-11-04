@@ -19,6 +19,7 @@ import {dataTableDefaultMessages} from '../../../utils/DataTable';
 import {environment} from '../../../../environments/environment';
 import {DatePipe} from '@angular/common';
 import {DatatableDetailsRow} from '../../../directives/datatable-details-row/datatable-details-row';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 @Component({
   selector: 'app-answer-sheet-list',
   templateUrl: './answer-sheet-list.html',
@@ -36,7 +37,9 @@ import {DatatableDetailsRow} from '../../../directives/datatable-details-row/dat
     DataTableColumnDirective,
     DataTableColumnCellDirective,
     DatePipe,
-    DatatableDetailsRow
+    DatatableDetailsRow,
+    ReactiveFormsModule,
+    FormsModule
   ]
 })
 export class AnswerSheetList implements AfterViewInit {
@@ -49,6 +52,9 @@ export class AnswerSheetList implements AfterViewInit {
   @ViewChild('confirmDeleteAnswerSheetModal') confirmDeleteAnswerSheetModal!: NgbModal;
   @ViewChild('confirmDeleteAnswerSheetFileModal') confirmDeleteAnswerSheetFileModal!: NgbModal;
   @ViewChild(DatatableComponent) dataTable!: DatatableComponent<IAnswerSheet>;
+
+  rowsPerPage: number = environment.dataTable.rowsPerPage;
+  rowsPerPageOptions: number[] = environment.dataTable.rowsPerPageOptions;
 
   confirmDeleteModalRef?: NgbModalRef;
 
@@ -137,5 +143,4 @@ export class AnswerSheetList implements AfterViewInit {
   ];
 
   protected readonly Math = Math;
-  protected readonly environment = environment;
 }

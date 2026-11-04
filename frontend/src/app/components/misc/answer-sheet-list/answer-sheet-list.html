@@ -1,4 +1,4 @@
-<ngx-datatable [rows]="answerSheets" [sorts]="sorts" [limit]="environment.dataTable.rowsPerPage" [footerHeight]="55" (activate)="handleActivate($event)" [messages]="messages" rowHeight="auto" columnMode="flex">
+<ngx-datatable [rows]="answerSheets" [sorts]="sorts" [limit]="rowsPerPage" [footerHeight]="55" (activate)="handleActivate($event)" [messages]="messages" rowHeight="auto" columnMode="flex">
   <ngx-datatable-column [draggable]="false" [sortable]="false" [resizeable]="false">
     <ng-template ngx-datatable-cell-template class="test" let-row="row" let-expanded="expanded">
       @if(row.files.length > 1){
@@ -63,7 +63,17 @@
       <div class="page-count fst-italic" i18n="@@app.answer-sheet.table.footer.stats">
         showing {{Math.min(rowCount - (offset * pageSize), pageSize)}} of {{rowCount}} {rowCount, plural, =1 {graded exam} other {graded exams}}
         ({{numberOfFiles}} {numberOfFiles, plural, =1 {file} other {files}}; {{Math.ceil(rowCount / pageSize)}} {Math.ceil(rowCount / pageSize), plural, =1 {page} other {pages}})</div>
-      <ngx-datatable-pager style="flex: 1 1 50%"></ngx-datatable-pager>
+      <div class="d-flex flex-row align-items-center gap-1 ms-auto" >
+        <select class="form-select form-select-sm" [(ngModel)]="rowsPerPage" style="width: 6rem">
+          @for (rowsPerPageOption of rowsPerPageOptions; track rowsPerPageOption){
+            <option [ngValue]="rowsPerPageOption">{{rowsPerPageOption}}</option>
+          }
+        </select>
+        <label i18n>items per page</label>
+      </div>
+      <div>
+        <ngx-datatable-pager  ></ngx-datatable-pager>
+      </div>
     </ng-template>
   </ngx-datatable-footer>
 </ngx-datatable>
