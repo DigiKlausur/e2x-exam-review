@@ -56,7 +56,7 @@
     <a (click)="collapse.toggle()" role="button" i18n="@@app.exam-editor.details-toggle">@if(collapseReviewSettings) {<i class="bi bi-caret-down-fill"></i> show} @else {<i class="bi bi-caret-up-fill"></i> hide} advanced settings</a>
   </div>
   <div class="d-flex justify-content-end gap-3">
-    <button class="btn btn-outline-danger" (click)="handleDeleteExam()"><i class="bi bi-trash me-2"></i><span  i18n="@@app.form.delete-exam-button">Delete Exam</span></button>
+    <button class="btn btn-outline-danger" [disabled]="examId === 'new'" (click)="handleDeleteExam()"><i class="bi bi-trash me-2"></i><span  i18n="@@app.form.delete-exam-button">Delete Exam</span></button>
     <button class="btn btn-primary" (click)="saveExam()"><i class="bi bi-floppy me-2"></i><span  i18n="@@app.form.save-button">Save</span></button>
   </div>
 </form>
